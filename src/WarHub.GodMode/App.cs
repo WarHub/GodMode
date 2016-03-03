@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Xamarin.Forms;
+﻿// WarHub licenses this file to you under the MIT license.
+// See LICENSE file in the project root for more information.
 
 namespace WarHub.GodMode
 {
+    using Xamarin.Forms;
+
     public class App : Application
     {
         public App()
@@ -17,8 +15,10 @@ namespace WarHub.GodMode
                 Content = new StackLayout
                 {
                     VerticalOptions = LayoutOptions.Center,
-                    Children = {
-                        new Label {
+                    Children =
+                    {
+                        new Label
+                        {
                             XAlign = TextAlignment.Center,
                             Text = "Welcome to Xamarin Forms!"
                         }
