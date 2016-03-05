@@ -3,29 +3,21 @@
 
 namespace WarHub.Armoury.GodMode
 {
+    using System.Reflection;
+    using Autofac;
+    using Views;
     using Xamarin.Forms;
 
     public class App : Application
     {
         public App()
         {
+            ServiceProvider = BuildContainer().BeginLifetimeScope();
             // The root page of your application
-            MainPage = new ContentPage
-            {
-                Content = new StackLayout
-                {
-                    VerticalOptions = LayoutOptions.Center,
-                    Children =
-                    {
-                        new Label
-                        {
-                            XAlign = TextAlignment.Center,
-                            Text = "Welcome to Xamarin Forms!"
-                        }
-                    }
-                }
-            };
+            MainPage = new NavigationPage(new MainPage());
         }
+
+        public static IComponentContext ServiceProvider { get; private set; }
 
         protected override void OnStart()
         {
@@ -40,6 +32,13 @@ namespace WarHub.Armoury.GodMode
         protected override void OnResume()
         {
             // Handle when your app resumes
+        }
+
+        private IContainer BuildContainer()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterAssemblyModules(GetType().GetTypeInfo().Assembly);
+            return builder.Build();
         }
     }
 }

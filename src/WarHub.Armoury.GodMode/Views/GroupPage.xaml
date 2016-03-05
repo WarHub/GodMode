@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:controls="clr-namespace:WarHub.Armoury.GodMode.Controls;assembly=WarHub.Armoury.GodMode"
+            xmlns:services="clr-namespace:WarHub.Armoury.GodMode.Services;assembly=WarHub.Armoury.GodMode"
+            xmlns:views="clr-namespace:WarHub.Armoury.GodMode.Views;assembly=WarHub.Armoury.GodMode"
+            x:Class="WarHub.Armoury.GodMode.Views.GroupPage"
+            x:Name="Page"
+            BindingContext="{x:Static services:ViewModelLocator.GroupViewModel}"
+            Title="{Binding Name}">
+
+    <views:CatalogueItemsListPage />
+
+    <ContentPage Title="Properties">
+        <ScrollView>
+            <StackLayout Orientation="Vertical">
+                <views:IdentifierView BindingContext="{Binding Source={x:Reference Page}, Path=BindingContext.Id}" />
+
+                <Label>Entry Name</Label>
+                <Entry Text="{Binding Name}" Placeholder="Entry Name" />
+
+                <Label>Default choice</Label>
+                <controls:BindablePicker Title="Default choice" DisplayMember="Name"
+                                         ItemsSource="{Binding DefaultChoices}" SelectedItem="{Binding DefaultChoice}" />
+
+                <Label>Is collective</Label>
+                <Switch IsToggled="{Binding IsCollective}" />
+
+                <Label>Is hidden</Label>
+                <Switch IsToggled="{Binding IsHidden}" />
+
+                <views:EntryLimitsView BindingContext="{Binding Source={x:Reference Page}, Path=BindingContext.Limits}" />
+            </StackLayout>
+        </ScrollView>
+    </ContentPage>
+
+    <views:ModifiersListPage />
+
+</TabbedPage>

@@ -36,15 +36,193 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Behaviors\ItemSelectedBehavior.cs" />
+    <Compile Include="Behaviors\TappedBehavior.cs" />
+    <Compile Include="CommandExtensions.cs" />
+    <Compile Include="Commands\CommandsAutofacModule.cs" />
+    <Compile Include="Commands\CreateCatalogueItemCommand.cs" />
+    <Compile Include="Commands\CreateConditionItemCommand.cs" />
+    <Compile Include="Commands\CreateModifierCommand.cs" />
+    <Compile Include="Commands\NavigateCommandBase.cs" />
+    <Compile Include="Commands\NavigateRelayCommand.cs" />
+    <Compile Include="Commands\NavTuple.cs" />
+    <Compile Include="Commands\OpenCatalogueItemCommand.cs" />
+    <Compile Include="Commands\OpenConditionItemCommand.cs" />
+    <Compile Include="Commands\OpenLinkTargetAsChildCommand.cs" />
+    <Compile Include="Commands\OpenLinkTargetAsSharedCommand.cs" />
+    <Compile Include="Commands\OpenModifierCommand.cs" />
+    <Compile Include="Commands\ParameterWrapperCommand.cs" />
+    <Compile Include="Commands\RemoveCatalogueItemCommand.cs" />
+    <Compile Include="Commands\RemoveConditionItemCommand.cs" />
+    <Compile Include="Commands\RemoveModifierCommand.cs" />
+    <Compile Include="Controls\BindablePicker.cs" />
+    <Compile Include="Controls\FacadeCellTemplateFactory.cs" />
+    <Compile Include="Controls\FacadeListView.cs" />
+    <Compile Include="Controls\FilteringListViewBase.cs" />
+    <Compile Include="Controls\GroupingFilteringFacadeListView.cs" />
+    <Compile Include="Controls\GroupingFilteringListViewBase.cs" />
+    <Compile Include="Converters\CatalogueConditionToStringConverter.cs" />
+    <Compile Include="Converters\DecimalConverter.cs" />
+    <Compile Include="Converters\IntConverter.cs" />
+    <Compile Include="Converters\IsNotNullConverter.cs" />
+    <Compile Include="Converters\IsNullConverter.cs" />
+    <Compile Include="Converters\ModifierToStringConverter.cs" />
+    <Compile Include="Demo\DemoLoader.cs" />
+    <Compile Include="Demo\ModelLocator.cs" />
+    <Compile Include="ModelFacades\CatalogueItemFacade.cs" />
+    <Compile Include="ModelFacades\CatalogueItemFacadeExtensions.cs" />
+    <Compile Include="ModelFacades\CatalogueItemKind.cs" />
+    <Compile Include="ModelFacades\ConditionItemFacade.cs" />
+    <Compile Include="ModelFacades\ConditionItemFacadeExtensions.cs" />
+    <Compile Include="ModelFacades\ConditionItemKind.cs" />
+    <Compile Include="ModelFacades\IModelFacade.cs" />
+    <Compile Include="ModelFacades\ModelFacadeBase.cs" />
+    <Compile Include="ModelFacades\ModifierFacade.cs" />
+    <Compile Include="ModelFacades\ModifierFacadeExtensions.cs" />
+    <Compile Include="ModelFacades\ModifierKind.cs" />
+    <Compile Include="Models\BindableGrouping.cs" />
+    <Compile Include="Models\BindableGroupingExtensions.cs" />
+    <Compile Include="Models\BindableMap.cs" />
+    <Compile Include="Models\BindableMapExtensions.cs" />
+    <Compile Include="Models\IBindableGrouping.cs" />
+    <Compile Include="Models\IBindableMap.cs" />
+    <Compile Include="Models\ModelExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ICommandsAggregateService.cs" />
+    <Compile Include="Services\IDialogService.cs" />
+    <Compile Include="Services\Implementations\CommandsAggregateService.cs" />
+    <Compile Include="Services\Implementations\DialogService.cs" />
+    <Compile Include="Services\Implementations\NavigationService.cs" />
+    <Compile Include="Services\Implementations\PageService.cs" />
+    <Compile Include="Services\INavigationService.cs" />
+    <Compile Include="Services\IPageService.cs" />
+    <Compile Include="Services\ServicesAutofacModule.cs" />
+    <Compile Include="Services\ViewModelLocator.cs" />
+    <Compile Include="ViewModels\BookIndexViewModel.cs" />
+    <Compile Include="ViewModels\CatalogueConditionGroupViewModel.cs" />
+    <Compile Include="ViewModels\CatalogueConditionViewModel.cs" />
+    <Compile Include="ViewModels\CatalogueViewModel.cs" />
+    <Compile Include="ViewModels\CharacteristicViewModel.cs" />
+    <Compile Include="ViewModels\EntryLimitsViewModel.cs" />
+    <Compile Include="ViewModels\EntryLinkViewModel.cs" />
+    <Compile Include="ViewModels\EntryModifierViewModel.cs" />
+    <Compile Include="ViewModels\EntryViewModel.cs" />
+    <Compile Include="ViewModels\GenericViewModel.cs" />
+    <Compile Include="ViewModels\GroupLinkViewModel.cs" />
+    <Compile Include="ViewModels\GroupModifierViewModel.cs" />
+    <Compile Include="ViewModels\GroupViewModel.cs" />
+    <Compile Include="ViewModels\ICatalogueItemsListViewModel.cs" />
+    <Compile Include="ViewModels\IConditionItemsListViewModel.cs" />
+    <Compile Include="ViewModels\IdentifierViewModel.cs" />
+    <Compile Include="ViewModels\IModifiersListViewModel.cs" />
+    <Compile Include="ViewModels\IRootItemViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\ModifierRepetitionViewModel.cs" />
+    <Compile Include="ViewModels\ModifierViewModelBase.cs" />
+    <Compile Include="ViewModels\ProfileLinkViewModel.cs" />
+    <Compile Include="ViewModels\ProfileModifierViewModel.cs" />
+    <Compile Include="ViewModels\ProfileViewModel.cs" />
+    <Compile Include="ViewModels\RuleLinkViewModel.cs" />
+    <Compile Include="ViewModels\RuleModifierViewModel.cs" />
+    <Compile Include="ViewModels\RuleViewModel.cs" />
+    <Compile Include="Views\BookIndexView.xaml.cs">
+      <DependentUpon>BookIndexView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CatalogueConditionGroupPage.xaml.cs">
+      <DependentUpon>CatalogueConditionGroupPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CatalogueConditionPage.xaml.cs">
+      <DependentUpon>CatalogueConditionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CatalogueItemsListPage.xaml.cs">
+      <DependentUpon>CatalogueItemsListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CataloguePage.xaml.cs">
+      <DependentUpon>CataloguePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CharacteristicView.xaml.cs">
+      <DependentUpon>CharacteristicView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConditionItemsListPage.xaml.cs">
+      <DependentUpon>ConditionItemsListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EntryLimitsView.xaml.cs">
+      <DependentUpon>EntryLimitsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EntryLinkPage.xaml.cs">
+      <DependentUpon>EntryLinkPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EntryModifierPage.xaml.cs">
+      <DependentUpon>EntryModifierPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EntryPage.xaml.cs">
+      <DependentUpon>EntryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GroupLinkPage.xaml.cs">
+      <DependentUpon>GroupLinkPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GroupModifierPage.xaml.cs">
+      <DependentUpon>GroupModifierPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GroupPage.xaml.cs">
+      <DependentUpon>GroupPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IdentifierView.xaml.cs">
+      <DependentUpon>IdentifierView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ModifiersListPage.xaml.cs">
+      <DependentUpon>ModifiersListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProfileLinkPage.xaml.cs">
+      <DependentUpon>ProfileLinkPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProfileModifierPage.xaml.cs">
+      <DependentUpon>ProfileModifierPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProfilePage.xaml.cs">
+      <DependentUpon>ProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RootItemView.xaml.cs">
+      <DependentUpon>RootItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RuleLinkPage.xaml.cs">
+      <DependentUpon>RuleLinkPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RuleModifierPage.xaml.cs">
+      <DependentUpon>RuleModifierPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RulePage.xaml.cs">
+      <DependentUpon>RulePage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Demo\Tau-Codex.cat" />
+    <EmbeddedResource Include="Demo\Warhammer40K.gst" />
     <None Include="GettingStarted.Xamarin" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Autofac.3.5.2\lib\portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WarHub.Armoury.Model, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WarHub.Armoury.Model.0.1.0\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10\WarHub.Armoury.Model.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WarHub.Armoury.Model.BattleScribe, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WarHub.Armoury.Model.BattleScribe.0.1.0\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10\WarHub.Armoury.Model.BattleScribe.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WarHub.Armoury.Model.BattleScribeXml, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WarHub.Armoury.Model.BattleScribeXml.0.1.0\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10\WarHub.Armoury.Model.BattleScribeXml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WarHub.Mvvm, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\WarHub.Mvvm.1.0.0\lib\portable-net45+win+wpa81+wp80+MonoAndroid10+Xamarin.iOS10+MonoTouch10\WarHub.Mvvm.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -59,6 +237,104 @@
       <HintPath>..\..\packages\Xamarin.Forms.2.1.0.6524\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\BookIndexView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\CatalogueConditionGroupPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\CatalogueConditionPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\CatalogueItemsListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\CataloguePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\CharacteristicView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ConditionItemsListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\EntryLimitsView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\EntryLinkPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\EntryModifierPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\EntryPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\GroupLinkPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\GroupModifierPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\GroupPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\IdentifierView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\MainPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ModifiersListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ProfileLinkPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ProfileModifierPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ProfilePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\RootItemView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\RuleLinkPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\RuleModifierPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\RulePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.1.0.6524\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.1.0.6524\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:WarHub.Armoury.GodMode.Services;assembly=WarHub.Armoury.GodMode"
+             x:Class="WarHub.Armoury.GodMode.Views.IdentifierView"
+             BindingContext="{x:Static services:ViewModelLocator.IdentifierViewModel}">
+
+
+    <StackLayout Orientation="Vertical">
+        <Label>Id</Label>
+        <Entry Text="{Binding RawValue, Mode=OneWay}" IsEnabled="False" />
+        <Button Text="Regenerate Id" Command="{Binding ReGenIdCommand}" />
+    </StackLayout>
+
+</ContentView>
