@@ -1,6 +1,8 @@
 ﻿{
   "dependencies": {
+    "Autofac": "3.5.2",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
+    "WarHub.Mvvm": "1.0.0",
     "Xamarin.Forms": "2.1.0.6524"
   },
   "frameworks": {
