@@ -1,8 +1,6 @@
 ﻿// WarHub licenses this file to you under the MIT license.
 // See LICENSE file in the project root for more information.
 
- // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
-
 namespace WarHub.Armoury.GodMode.WinPhone
 {
     using System;
