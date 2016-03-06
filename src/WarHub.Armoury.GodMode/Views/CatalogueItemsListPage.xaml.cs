@@ -3,18 +3,17 @@
 
 namespace WarHub.Armoury.GodMode.Views
 {
-    using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Linq;
-    using ModelFacades;
-    using Models;
     using Xamarin.Forms;
+    using FacadeGrouping = Models.IBindableGrouping<ModelFacades.IModelFacade>;
+    using FacadeGroupings = System.Collections.Generic.IEnumerable<Models.IBindableGrouping<ModelFacades.IModelFacade>>;
 
     public partial class CatalogueItemsListPage : ContentPage
     {
         public static BindableProperty ElementsProperty = BindableProperty.Create(nameof(Elements),
-            typeof(CatalogueItemsListPage), typeof(IEnumerable<IBindableGrouping<IModelFacade>>),
-            new IBindableGrouping<IModelFacade>[0], propertyChanged: OnElementsPropertyChanged);
+            typeof(FacadeGroupings), typeof(CatalogueItemsListPage),
+            new FacadeGrouping[0], propertyChanged: OnElementsPropertyChanged);
 
         public static BindableProperty ElementsCountProperty = BindableProperty.Create(nameof(ElementsCount),
             typeof(int), typeof(CatalogueItemsListPage), default(int));
@@ -26,9 +25,9 @@ namespace WarHub.Armoury.GodMode.Views
                 new Binding(nameof(ItemsListView.ItemsSource), source: ItemsListView));
         }
 
-        public IEnumerable<IBindableGrouping<IModelFacade>> Elements
+        public FacadeGroupings Elements
         {
-            get { return (IEnumerable<IBindableGrouping<IModelFacade>>) GetValue(ElementsProperty); }
+            get { return (FacadeGroupings) GetValue(ElementsProperty); }
             set { SetValue(ElementsProperty, value); }
         }
 
@@ -55,12 +54,12 @@ namespace WarHub.Armoury.GodMode.Views
             {
                 return;
             }
-            Unsubscribe((IEnumerable<IBindableGrouping<IModelFacade>>) oldValue);
-            Subscribe((IEnumerable<IBindableGrouping<IModelFacade>>) newValue);
+            Unsubscribe((FacadeGroupings) oldValue);
+            Subscribe((FacadeGroupings) newValue);
             UpdateElementsCount();
         }
 
-        private void Unsubscribe(IEnumerable<IBindableGrouping<IModelFacade>> oldValue)
+        private void Unsubscribe(FacadeGroupings oldValue)
         {
             if (oldValue == null)
             {
@@ -77,7 +76,7 @@ namespace WarHub.Armoury.GodMode.Views
             }
         }
 
-        private void Subscribe(IEnumerable<IBindableGrouping<IModelFacade>> newValue)
+        private void Subscribe(FacadeGroupings newValue)
         {
             if (newValue == null)
             {
@@ -103,11 +102,11 @@ namespace WarHub.Armoury.GodMode.Views
         {
             if (e.OldItems != null)
             {
-                Unsubscribe(e.OldItems.Cast<IBindableGrouping<IModelFacade>>());
+                Unsubscribe(e.OldItems.Cast<FacadeGrouping>());
             }
             if (e.NewItems != null)
             {
-                Subscribe(e.NewItems.Cast<IBindableGrouping<IModelFacade>>());
+                Subscribe(e.NewItems.Cast<FacadeGrouping>());
             }
             UpdateElementsCount();
         }

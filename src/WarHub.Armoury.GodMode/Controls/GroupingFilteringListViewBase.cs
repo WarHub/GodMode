@@ -15,8 +15,8 @@ namespace WarHub.Armoury.GodMode.Controls
         /// </summary>
         public static readonly BindableProperty ItemsBaseSourceProperty =
             BindableProperty.Create(
-                nameof(ItemsBaseSource), typeof(GroupingFilteringListViewBase<T>),
-                typeof(IEnumerable<IBindableGrouping<T>>), EmptyGrouping(),
+                nameof(ItemsBaseSource), typeof(IEnumerable<IBindableGrouping<T>>),
+                typeof(GroupingFilteringListViewBase<T>), EmptyGrouping(),
                 propertyChanged: ItemsBaseSourcePropertyChanged);
 
         protected GroupingFilteringListViewBase()
