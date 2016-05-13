@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:WarHub.Armoury.GodMode.Services;assembly=WarHub.Armoury.GodMode"
+             xmlns:converters="clr-namespace:WarHub.Armoury.GodMode.Converters;assembly=WarHub.Armoury.GodMode"
+             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.EntryLimitsView"
+             BindingContext="{x:Static services:ViewModelLocator.EntryLimitsViewModel}">
+
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:IntConverter x:Key="IntConverter" />
+            <converters:DecimalConverter x:Key="DecimalConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <Frame OutlineColor="Accent" Padding="8,8,8,8">
+        <StackLayout Orientation="Vertical">
+            <Label HorizontalOptions="CenterAndExpand">Limits</Label>
+            <Frame OutlineColor="Accent" Padding="8,8,8,8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalOptions="CenterAndExpand"
+                           Text="Selections" />
+
+                    <Label Grid.Column="1" Grid.Row="0">Min</Label>
+                    <Entry Grid.Column="2" Grid.Row="0"
+                           Text="{Binding SelectionsLimit.Min, Converter={StaticResource IntConverter}}"
+                           Keyboard="Numeric" />
+                    <Stepper Grid.Column="3" Grid.Row="0" Value="{Binding SelectionsLimit.Min}"
+                             Minimum="{Binding IntMin}" Maximum="{Binding IntMax}" Increment="1" />
+
+                    <Label Grid.Column="1" Grid.Row="1">Max</Label>
+                    <Entry Grid.Column="2" Grid.Row="1"
+                           Text="{Binding SelectionsLimit.Max, Converter={StaticResource IntConverter}}"
+                           Keyboard="Numeric" />
+                    <Stepper Grid.Column="3" Grid.Row="1" Value="{Binding SelectionsLimit.Max}" Minimum="-1"
+                             Maximum="{Binding IntMax}" Increment="1" />
+                </Grid>
+            </Frame>
+            <Frame OutlineColor="Accent" Padding="8,8,8,8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalOptions="CenterAndExpand"
+                           Text="In Force" />
+
+                    <Label Grid.Column="1" Grid.Row="0">Min</Label>
+                    <Entry Grid.Column="2" Grid.Row="0"
+                           Text="{Binding InForceLimit.Min, Converter={StaticResource IntConverter}}"
+                           Keyboard="Numeric" />
+                    <Stepper Grid.Column="3" Grid.Row="0" Value="{Binding InForceLimit.Min}"
+                             Minimum="{Binding IntMin}" Maximum="{Binding IntMax}" Increment="1" />
+
+                    <Label Grid.Column="1" Grid.Row="1">Max</Label>
+                    <Entry Grid.Column="2" Grid.Row="1"
+                           Text="{Binding InForceLimit.Max, Converter={StaticResource IntConverter}}"
+                           Keyboard="Numeric" />
+                    <Stepper Grid.Column="3" Grid.Row="1" Value="{Binding InForceLimit.Max}" Minimum="-1"
+                             Maximum="{Binding IntMax}" Increment="1" />
+                </Grid>
+            </Frame>
+            <Frame OutlineColor="Accent" Padding="8,8,8,8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalOptions="CenterAndExpand"
+                           Text="In Roster" />
+
+                    <Label Grid.Column="1" Grid.Row="0">Min</Label>
+                    <Entry Grid.Column="2" Grid.Row="0"
+                           Text="{Binding InRosterLimit.Min, Converter={StaticResource IntConverter}}"
+                           Keyboard="Numeric" />
+                    <Stepper Grid.Column="3" Grid.Row="0" Value="{Binding InRosterLimit.Min}"
+                             Minimum="{Binding IntMin}" Maximum="{Binding IntMax}" Increment="1" />
+
+                    <Label Grid.Column="1" Grid.Row="1">Max</Label>
+                    <Entry Grid.Column="2" Grid.Row="1"
+                           Text="{Binding InRosterLimit.Max, Converter={StaticResource IntConverter}}"
+                           Keyboard="Numeric" />
+                    <Stepper Grid.Column="3" Grid.Row="1" Value="{Binding InRosterLimit.Max}" Minimum="-1"
+                             Maximum="{Binding IntMax}" Increment="1" />
+                </Grid>
+            </Frame>
+            <Frame OutlineColor="Accent" Padding="8,8,8,8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalOptions="CenterAndExpand"
+                           Text="Points" />
+
+                    <Label Grid.Column="1" Grid.Row="0">Min</Label>
+                    <Entry Grid.Column="2" Grid.Row="0"
+                           Text="{Binding PointsLimit.Min, Converter={StaticResource DecimalConverter}}"
+                           Keyboard="Numeric" />
+                    <Stepper Grid.Column="3" Grid.Row="0" Value="{Binding PointsLimit.Min}" Increment="1"
+                             Minimum="{Binding DecimalMin}" Maximum="{Binding DecimalMax}" />
+
+                    <Label Grid.Column="1" Grid.Row="1">Max</Label>
+                    <Entry Grid.Column="2" Grid.Row="1"
+                           Text="{Binding PointsLimit.Max, Converter={StaticResource DecimalConverter}}"
+                           Keyboard="Numeric" />
+                    <Stepper Grid.Column="3" Grid.Row="1" Value="{Binding PointsLimit.Max}" Minimum="-1"
+                             Maximum="{Binding DecimalMax}" Increment="1" />
+                </Grid>
+            </Frame>
+        </StackLayout>
+    </Frame>
+</ContentView>

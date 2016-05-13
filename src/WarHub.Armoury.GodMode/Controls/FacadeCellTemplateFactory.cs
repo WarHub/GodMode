@@ -3,7 +3,7 @@
 
 namespace WarHub.Armoury.GodMode.Controls
 {
-    using ModelFacades;
+    using Modules.Editor.Models;
     using Xamarin.Forms;
 
     public static class FacadeCellTemplateFactory

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:WarHub.Armoury.GodMode.Services;assembly=WarHub.Armoury.GodMode"
+             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.CharacteristicView"
+             BindingContext="{x:Static services:ViewModelLocator.CharacteristicViewModel}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Label Text="{Binding Name}" />
+        <Entry Text="{Binding Value}" Placeholder="Value" Grid.Row="1" HorizontalOptions="FillAndExpand" />
+    </Grid>
+</ContentView>

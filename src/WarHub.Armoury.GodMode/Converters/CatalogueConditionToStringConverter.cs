@@ -5,8 +5,8 @@ namespace WarHub.Armoury.GodMode.Converters
 {
     using System;
     using System.Globalization;
+    using Bindables;
     using Model;
-    using Models;
     using Xamarin.Forms;
 
     public class CatalogueConditionToStringConverter : IValueConverter

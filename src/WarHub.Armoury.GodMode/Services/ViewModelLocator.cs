@@ -5,7 +5,8 @@ namespace WarHub.Armoury.GodMode.Services
 {
     using Autofac;
     using Demo;
-    using ViewModels;
+    using Modules.Editor.ViewModels;
+    using Modules.Home.ViewModels;
 
     public static class ViewModelLocator
     {

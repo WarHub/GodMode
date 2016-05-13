@@ -8,7 +8,7 @@ namespace WarHub.Armoury.GodMode.Commands
     using System.Linq;
     using System.Threading.Tasks;
     using Model;
-    using ModelFacades;
+    using Modules.Editor.Models;
     using Mvvm.Commands;
     using Services;
 

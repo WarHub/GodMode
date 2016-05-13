@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:WarHub.Armoury.GodMode.Controls;assembly=WarHub.Armoury.GodMode"
+             xmlns:behaviors="clr-namespace:WarHub.Armoury.GodMode.Behaviors;assembly=WarHub.Armoury.GodMode"
+             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.CatalogueItemsListPage"
+             x:Name="Page"
+             Title="{Binding Source={x:Reference Page}, Path=ElementsCount, StringFormat='Elements ({0})'}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <SearchBar Placeholder="Search" TextChanged="SearchBar_OnTextChanged" />
+            <Button Grid.Column="1" Text="New" Command="{Binding CreateCatalogueItemCommand}" />
+        </Grid>
+
+        <controls:GroupingFilteringFacadeListView Grid.Row="1" x:Name="ItemsListView"
+                                                  ItemsBaseSource="{Binding CatalogueItems}"
+                                                  behaviors:ItemSelectedBehavior.Command="{Binding OpenCatalogueItemCommand}" />
+    </Grid>
+</ContentPage>

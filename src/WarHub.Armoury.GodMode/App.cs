@@ -5,7 +5,7 @@ namespace WarHub.Armoury.GodMode
 {
     using System.Reflection;
     using Autofac;
-    using Views;
+    using Modules.Home.Views;
     using Xamarin.Forms;
 
     public class App : Application

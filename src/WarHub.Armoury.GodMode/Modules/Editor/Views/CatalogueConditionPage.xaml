@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:services="clr-namespace:WarHub.Armoury.GodMode.Services;assembly=WarHub.Armoury.GodMode"
+            xmlns:controls="clr-namespace:WarHub.Armoury.GodMode.Controls;assembly=WarHub.Armoury.GodMode"
+            xmlns:converters="clr-namespace:WarHub.Armoury.GodMode.Converters;assembly=WarHub.Armoury.GodMode"
+            x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.CatalogueConditionPage"
+            x:Name="Page"
+            BindingContext="{x:Static services:ViewModelLocator.CatalogueConditionViewModel}"
+            Title="Condition">
+
+    <TabbedPage.Resources>
+        <ResourceDictionary>
+            <converters:DecimalConverter x:Key="DecimalConverter" />
+        </ResourceDictionary>
+    </TabbedPage.Resources>
+
+
+    <ContentPage Title="Properties">
+        <ScrollView>
+            <StackLayout Orientation="Vertical">
+                <controls:BindablePicker Title="Parent kind" ItemsSource="{Binding ParentKinds}"
+                                         SelectedItem="{Binding ParentKind}" />
+
+                <controls:BindablePicker Title="Condition kind" ItemsSource="{Binding ConditionKinds}"
+                                         SelectedItem="{Binding ConditionKind}" />
+
+                <Label>Child value</Label>
+                <Entry Text="{Binding ChildValue, Converter={StaticResource DecimalConverter}}"
+                       Keyboard="{x:Static Keyboard.Numeric}" />
+
+                <controls:BindablePicker Title="Child value unit" ItemsSource="{Binding ChildValueUnits}"
+                                         SelectedItem="{Binding ChildValueUnit}" />
+
+                <controls:BindablePicker Title="Child kind" ItemsSource="{Binding ConditionChildKinds}"
+                                         SelectedItem="{Binding ConditionChildKind}" />
+            </StackLayout>
+        </ScrollView>
+    </ContentPage>
+</TabbedPage>

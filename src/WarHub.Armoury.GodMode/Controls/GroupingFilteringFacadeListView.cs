@@ -3,7 +3,7 @@
 
 namespace WarHub.Armoury.GodMode.Controls
 {
-    using ModelFacades;
+    using Modules.Editor.Models;
 
     public class GroupingFilteringFacadeListView : GroupingFilteringListViewBase<IModelFacade>
     {

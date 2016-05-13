@@ -32,7 +32,7 @@ namespace WarHub.Armoury.GodMode.Demo
         public static IGroupLink GroupLink => Catalogue.Context.GroupLinks.First();
 
         public static IGroupModifier GroupModifier
-            => Catalogue.Context.Groups.First(@group => @group.Modifiers.Count > 0).Modifiers.First();
+            => Catalogue.Context.Groups.First(group => group.Modifiers.Count > 0).Modifiers.First();
 
         public static IIdentifier Id => Catalogue.Id;
 

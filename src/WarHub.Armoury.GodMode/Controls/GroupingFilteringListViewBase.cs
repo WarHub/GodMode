@@ -5,7 +5,7 @@ namespace WarHub.Armoury.GodMode.Controls
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Models;
+    using Bindables;
     using Xamarin.Forms;
 
     public abstract class GroupingFilteringListViewBase<T> : ListView

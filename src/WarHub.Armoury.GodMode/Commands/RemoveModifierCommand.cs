@@ -5,8 +5,8 @@ namespace WarHub.Armoury.GodMode.Commands
 {
     using System;
     using System.Threading.Tasks;
-    using ModelFacades;
-    using Models;
+    using Bindables;
+    using Modules.Editor.Models;
     using Mvvm.Commands;
     using Services;
 

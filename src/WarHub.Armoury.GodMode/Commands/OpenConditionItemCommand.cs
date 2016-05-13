@@ -4,9 +4,9 @@
 namespace WarHub.Armoury.GodMode.Commands
 {
     using Model;
-    using ModelFacades;
+    using Modules.Editor.Models;
+    using Modules.Editor.Views;
     using Services;
-    using Views;
 
     public class OpenConditionItemCommand : NavigateCommandBase<ConditionItemFacade>
     {

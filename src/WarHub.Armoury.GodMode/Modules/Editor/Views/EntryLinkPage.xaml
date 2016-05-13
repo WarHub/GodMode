@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:controls="clr-namespace:WarHub.Armoury.GodMode.Controls;assembly=WarHub.Armoury.GodMode"
+            xmlns:services="clr-namespace:WarHub.Armoury.GodMode.Services;assembly=WarHub.Armoury.GodMode"
+            xmlns:views1="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.Views;assembly=WarHub.Armoury.GodMode"
+            x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.EntryLinkPage"
+            x:Name="Page"
+            BindingContext="{x:Static services:ViewModelLocator.EntryLinkViewModel}"
+            Title="{Binding TargetEntry.Name}">
+
+    <ContentPage Title="Properties">
+        <ScrollView>
+            <StackLayout Orientation="Vertical">
+                <views1:IdentifierView BindingContext="{Binding Source={x:Reference Page}, Path=BindingContext.Id}" />
+
+                <Label>Target</Label>
+                <controls:BindablePicker Title="Link target" DisplayMember="Name" ItemsSource="{Binding SharedEntries}"
+                                         SelectedItem="{Binding TargetEntry}" />
+                <StackLayout Orientation="Horizontal" Padding="0,0,10,0">
+                    <Button Text="Go to target" Command="{Binding OpenLinkTargetAsSharedCommand}" />
+                    <Button Text="Open in next page" Command="{Binding OpenLinkTargetAsChildCommand}" />
+                </StackLayout>
+                <views1:RootItemView />
+            </StackLayout>
+        </ScrollView>
+    </ContentPage>
+
+    <views1:ModifiersListPage />
+
+</TabbedPage>
