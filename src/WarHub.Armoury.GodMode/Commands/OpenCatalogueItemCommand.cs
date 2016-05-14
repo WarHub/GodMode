@@ -5,6 +5,7 @@ namespace WarHub.Armoury.GodMode.Commands
 {
     using Model;
     using Modules.Editor.Models;
+    using Modules.Editor.ViewModels;
     using Modules.Editor.Views;
     using Services;
 

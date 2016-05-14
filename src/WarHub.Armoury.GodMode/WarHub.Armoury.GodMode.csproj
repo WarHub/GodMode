@@ -87,6 +87,8 @@
     <Compile Include="Bindables\IBindableGrouping.cs" />
     <Compile Include="Bindables\IBindableMap.cs" />
     <Compile Include="Bindables\ModelStringifyExtensions.cs" />
+    <Compile Include="Modules\Editor\ViewModels\ViewModelLocator.cs" />
+    <Compile Include="Modules\Home\ViewModels\ViewModelLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ICommandsAggregateService.cs" />
     <Compile Include="Services\IDialogService.cs" />
@@ -97,7 +99,6 @@
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Services\IPageService.cs" />
     <Compile Include="Services\ServicesAutofacModule.cs" />
-    <Compile Include="Services\ViewModelLocator.cs" />
     <Compile Include="Modules\Editor\ViewModels\BookIndexViewModel.cs" />
     <Compile Include="Modules\Editor\ViewModels\CatalogueConditionGroupViewModel.cs" />
     <Compile Include="Modules\Editor\ViewModels\CatalogueConditionViewModel.cs" />

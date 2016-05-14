@@ -1,12 +1,10 @@
 ﻿// WarHub licenses this file to you under the MIT license.
 // See LICENSE file in the project root for more information.
 
-namespace WarHub.Armoury.GodMode.Services
+namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using Autofac;
     using Demo;
-    using Modules.Editor.ViewModels;
-    using Modules.Home.ViewModels;
 
     public static class ViewModelLocator
     {
@@ -36,8 +34,6 @@ namespace WarHub.Armoury.GodMode.Services
         public static GroupViewModel GroupViewModel => Resolve<GroupViewModel>();
 
         public static IdentifierViewModel IdentifierViewModel => Resolve<IdentifierViewModel>();
-
-        public static MainViewModel MainViewModel => Resolve<MainViewModel>();
 
         public static ProfileLinkViewModel ProfileLinkViewModel => Resolve<ProfileLinkViewModel>();
 

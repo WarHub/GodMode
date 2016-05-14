@@ -12,7 +12,7 @@ namespace WarHub.Armoury.GodMode
     {
         public App()
         {
-            ServiceProvider = BuildContainer().BeginLifetimeScope();
+            ServiceProvider = BuildContainer();
             // The root page of your application
             MainPage = new NavigationPage(new MainPage());
         }

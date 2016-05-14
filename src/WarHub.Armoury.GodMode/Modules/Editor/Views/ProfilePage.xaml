@@ -5,9 +5,10 @@
             xmlns:services="clr-namespace:WarHub.Armoury.GodMode.Services;assembly=WarHub.Armoury.GodMode"
             xmlns:controls="clr-namespace:WarHub.Armoury.GodMode.Controls;assembly=WarHub.Armoury.GodMode"
             xmlns:views1="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.Views;assembly=WarHub.Armoury.GodMode"
+            xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.ProfilePage"
             x:Name="Page"
-            BindingContext="{x:Static services:ViewModelLocator.ProfileViewModel}"
+            BindingContext="{x:Static viewModels:ViewModelLocator.ProfileViewModel}"
             Title="{Binding Name, StringFormat='{0} (Profile)'}">
 
     <TabbedPage.Resources>
