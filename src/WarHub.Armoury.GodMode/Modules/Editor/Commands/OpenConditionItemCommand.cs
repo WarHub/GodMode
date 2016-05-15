@@ -3,6 +3,7 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
+    using System;
     using AppServices;
     using GodMode.Commands;
     using Model;
@@ -12,10 +13,18 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 
     public class OpenConditionItemCommand : NavigateCommandBase<ConditionItemFacade>
     {
-        public OpenConditionItemCommand(IDialogService dialogService, INavigationService navigationService)
+        public OpenConditionItemCommand(IDialogService dialogService, INavigationService navigationService,
+            Func<ICatalogueCondition, CatalogueConditionViewModel> conditionVmFactory,
+            Func<IConditionGroup, CatalogueConditionGroupViewModel> groupVmFactory)
             : base(dialogService, navigationService)
         {
+            ConditionVmFactory = conditionVmFactory;
+            GroupVmFactory = groupVmFactory;
         }
+
+        private Func<ICatalogueCondition, CatalogueConditionViewModel> ConditionVmFactory { get; }
+
+        private Func<IConditionGroup, CatalogueConditionGroupViewModel> GroupVmFactory { get; }
 
         protected override NavTuple GetNavTuple(ConditionItemFacade parameter)
         {
@@ -23,11 +32,10 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
             {
                 case ConditionItemKind.Condition:
                     return new NavTuple(new CatalogueConditionPage(),
-                        ViewModelLocator.CatalogueConditionViewModel.WithModel((ICatalogueCondition) parameter.Item));
+                        ConditionVmFactory((ICatalogueCondition) parameter.Item));
                 case ConditionItemKind.Group:
                     return new NavTuple(new CatalogueConditionGroupPage(),
-                        ViewModelLocator.CatalogueConditionGroupViewModel.WithModel(
-                            (ICatalogueConditionGroup) parameter.Item));
+                        GroupVmFactory((ICatalogueConditionGroup) parameter.Item));
                 default:
                     return null;
             }

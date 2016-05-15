@@ -4,13 +4,12 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System.Collections.Generic;
-    using Demo;
     using Model;
     using Mvvm;
 
-    public class EntryLimitsViewModel : GenericViewModel<EntryLimitsViewModel, IEntryLimits>
+    public class EntryLimitsViewModel : GenericViewModel<IEntryLimits>
     {
-        public EntryLimitsViewModel(IEntryLimits model = null) : base(model ?? ModelLocator.EntryLimits)
+        public EntryLimitsViewModel(IEntryLimits model) : base(model)
         {
             InForceLimit = new MinMaxViewModel<int>(Limits.InForceLimit);
             InRosterLimit = new MinMaxViewModel<int>(Limits.InRosterLimit);
@@ -35,11 +34,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         public MinMaxViewModel<int> SelectionsLimit { get; }
 
         private IEntryLimits Limits => Model;
-
-        protected override EntryLimitsViewModel WithModelCore(IEntryLimits model)
-        {
-            return new EntryLimitsViewModel(model);
-        }
     }
 
     public class MinMaxViewModel<T> : ViewModelBase

@@ -7,17 +7,14 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
     using System.Windows.Input;
     using AppServices;
     using Bindables;
-    using Demo;
     using Model;
     using Models;
 
-    public class CatalogueConditionGroupViewModel :
-        GenericViewModel<CatalogueConditionGroupViewModel, ICatalogueConditionGroup>,
+    public class CatalogueConditionGroupViewModel : GenericViewModel<ICatalogueConditionGroup>,
         IConditionItemsListViewModel
     {
-        public CatalogueConditionGroupViewModel(ICommandsAggregateService commands,
-            ICatalogueConditionGroup model = null)
-            : base(model ?? ModelLocator.CatalogueConditionGroup)
+        public CatalogueConditionGroupViewModel(ICatalogueConditionGroup model, ICommandsAggregateService commands)
+            : base(model)
         {
             Commands = commands;
             ConditionsMap = Group.Conditions.ToBindableMap("conditions",
@@ -61,10 +58,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         public ICommand CreateConditionItemCommand => Commands.CreateConditionItemCommand.EnableFor(Group);
 
         public ICommand OpenConditionItemCommand => Commands.OpenConditionItemCommand;
-
-        protected override CatalogueConditionGroupViewModel WithModelCore(ICatalogueConditionGroup model)
-        {
-            return new CatalogueConditionGroupViewModel(Commands, model);
-        }
     }
 }

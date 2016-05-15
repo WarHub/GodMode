@@ -7,7 +7,7 @@
             xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.CatalogueConditionGroupPage"
             x:Name="Page"
-            BindingContext="{x:Static viewModels:ViewModelLocator.CatalogueConditionGroupViewModel}"
+            BindingContext="{x:Static views1:ViewModelLocator.CatalogueConditionGroupViewModel}"
             Title="Condition group">
 
     <ContentPage Title="Properties">

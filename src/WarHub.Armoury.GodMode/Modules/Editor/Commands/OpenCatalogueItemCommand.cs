@@ -3,6 +3,7 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
+    using System;
     using AppServices;
     using GodMode.Commands;
     using Model;
@@ -12,10 +13,39 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 
     public class OpenCatalogueItemCommand : NavigateCommandBase<CatalogueItemFacade>
     {
-        public OpenCatalogueItemCommand(INavigationService navigationService, IDialogService dialogService)
+        public OpenCatalogueItemCommand(INavigationService navigationService, IDialogService dialogService,
+            Func<IEntry, EntryViewModel> entryVmFactory, Func<IEntryLink, EntryLinkViewModel> entryLinkVmFactory,
+            Func<IGroup, GroupViewModel> groupVmFactory, Func<IGroupLink, GroupLinkViewModel> groupLinkVmFactory,
+            Func<IProfile, ProfileViewModel> profileVmFactory,
+            Func<IProfileLink, ProfileLinkViewModel> profileLinkVmFactory,
+            Func<IRule, RuleViewModel> ruleVmFactory, Func<IRuleLink, RuleLinkViewModel> ruleLinkVmFactory)
             : base(dialogService, navigationService)
         {
+            EntryVmFactory = entryVmFactory;
+            EntryLinkVmFactory = entryLinkVmFactory;
+            GroupVmFactory = groupVmFactory;
+            GroupLinkVmFactory = groupLinkVmFactory;
+            ProfileVmFactory = profileVmFactory;
+            ProfileLinkVmFactory = profileLinkVmFactory;
+            RuleVmFactory = ruleVmFactory;
+            RuleLinkVmFactory = ruleLinkVmFactory;
         }
+
+        private Func<IEntryLink, EntryLinkViewModel> EntryLinkVmFactory { get; }
+
+        private Func<IEntry, EntryViewModel> EntryVmFactory { get; }
+
+        private Func<IGroupLink, GroupLinkViewModel> GroupLinkVmFactory { get; }
+
+        private Func<IGroup, GroupViewModel> GroupVmFactory { get; }
+
+        private Func<IProfileLink, ProfileLinkViewModel> ProfileLinkVmFactory { get; }
+
+        private Func<IProfile, ProfileViewModel> ProfileVmFactory { get; }
+
+        private Func<IRuleLink, RuleLinkViewModel> RuleLinkVmFactory { get; }
+
+        private Func<IRule, RuleViewModel> RuleVmFactory { get; }
 
         protected override NavTuple GetNavTuple(CatalogueItemFacade facade)
         {
@@ -23,25 +53,20 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
             {
                 case CatalogueItemKind.Entry:
                     return facade.IsLink
-                        ? new NavTuple(new EntryLinkPage(),
-                            ViewModelLocator.EntryLinkViewModel.WithModel((IEntryLink) facade.Item))
-                        : new NavTuple(new EntryPage(), ViewModelLocator.EntryViewModel.WithModel((IEntry) facade.Item));
+                        ? new NavTuple(new EntryLinkPage(), EntryLinkVmFactory((IEntryLink) facade.Item))
+                        : new NavTuple(new EntryPage(), EntryVmFactory((IEntry) facade.Item));
                 case CatalogueItemKind.Group:
                     return facade.IsLink
-                        ? new NavTuple(new GroupLinkPage(),
-                            ViewModelLocator.GroupLinkViewModel.WithModel((IGroupLink) facade.Item))
-                        : new NavTuple(new GroupPage(), ViewModelLocator.GroupViewModel.WithModel((IGroup) facade.Item));
+                        ? new NavTuple(new GroupLinkPage(), GroupLinkVmFactory((IGroupLink) facade.Item))
+                        : new NavTuple(new GroupPage(), GroupVmFactory((IGroup) facade.Item));
                 case CatalogueItemKind.Profile:
                     return facade.IsLink
-                        ? new NavTuple(new ProfileLinkPage(),
-                            ViewModelLocator.ProfileLinkViewModel.WithModel((IProfileLink) facade.Item))
-                        : new NavTuple(new ProfilePage(),
-                            ViewModelLocator.ProfileViewModel.WithModel((IProfile) facade.Item));
+                        ? new NavTuple(new ProfileLinkPage(), ProfileLinkVmFactory((IProfileLink) facade.Item))
+                        : new NavTuple(new ProfilePage(), ProfileVmFactory((IProfile) facade.Item));
                 case CatalogueItemKind.Rule:
                     return facade.IsLink
-                        ? new NavTuple(new RuleLinkPage(),
-                            ViewModelLocator.RuleLinkViewModel.WithModel((IRuleLink) facade.Item))
-                        : new NavTuple(new RulePage(), ViewModelLocator.RuleViewModel.WithModel((IRule) facade.Item));
+                        ? new NavTuple(new RuleLinkPage(), RuleLinkVmFactory((IRuleLink) facade.Item))
+                        : new NavTuple(new RulePage(), RuleVmFactory((IRule) facade.Item));
                 default:
                     return null;
             }

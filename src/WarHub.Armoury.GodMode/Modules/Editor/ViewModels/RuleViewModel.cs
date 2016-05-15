@@ -3,21 +3,22 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Windows.Input;
     using AppServices;
     using Bindables;
-    using Demo;
     using Model;
     using Models;
 
-    public class RuleViewModel : GenericViewModel<RuleViewModel, IRule>, IModifiersListViewModel
+    public class RuleViewModel : GenericViewModel<IRule>, IModifiersListViewModel
     {
-        public RuleViewModel(ICommandsAggregateService commands, IRule rule = null)
-            : base(rule ?? ModelLocator.Rule)
+        public RuleViewModel(IRule model, ICommandsAggregateService commands,
+            Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
+            Func<IBookIndex, BookIndexViewModel> bookIndexVmFactory) : base(model)
         {
             Commands = commands;
-            Id = ViewModelLocator.IdentifierViewModel.WithModel(Rule.Id);
-            Book = ViewModelLocator.BookIndexViewModel.WithModel(Rule.Book);
+            Id = identifierVmFactory(Rule.Id);
+            Book = bookIndexVmFactory(Rule.Book);
             Modifiers = Rule.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
         }
 
@@ -54,10 +55,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         IBindableGrouping<ModifierFacade> IModifiersListViewModel.Modifiers => Modifiers;
 
         public ICommand OpenModifierCommand => Commands.OpenModifierCommand;
-
-        protected override RuleViewModel WithModelCore(IRule model)
-        {
-            return new RuleViewModel(Commands, model);
-        }
     }
 }

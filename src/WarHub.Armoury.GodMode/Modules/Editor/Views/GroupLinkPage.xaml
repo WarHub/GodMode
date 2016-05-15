@@ -7,7 +7,7 @@
             xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.GroupLinkPage"
             x:Name="Page"
-            BindingContext="{x:Static viewModels:ViewModelLocator.GroupLinkViewModel}"
+            BindingContext="{x:Static views1:ViewModelLocator.GroupLinkViewModel}"
             Title="{Binding TargetGroup.Name}">
 
     <ContentPage Title="Properties">

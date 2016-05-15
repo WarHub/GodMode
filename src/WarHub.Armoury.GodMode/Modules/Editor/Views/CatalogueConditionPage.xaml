@@ -5,9 +5,10 @@
             xmlns:controls="clr-namespace:WarHub.Armoury.GodMode.Controls;assembly=WarHub.Armoury.GodMode"
             xmlns:converters="clr-namespace:WarHub.Armoury.GodMode.Converters;assembly=WarHub.Armoury.GodMode"
             xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
+            xmlns:views="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.Views;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.CatalogueConditionPage"
             x:Name="Page"
-            BindingContext="{x:Static viewModels:ViewModelLocator.CatalogueConditionViewModel}"
+            BindingContext="{x:Static views:ViewModelLocator.CatalogueConditionViewModel}"
             Title="Condition">
 
     <TabbedPage.Resources>

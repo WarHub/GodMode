@@ -5,15 +5,13 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System.Collections.Generic;
     using AppServices;
-    using Demo;
     using Model;
 
     public class RuleModifierViewModel :
-        ModifierViewModelBase<RuleModifierViewModel, IRuleModifier, string, RuleModifierAction, RuleField>
+        ModifierViewModelBase<IRuleModifier, string, RuleModifierAction, RuleField>
     {
-        public RuleModifierViewModel(ICommandsAggregateService commands,
-            IRuleModifier modifier = null)
-            : base(commands, modifier ?? ModelLocator.RuleModifier)
+        public RuleModifierViewModel(IRuleModifier model, ICommandsAggregateService commands)
+            : base(model, commands)
         {
             IsFieldActive = CanFieldBeActive();
             IsValueActive = CanValueBeActive();
@@ -49,10 +47,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         private bool CanFieldBeActive() => Action != RuleModifierAction.Hide && Action != RuleModifierAction.Show;
 
         private bool CanValueBeActive() => CanFieldBeActive();
-
-        protected override RuleModifierViewModel WithModelCore(IRuleModifier model)
-        {
-            return new RuleModifierViewModel(Commands, model);
-        }
     }
 }

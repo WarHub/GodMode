@@ -3,12 +3,11 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
-    using Demo;
     using Model;
 
-    public class CharacteristicViewModel : GenericViewModel<CharacteristicViewModel, ICharacteristic>
+    public class CharacteristicViewModel : GenericViewModel<ICharacteristic>
     {
-        public CharacteristicViewModel(ICharacteristic model = null) : base(model ?? ModelLocator.Characteristic)
+        public CharacteristicViewModel(ICharacteristic model) : base(model)
         {
         }
 
@@ -21,10 +20,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         }
 
         private ICharacteristic Characteristic => Model;
-
-        protected override CharacteristicViewModel WithModelCore(ICharacteristic model)
-        {
-            return new CharacteristicViewModel(model);
-        }
     }
 }

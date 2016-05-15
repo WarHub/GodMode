@@ -8,7 +8,7 @@
             xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.EntryModifierPage"
             x:Name="Page"
-            BindingContext="{x:Static viewModels:ViewModelLocator.EntryModifierViewModel}"
+            BindingContext="{x:Static views1:ViewModelLocator.EntryModifierViewModel}"
             Title="Entry Modifier">
 
     <TabbedPage.Resources>

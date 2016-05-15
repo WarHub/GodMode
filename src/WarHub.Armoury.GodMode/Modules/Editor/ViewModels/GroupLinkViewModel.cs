@@ -3,21 +3,21 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Windows.Input;
     using AppServices;
     using Bindables;
-    using Demo;
     using Model;
     using Models;
 
-    public class GroupLinkViewModel : GenericViewModel<GroupLinkViewModel, IGroupLink>, IModifiersListViewModel
+    public class GroupLinkViewModel : GenericViewModel<IGroupLink>, IModifiersListViewModel
     {
-        public GroupLinkViewModel(ICommandsAggregateService commands, IGroupLink model = null)
-            : base(model ?? ModelLocator.GroupLink)
+        public GroupLinkViewModel(IGroupLink model, ICommandsAggregateService commands,
+            Func<IIdentifier, IdentifierViewModel> identifierVmFactory) : base(model)
         {
             Commands = commands;
-            Id = ViewModelLocator.IdentifierViewModel.WithModel(Link.Id);
+            Id = identifierVmFactory(Link.Id);
             Modifiers = Link.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
         }
 
@@ -48,10 +48,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         public ICommand OpenModifierCommand => Commands.OpenModifierCommand;
 
         IBindableGrouping<ModifierFacade> IModifiersListViewModel.Modifiers => Modifiers;
-
-        protected override GroupLinkViewModel WithModelCore(IGroupLink model)
-        {
-            return new GroupLinkViewModel(Commands, model);
-        }
     }
 }

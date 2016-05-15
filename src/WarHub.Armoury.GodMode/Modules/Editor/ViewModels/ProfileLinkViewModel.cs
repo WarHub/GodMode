@@ -3,21 +3,21 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Windows.Input;
     using AppServices;
     using Bindables;
-    using Demo;
     using Model;
     using Models;
 
-    public class ProfileLinkViewModel : GenericViewModel<ProfileLinkViewModel, IProfileLink>, IModifiersListViewModel
+    public class ProfileLinkViewModel : GenericViewModel<IProfileLink>, IModifiersListViewModel
     {
-        public ProfileLinkViewModel(ICommandsAggregateService commands, IProfileLink model = null)
-            : base(model ?? ModelLocator.ProfileLink)
+        public ProfileLinkViewModel(IProfileLink model, ICommandsAggregateService commands,
+            Func<IIdentifier, IdentifierViewModel> identifierVmFactory) : base(model)
         {
             Commands = commands;
-            Id = ViewModelLocator.IdentifierViewModel.WithModel(Link.Id);
+            Id = identifierVmFactory(Link.Id);
             Modifiers = Link.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
         }
 
@@ -48,10 +48,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         public ICommand OpenModifierCommand => Commands.OpenModifierCommand;
 
         IBindableGrouping<ModifierFacade> IModifiersListViewModel.Modifiers => Modifiers;
-
-        protected override ProfileLinkViewModel WithModelCore(IProfileLink model)
-        {
-            return new ProfileLinkViewModel(Commands, model);
-        }
     }
 }

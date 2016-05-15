@@ -5,14 +5,13 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System.Collections.Generic;
     using AppServices;
-    using Demo;
     using Model;
 
     public class GroupModifierViewModel :
-        ModifierViewModelBase<GroupModifierViewModel, IGroupModifier, decimal, EntryBaseModifierAction, GroupField>
+        ModifierViewModelBase<IGroupModifier, decimal, EntryBaseModifierAction, GroupField>
     {
-        public GroupModifierViewModel(ICommandsAggregateService commands, IGroupModifier model = null)
-            : base(commands, model ?? ModelLocator.GroupModifier)
+        public GroupModifierViewModel(IGroupModifier model, ICommandsAggregateService commands)
+            : base(model, commands)
         {
             IsFieldActive = CanFieldBeActive();
             IsValueActive = CanValueBeActive();
@@ -56,10 +55,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             => Action != EntryBaseModifierAction.Hide && Action != EntryBaseModifierAction.Show;
 
         private bool CanValueBeActive() => CanFieldBeActive();
-
-        protected override GroupModifierViewModel WithModelCore(IGroupModifier model)
-        {
-            return new GroupModifierViewModel(Commands, model);
-        }
     }
 }

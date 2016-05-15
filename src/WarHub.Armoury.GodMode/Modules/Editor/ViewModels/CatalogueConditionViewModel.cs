@@ -8,12 +8,12 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
     using Demo;
     using Model;
 
-    public class CatalogueConditionViewModel : GenericViewModel<CatalogueConditionViewModel, ICatalogueCondition>
+    public class CatalogueConditionViewModel : GenericViewModel<ICatalogueCondition>
     {
         private IEnumerable<ConditionValueUnit> _childValueUnits;
 
-        public CatalogueConditionViewModel(IDialogService dialogService, ICatalogueCondition model = null)
-            : base(model ?? ModelLocator.CatalogueCondition)
+        public CatalogueConditionViewModel(ICatalogueCondition model, IDialogService dialogService)
+            : base(model)
         {
             DialogService = dialogService;
             SetValidChildValueUnits();
@@ -113,12 +113,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
                 }
                 : new[] {ConditionValueUnit.Points, ConditionValueUnit.Selections};
         }
-
-        protected override CatalogueConditionViewModel WithModelCore(ICatalogueCondition model)
-        {
-            return new CatalogueConditionViewModel(DialogService, model);
-        }
-
 
         private void WarnInvalidConditionKind()
         {

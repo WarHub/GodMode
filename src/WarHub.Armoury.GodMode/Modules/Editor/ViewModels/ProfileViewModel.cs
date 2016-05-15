@@ -3,25 +3,29 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Input;
     using AppServices;
     using Bindables;
-    using Demo;
     using Model;
     using Models;
 
-    public class ProfileViewModel : GenericViewModel<ProfileViewModel, IProfile>, IModifiersListViewModel
+    public class ProfileViewModel : GenericViewModel<IProfile>, IModifiersListViewModel
     {
         private IReadOnlyList<CharacteristicViewModel> _characteristics;
 
-        public ProfileViewModel(ICommandsAggregateService commands, IProfile model = null)
-            : base(model ?? ModelLocator.Profile)
+        public ProfileViewModel(IProfile model, ICommandsAggregateService commands,
+            Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
+            Func<IBookIndex, BookIndexViewModel> bookIndexVmFactory,
+            Func<ICharacteristic, CharacteristicViewModel> characteristicVmFactory)
+            : base(model)
         {
             Commands = commands;
-            Id = ViewModelLocator.IdentifierViewModel.WithModel(Profile.Id);
-            Book = ViewModelLocator.BookIndexViewModel.WithModel(Profile.Book);
+            CharacteristicVmFactory = characteristicVmFactory;
+            Id = identifierVmFactory(Profile.Id);
+            Book = bookIndexVmFactory(Profile.Book);
             Modifiers =
                 Profile.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
             UpdateCharacteristicViewModels();
@@ -65,6 +69,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 
         public IEnumerable<IProfileType> ProfileTypes => Profile.Context.Catalogue.SystemContext.ProfileTypes;
 
+        private Func<ICharacteristic, CharacteristicViewModel> CharacteristicVmFactory { get; }
+
         private ICommandsAggregateService Commands { get; }
 
         private IProfile Profile => Model;
@@ -89,14 +95,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 
         private void UpdateCharacteristicViewModels()
         {
-            var characteristicVm = ViewModelLocator.CharacteristicViewModel;
             Characteristics =
-                Profile.Characteristics.Select(characteristic => characteristicVm.WithModel(characteristic)).ToList();
-        }
-
-        protected override ProfileViewModel WithModelCore(IProfile model)
-        {
-            return new ProfileViewModel(Commands, model);
+                Profile.Characteristics.Select(characteristic => CharacteristicVmFactory(characteristic)).ToList();
         }
     }
 }

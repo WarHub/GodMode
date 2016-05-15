@@ -99,7 +99,7 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
             {
                 return;
             }
-            ConfiureItem(item, chosenKindName);
+            ConfigureItemName(item, chosenKindName);
             if (OpenCatalogueItemCommand.CanExecute(item))
             {
                 OpenCatalogueItemCommand.Execute(item);
@@ -110,7 +110,7 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
                     "cancel");
         }
 
-        private static void ConfiureItem(CatalogueItemFacade facade, string chosenKindName)
+        private static void ConfigureItemName(CatalogueItemFacade facade, string chosenKindName)
         {
             var nameable = facade.Item as INameable;
             if (nameable != null && !facade.IsLink)

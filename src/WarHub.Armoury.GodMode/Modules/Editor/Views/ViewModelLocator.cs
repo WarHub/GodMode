@@ -1,11 +1,13 @@
 ﻿// WarHub licenses this file to you under the MIT license.
 // See LICENSE file in the project root for more information.
 
-namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
+namespace WarHub.Armoury.GodMode.Modules.Editor.Views
 {
-    using Autofac;
-    using Demo;
+    using ViewModels;
 
+    /// <summary>
+    /// Returns null, used only for BindingContext typing in XAML views.
+    /// </summary>
     public static class ViewModelLocator
     {
         public static BookIndexViewModel BookIndexViewModel => Resolve<BookIndexViewModel>();
@@ -41,15 +43,12 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 
         public static ProfileViewModel ProfileViewModel => Resolve<ProfileViewModel>();
 
-        public static IRootItemViewModel RootItemViewModel
-            => Resolve<EntryViewModel>().WithModel(ModelLocator.RootEntry);
-
         public static RuleLinkViewModel RuleLinkViewModel => Resolve<RuleLinkViewModel>();
 
         public static RuleModifierViewModel RuleModifierViewModel => Resolve<RuleModifierViewModel>();
 
         public static RuleViewModel RuleViewModel => Resolve<RuleViewModel>();
 
-        private static TService Resolve<TService>() => App.ServiceProvider.Resolve<TService>();
+        private static TService Resolve<TService>() where TService : class => null;
     }
 }

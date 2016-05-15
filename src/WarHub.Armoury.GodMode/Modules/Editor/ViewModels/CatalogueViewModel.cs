@@ -3,18 +3,19 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Windows.Input;
     using AppServices;
     using Bindables;
-    using Demo;
     using Model;
     using Models;
 
-    public class CatalogueViewModel : GenericViewModel<CatalogueViewModel, ICatalogue>, ICatalogueItemsListViewModel
+    public class CatalogueViewModel : GenericViewModel<ICatalogue>, ICatalogueItemsListViewModel
     {
-        public CatalogueViewModel(ICommandsAggregateService commands, ICatalogue catalogue = null)
-            : base(catalogue ?? ModelLocator.Catalogue)
+        public CatalogueViewModel(ICatalogue model, ICommandsAggregateService commands,
+            Func<IIdentifier, IdentifierViewModel> identifierVmFactory)
+            : base(model)
         {
             Commands = commands;
             SharedEntries = Catalogue.SharedEntries.ToBindableMap("shared entries", asShared: true,
@@ -33,7 +34,7 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
                 Commands.RemoveCatalogueItemCommand.For(() => Rules));
             RuleLinks = Catalogue.RuleLinks.ToBindableMap("rule links",
                 Commands.RemoveCatalogueItemCommand.For(() => RuleLinks));
-            Id = ViewModelLocator.IdentifierViewModel.WithModel(Catalogue.Id);
+            Id = identifierVmFactory(Catalogue.Id);
             CreateCatalogueItemCommand = Commands.CreateCatalogueItemCommand.EnableFor(Catalogue);
         }
 
@@ -117,11 +118,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         public ICommand CreateCatalogueItemCommand { get; }
 
         public ICommand OpenCatalogueItemCommand => Commands.OpenCatalogueItemCommand;
-
-
-        protected override CatalogueViewModel WithModelCore(ICatalogue model)
-        {
-            return new CatalogueViewModel(Commands, model);
-        }
     }
 }

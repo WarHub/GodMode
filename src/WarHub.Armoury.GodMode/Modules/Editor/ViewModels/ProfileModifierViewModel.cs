@@ -8,15 +8,13 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
     using System.Threading.Tasks;
     using AppServices;
     using Bindables;
-    using Demo;
     using Model;
 
     public class ProfileModifierViewModel :
-        ModifierViewModelBase<ProfileModifierViewModel, IProfileModifier, string, ProfileModifierAction, IIdentifier>
+        ModifierViewModelBase<IProfileModifier, string, ProfileModifierAction, IIdentifier>
     {
-        public ProfileModifierViewModel(ICommandsAggregateService commands, IDialogService dialogService,
-            IProfileModifier model = null)
-            : base(commands, model ?? ModelLocator.ProfileModifier)
+        public ProfileModifierViewModel(IProfileModifier model, ICommandsAggregateService commands,
+            IDialogService dialogService) : base(model, commands)
         {
             DialogService = dialogService;
             ParentProfile = Modifier.GetParentProfile();
@@ -117,11 +115,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
                 $" '{ParentProfile.Name}' profile's '{characteristicName}' value ('{profileValue}')" +
                 $" and modifier value ('{modifierValue}') both must be numbers.",
                 "okey");
-        }
-
-        protected override ProfileModifierViewModel WithModelCore(IProfileModifier model)
-        {
-            return new ProfileModifierViewModel(Commands, DialogService, model);
         }
     }
 }

@@ -3,27 +3,25 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using AppServices;
-    using Models;
+    using GodMode.Commands;
+    using Model;
     using ViewModels;
 
     public class OpenLinkTargetAsSharedCommand : OpenLinkTargetAsChildCommand
     {
-        public OpenLinkTargetAsSharedCommand(IDialogService dialogService, INavigationService navigationService)
-            : base(dialogService, navigationService)
+        public OpenLinkTargetAsSharedCommand(IDialogService dialogService, INavigationService navigationService,
+            Func<IEntry, EntryViewModel> entryVmFactory, Func<IGroup, GroupViewModel> groupVmFactory,
+            Func<IProfile, ProfileViewModel> profileVmFactory, Func<IRule, RuleViewModel> ruleVmFactory)
+            : base(dialogService, navigationService, entryVmFactory, groupVmFactory, profileVmFactory, ruleVmFactory)
         {
         }
 
-        protected override async Task ExecuteCoreAsync(CatalogueItemFacade parameter)
+        protected override async Task Navigate(NavTuple navTuple)
         {
-            var navTuple = GetNavTuple(parameter);
-            if (navTuple == null)
-            {
-                await DialogService.ShowDialogAsync("View unavailable", GetErrorString(parameter), "Oh well");
-                return;
-            }
             while (NavigationService.NavigationStack.Count > 0)
             {
                 var currentPage = NavigationService.NavigationStack.Last();

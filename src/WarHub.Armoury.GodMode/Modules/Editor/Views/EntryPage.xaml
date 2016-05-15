@@ -8,7 +8,7 @@
             xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.EntryPage"
             x:Name="Page"
-            BindingContext="{x:Static viewModels:ViewModelLocator.EntryViewModel}"
+            BindingContext="{x:Static views1:ViewModelLocator.EntryViewModel}"
             Title="{Binding Name}">
 
     <TabbedPage.Resources>

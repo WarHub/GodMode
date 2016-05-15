@@ -8,9 +8,9 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 
     public class ModifierRepetitionViewModel : ViewModelBase
     {
-        public ModifierRepetitionViewModel(IRepetitionInfo repetition)
+        public ModifierRepetitionViewModel(IRepetitionInfo model)
         {
-            Repetition = repetition;
+            Repetition = model;
         }
 
         public bool IsActive

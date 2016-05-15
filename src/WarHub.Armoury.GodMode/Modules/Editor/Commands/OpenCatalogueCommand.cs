@@ -3,24 +3,30 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
+    using System;
     using AppServices;
     using Demo;
     using GodMode.Commands;
+    using Model;
     using Model.Repo;
     using ViewModels;
     using Views;
 
     public class OpenCatalogueCommand : NavigateCommandBase<CatalogueInfo>
     {
-        public OpenCatalogueCommand(IDialogService dialogService, INavigationService navigationService)
+        public OpenCatalogueCommand(IDialogService dialogService, INavigationService navigationService,
+            Func<ICatalogue, CatalogueViewModel> catalogueVmFactory)
             : base(dialogService, navigationService)
         {
+            CatalogueVmFactory = catalogueVmFactory;
         }
+
+        private Func<ICatalogue, CatalogueViewModel> CatalogueVmFactory { get; }
 
         protected override NavTuple GetNavTuple(CatalogueInfo parameter)
         {
-            return new NavTuple(new CataloguePage(),
-                ViewModelLocator.CatalogueViewModel.WithModel(ModelLocator.Catalogue));
+            // TODO load catalogue from parameter
+            return new NavTuple(new CataloguePage(), CatalogueVmFactory(ModelLocator.Catalogue));
         }
 
         protected override string GetErrorString(CatalogueInfo parameter)

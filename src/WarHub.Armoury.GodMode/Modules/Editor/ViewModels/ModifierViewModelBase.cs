@@ -11,14 +11,14 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
     using Model;
     using Models;
 
-    public abstract class ModifierViewModelBase<TViewModel, TModifier, TValue, TAction, TField> :
-        GenericViewModel<TViewModel, TModifier>, IConditionItemsListViewModel
+    public abstract class ModifierViewModelBase<TModifier, TValue, TAction, TField> :
+        GenericViewModel<TModifier>, IConditionItemsListViewModel
         where TModifier : ICatalogueModifier<TValue, TAction, TField>
     {
         private bool _isFieldActive;
         private bool _isValueActive;
 
-        protected ModifierViewModelBase(ICommandsAggregateService commands, TModifier model) : base(model)
+        protected ModifierViewModelBase(TModifier model, ICommandsAggregateService commands) : base(model)
         {
             if (commands == null)
                 throw new ArgumentNullException(nameof(commands));

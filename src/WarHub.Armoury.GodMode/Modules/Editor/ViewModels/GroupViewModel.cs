@@ -3,23 +3,24 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows.Input;
     using AppServices;
     using Bindables;
-    using Demo;
     using Model;
     using Models;
 
-    public class GroupViewModel : GenericViewModel<GroupViewModel, IGroup>, IModifiersListViewModel,
-        ICatalogueItemsListViewModel
+    public class GroupViewModel : GenericViewModel<IGroup>, IModifiersListViewModel, ICatalogueItemsListViewModel
     {
         private CatalogueItemFacade _defaultChoice;
         private IEnumerable<CatalogueItemFacade> _defaultChoices;
 
-        public GroupViewModel(ICommandsAggregateService commands, IGroup model = null)
-            : base(model ?? ModelLocator.Group)
+        public GroupViewModel(IGroup model, ICommandsAggregateService commands,
+            Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
+            Func<IEntryLimits, EntryLimitsViewModel> entryLimitsVmFactory)
+            : base(model)
         {
             Commands = commands;
             Entries = Group.Entries.ToBindableMap("entries",
@@ -30,8 +31,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
                 Commands.RemoveCatalogueItemCommand.For(() => Groups));
             GroupLinks = Group.GroupLinks.ToBindableMap("group links",
                 Commands.RemoveCatalogueItemCommand.For(() => GroupLinks));
-            Id = ViewModelLocator.IdentifierViewModel.WithModel(Group.Id);
-            Limits = ViewModelLocator.EntryLimitsViewModel.WithModel(Group.Limits);
+            Id = identifierVmFactory(Group.Id);
+            Limits = entryLimitsVmFactory(Group.Limits);
             Modifiers = Group.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
             DefaultChoices =
                 Group.GetEntryLinkPairs()
@@ -131,12 +132,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             Group.DefaultChoice = DefaultChoice.IsLink
                 ? ((IEntryLink) DefaultChoice.Item).Target
                 : (IEntry) DefaultChoice.Item;
-        }
-
-
-        protected override GroupViewModel WithModelCore(IGroup model)
-        {
-            return new GroupViewModel(Commands, model);
         }
     }
 }

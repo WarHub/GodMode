@@ -5,14 +5,13 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System.Collections.Generic;
     using AppServices;
-    using Demo;
     using Model;
 
     public class EntryModifierViewModel :
-        ModifierViewModelBase<EntryModifierViewModel, IEntryModifier, decimal, EntryBaseModifierAction, EntryField>
+        ModifierViewModelBase<IEntryModifier, decimal, EntryBaseModifierAction, EntryField>
     {
-        public EntryModifierViewModel(ICommandsAggregateService commands, IEntryModifier model = null)
-            : base(commands, model ?? ModelLocator.EntryModifier)
+        public EntryModifierViewModel(IEntryModifier model, ICommandsAggregateService commands)
+            : base(model, commands)
         {
             IsFieldActive = CanFieldBeActive();
             IsValueActive = CanValueBeActive();
@@ -57,10 +56,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             => Action != EntryBaseModifierAction.Hide && Action != EntryBaseModifierAction.Show;
 
         private bool CanValueBeActive() => CanFieldBeActive();
-
-        protected override EntryModifierViewModel WithModelCore(IEntryModifier model)
-        {
-            return new EntryModifierViewModel(Commands, model);
-        }
     }
 }

@@ -3,19 +3,22 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Windows.Input;
     using AppServices;
     using Bindables;
-    using Demo;
     using Model;
     using Models;
 
-    public class EntryViewModel : GenericViewModel<EntryViewModel, IEntry>, IRootItemViewModel,
+    public class EntryViewModel : GenericViewModel<IEntry>, IRootItemViewModel,
         IModifiersListViewModel, ICatalogueItemsListViewModel
     {
-        public EntryViewModel(ICommandsAggregateService commands, IEntry model = null)
-            : base(model ?? ModelLocator.Entry)
+        public EntryViewModel(IEntry model, ICommandsAggregateService commands,
+            Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
+            Func<IBookIndex, BookIndexViewModel> bookIndexVmFactory,
+            Func<IEntryLimits, EntryLimitsViewModel> entryLimitsVmFactory)
+            : base(model)
         {
             Commands = commands;
             Entries = Entry.Entries.ToBindableMap("entries",
@@ -34,9 +37,9 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
                 Commands.RemoveCatalogueItemCommand.For(() => Rules));
             RuleLinks = Entry.RuleLinks.ToBindableMap("rule links",
                 Commands.RemoveCatalogueItemCommand.For(() => RuleLinks));
-            Id = ViewModelLocator.IdentifierViewModel.WithModel(Entry.Id);
-            Book = ViewModelLocator.BookIndexViewModel.WithModel(Entry.Book);
-            Limits = ViewModelLocator.EntryLimitsViewModel.WithModel(Entry.Limits);
+            Id = identifierVmFactory(Entry.Id);
+            Book = bookIndexVmFactory(Entry.Book);
+            Limits = entryLimitsVmFactory(Entry.Limits);
             RootEntry = Entry as IRootEntry;
             IsRootItem = RootEntry != null;
             Categories = Entry.Context.Catalogue.SystemContext.Categories.PrependWith(new NoCategory());
@@ -155,10 +158,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         }
 
         public bool IsRootItem { get; }
-
-        protected override EntryViewModel WithModelCore(IEntry model)
-        {
-            return new EntryViewModel(Commands, model);
-        }
     }
 }

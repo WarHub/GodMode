@@ -8,7 +8,7 @@
             xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.GroupModifierPage"
             x:Name="Page"
-            BindingContext="{x:Static viewModels:ViewModelLocator.GroupModifierViewModel}"
+            BindingContext="{x:Static views1:ViewModelLocator.GroupModifierViewModel}"
             Title="Group Modifier">
 
     <TabbedPage.Resources>

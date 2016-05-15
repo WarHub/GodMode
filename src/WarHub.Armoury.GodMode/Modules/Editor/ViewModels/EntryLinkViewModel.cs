@@ -3,22 +3,21 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Windows.Input;
     using AppServices;
     using Bindables;
-    using Demo;
     using Model;
     using Models;
 
-    public class EntryLinkViewModel : GenericViewModel<EntryLinkViewModel, IEntryLink>, IRootItemViewModel,
-        IModifiersListViewModel
+    public class EntryLinkViewModel : GenericViewModel<IEntryLink>, IRootItemViewModel, IModifiersListViewModel
     {
-        public EntryLinkViewModel(ICommandsAggregateService commands, IEntryLink model = null)
-            : base(model ?? ModelLocator.EntryLink)
+        public EntryLinkViewModel(IEntryLink model, ICommandsAggregateService commands,
+            Func<IIdentifier, IdentifierViewModel> identifierVmFactory) : base(model)
         {
             Commands = commands;
-            Id = ViewModelLocator.IdentifierViewModel.WithModel(Link.Id);
+            Id = identifierVmFactory(Link.Id);
             RootLink = Link as IRootLink;
             IsRootItem = RootLink != null;
             Categories = Link.Context.Catalogue.SystemContext.Categories.PrependWith(new NoCategory());
@@ -72,10 +71,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         }
 
         public bool IsRootItem { get; }
-
-        protected override EntryLinkViewModel WithModelCore(IEntryLink model)
-        {
-            return new EntryLinkViewModel(Commands, model);
-        }
     }
 }

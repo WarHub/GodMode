@@ -3,12 +3,11 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
-    using Demo;
     using Model;
 
-    public class BookIndexViewModel : GenericViewModel<BookIndexViewModel, IBookIndex>
+    public class BookIndexViewModel : GenericViewModel<IBookIndex>
     {
-        public BookIndexViewModel(IBookIndex model = null) : base(model ?? ModelLocator.Book)
+        public BookIndexViewModel(IBookIndex model) : base(model)
         {
         }
 
@@ -25,10 +24,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         }
 
         private IBookIndex Book => Model;
-
-        protected override BookIndexViewModel WithModelCore(IBookIndex model)
-        {
-            return new BookIndexViewModel(model);
-        }
     }
 }

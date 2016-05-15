@@ -7,7 +7,7 @@
             xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.RuleModifierPage"
             x:Name="Page"
-            BindingContext="{x:Static viewModels:ViewModelLocator.RuleModifierViewModel}"
+            BindingContext="{x:Static views1:ViewModelLocator.RuleModifierViewModel}"
             Title="Rule Modifier">
 
     <ContentPage Title="Properties">

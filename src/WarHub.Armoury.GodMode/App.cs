@@ -5,7 +5,7 @@ namespace WarHub.Armoury.GodMode
 {
     using System.Reflection;
     using Autofac;
-    using Modules.Home.Views;
+    using Modules.Home.Commands;
     using Xamarin.Forms;
 
     public class App : Application
@@ -14,7 +14,8 @@ namespace WarHub.Armoury.GodMode
         {
             ServiceProvider = BuildContainer();
             // The root page of your application
-            MainPage = new NavigationPage(new MainPage());
+            MainPage = new NavigationPage();
+            ServiceProvider.Resolve<OpenHomeCommand>().Execute();
         }
 
         public static IComponentContext ServiceProvider { get; private set; }

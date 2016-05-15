@@ -3,6 +3,7 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
+    using System;
     using AppServices;
     using GodMode.Commands;
     using Model;
@@ -12,27 +13,37 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 
     public class OpenLinkTargetAsChildCommand : NavigateCommandBase<CatalogueItemFacade>
     {
-        public OpenLinkTargetAsChildCommand(IDialogService dialogService, INavigationService navigationService)
+        public OpenLinkTargetAsChildCommand(IDialogService dialogService, INavigationService navigationService,
+            Func<IEntry, EntryViewModel> entryVmFactory, Func<IGroup, GroupViewModel> groupVmFactory,
+            Func<IProfile, ProfileViewModel> profileVmFactory, Func<IRule, RuleViewModel> ruleVmFactory)
             : base(dialogService, navigationService)
         {
+            EntryVmFactory = entryVmFactory;
+            GroupVmFactory = groupVmFactory;
+            ProfileVmFactory = profileVmFactory;
+            RuleVmFactory = ruleVmFactory;
         }
+
+        private Func<IEntry, EntryViewModel> EntryVmFactory { get; }
+
+        private Func<IGroup, GroupViewModel> GroupVmFactory { get; }
+
+        private Func<IProfile, ProfileViewModel> ProfileVmFactory { get; }
+
+        private Func<IRule, RuleViewModel> RuleVmFactory { get; }
 
         protected override NavTuple GetNavTuple(CatalogueItemFacade facade)
         {
             switch (facade.ItemKind)
             {
                 case CatalogueItemKind.Entry:
-                    return new NavTuple(new EntryPage(),
-                        ViewModelLocator.EntryViewModel.WithModel(((IEntryLink) facade.Item).Target));
+                    return new NavTuple(new EntryPage(), EntryVmFactory(((IEntryLink) facade.Item).Target));
                 case CatalogueItemKind.Group:
-                    return new NavTuple(new GroupPage(),
-                        ViewModelLocator.GroupViewModel.WithModel(((IGroupLink) facade.Item).Target));
+                    return new NavTuple(new GroupPage(), GroupVmFactory(((IGroupLink) facade.Item).Target));
                 case CatalogueItemKind.Profile:
-                    return new NavTuple(new ProfilePage(),
-                        ViewModelLocator.ProfileViewModel.WithModel(((IProfileLink) facade.Item).Target));
+                    return new NavTuple(new ProfilePage(), ProfileVmFactory(((IProfileLink) facade.Item).Target));
                 case CatalogueItemKind.Rule:
-                    return new NavTuple(new RulePage(),
-                        ViewModelLocator.RuleViewModel.WithModel(((IRuleLink) facade.Item).Target));
+                    return new NavTuple(new RulePage(), RuleVmFactory(((IRuleLink) facade.Item).Target));
                 default:
                     return null;
             }

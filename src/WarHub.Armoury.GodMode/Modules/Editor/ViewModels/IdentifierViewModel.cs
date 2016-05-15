@@ -4,16 +4,15 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System;
-    using Demo;
     using Model;
     using Mvvm.Commands;
     using ICommand = System.Windows.Input.ICommand;
 
-    public class IdentifierViewModel : GenericViewModel<IdentifierViewModel, IIdentifier>
+    public class IdentifierViewModel : GenericViewModel<IIdentifier>
     {
         private ICommand _reGenIdCommand;
 
-        public IdentifierViewModel(IIdentifier model = null) : base(model ?? ModelLocator.Id)
+        public IdentifierViewModel(IIdentifier model) : base(model)
         {
         }
 
@@ -26,10 +25,5 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         }));
 
         private IIdentifier Id => Model;
-
-        protected override IdentifierViewModel WithModelCore(IIdentifier model)
-        {
-            return new IdentifierViewModel(model);
-        }
     }
 }
