@@ -1,8 +1,9 @@
 ﻿// WarHub licenses this file to you under the MIT license.
 // See LICENSE file in the project root for more information.
 
-namespace WarHub.Armoury.GodMode.Commands
+namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
+    using GodMode.Commands;
     using Model;
     using Modules.Editor.Models;
     using Modules.Editor.ViewModels;

@@ -5,6 +5,7 @@ namespace WarHub.Armoury.GodMode.Services.Implementations
 {
     using Autofac;
     using Commands;
+    using Modules.Editor.Commands;
 
     public class CommandsAggregateService : ICommandsAggregateService
     {

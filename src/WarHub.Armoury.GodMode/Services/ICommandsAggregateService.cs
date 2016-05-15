@@ -4,6 +4,7 @@
 namespace WarHub.Armoury.GodMode.Services
 {
     using Commands;
+    using Modules.Editor.Commands;
 
     public interface ICommandsAggregateService
     {
