@@ -5,8 +5,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System.Linq;
     using System.Threading.Tasks;
+    using AppServices;
     using Models;
-    using Services;
     using ViewModels;
 
     public class OpenLinkTargetAsSharedCommand : OpenLinkTargetAsChildCommand
@@ -24,7 +24,7 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
                 await DialogService.ShowDialogAsync("View unavailable", GetErrorString(parameter), "Oh well");
                 return;
             }
-            while (true)
+            while (NavigationService.NavigationStack.Count > 0)
             {
                 var currentPage = NavigationService.NavigationStack.Last();
                 if (currentPage.BindingContext.GetType() == typeof(CatalogueViewModel))

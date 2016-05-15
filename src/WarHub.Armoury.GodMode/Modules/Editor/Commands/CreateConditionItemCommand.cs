@@ -7,10 +7,10 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AppServices;
     using Model;
     using Models;
     using Mvvm.Commands;
-    using Services;
 
     public class CreateConditionItemCommand : ProgressingAsyncCommandBase
     {

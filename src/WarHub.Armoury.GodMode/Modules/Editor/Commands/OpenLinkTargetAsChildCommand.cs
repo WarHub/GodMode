@@ -3,10 +3,10 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
+    using AppServices;
     using GodMode.Commands;
     using Model;
     using Models;
-    using Services;
     using ViewModels;
     using Views;
 
@@ -40,7 +40,7 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 
         protected override string GetErrorString(CatalogueItemFacade parameter)
         {
-            return $"Currently there is no implementation to open '{parameter.Name}'";
+            return $"Currently there is no implementation to open '{parameter?.Name ?? "'null'"}'";
         }
 
         protected override bool CanExecuteCore(CatalogueItemFacade parameter) => parameter?.IsLink ?? false;

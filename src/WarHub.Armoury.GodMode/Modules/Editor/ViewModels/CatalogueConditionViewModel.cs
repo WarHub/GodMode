@@ -4,9 +4,9 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System.Collections.Generic;
+    using AppServices;
     using Demo;
     using Model;
-    using Services;
 
     public class CatalogueConditionViewModel : GenericViewModel<CatalogueConditionViewModel, ICatalogueCondition>
     {

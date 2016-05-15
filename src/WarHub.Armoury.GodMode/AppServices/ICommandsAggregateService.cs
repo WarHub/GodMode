@@ -1,7 +1,7 @@
 ﻿// WarHub licenses this file to you under the MIT license.
 // See LICENSE file in the project root for more information.
 
-namespace WarHub.Armoury.GodMode.Services
+namespace WarHub.Armoury.GodMode.AppServices
 {
     using Commands;
     using Modules.Editor.Commands;
@@ -15,6 +15,8 @@ namespace WarHub.Armoury.GodMode.Services
         CreateModifierCommand CreateModifierCommand { get; }
 
         NavigateRelayCommand NavigateRelayCommand { get; }
+
+        OpenCatalogueCommand OpenCatalogueCommand { get; }
 
         OpenCatalogueItemCommand OpenCatalogueItemCommand { get; }
 

@@ -5,11 +5,11 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System.Collections.Generic;
     using System.Windows.Input;
+    using AppServices;
     using Bindables;
     using Demo;
     using Model;
     using Models;
-    using Services;
 
     public class ProfileLinkViewModel : GenericViewModel<ProfileLinkViewModel, IProfileLink>, IModifiersListViewModel
     {

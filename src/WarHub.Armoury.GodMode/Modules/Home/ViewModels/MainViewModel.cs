@@ -4,27 +4,28 @@
 namespace WarHub.Armoury.GodMode.Modules.Home.ViewModels
 {
     using System.Windows.Input;
-    using Editor.Views;
+    using AppServices;
+    using Demo;
+    using Model.Repo;
     using Mvvm;
-    using Services;
-    using Xamarin.Forms;
 
     public class MainViewModel : ViewModelBase
     {
         private ICommand _openCatalogueCommand;
 
-        public MainViewModel(INavigationService navigation)
+        public MainViewModel(ICommandsAggregateService commands)
         {
-            Navigation = navigation;
+            Commands = commands;
         }
 
-        public string MainText { get; set; } = "Welcome in GodMode! This is Xamarin.Forms application.";
+        public string MainText { get; } = "Welcome in GodMode! This is Xamarin.Forms application.";
 
         public ICommand OpenCatalogueCommand
             =>
                 _openCatalogueCommand ??
-                (_openCatalogueCommand = new Command(async () => { await Navigation.PushAsync(new CataloguePage()); }));
+                (_openCatalogueCommand =
+                    Commands.OpenCatalogueCommand.SetParameter(new CatalogueInfo(ModelLocator.Catalogue)));
 
-        private INavigationService Navigation { get; }
+        private ICommandsAggregateService Commands { get; }
     }
 }

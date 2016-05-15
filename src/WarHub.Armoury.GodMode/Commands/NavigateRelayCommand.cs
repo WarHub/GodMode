@@ -5,8 +5,8 @@ namespace WarHub.Armoury.GodMode.Commands
 {
     using System;
     using System.Threading.Tasks;
+    using AppServices;
     using Mvvm.Commands;
-    using Services;
 
     public class NavigateRelayCommand<T> : ProgressingAsyncCommandBase<T>
     {

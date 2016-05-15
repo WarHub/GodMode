@@ -3,10 +3,12 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
-    using System;
+    using AppServices;
+    using Demo;
     using GodMode.Commands;
     using Model.Repo;
-    using Services;
+    using ViewModels;
+    using Views;
 
     public class OpenCatalogueCommand : NavigateCommandBase<CatalogueInfo>
     {
@@ -17,7 +19,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 
         protected override NavTuple GetNavTuple(CatalogueInfo parameter)
         {
-            throw new NotImplementedException();
+            return new NavTuple(new CataloguePage(),
+                ViewModelLocator.CatalogueViewModel.WithModel(ModelLocator.Catalogue));
         }
 
         protected override string GetErrorString(CatalogueInfo parameter)

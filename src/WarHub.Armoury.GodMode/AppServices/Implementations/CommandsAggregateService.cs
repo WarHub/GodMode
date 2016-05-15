@@ -1,7 +1,7 @@
 ﻿// WarHub licenses this file to you under the MIT license.
 // See LICENSE file in the project root for more information.
 
-namespace WarHub.Armoury.GodMode.Services.Implementations
+namespace WarHub.Armoury.GodMode.AppServices.Implementations
 {
     using Autofac;
     using Commands;
@@ -19,6 +19,8 @@ namespace WarHub.Armoury.GodMode.Services.Implementations
 
         public NavigateRelayCommand NavigateRelayCommand
             => _navigateRelayCommand ?? (_navigateRelayCommand = Resolve<NavigateRelayCommand>());
+
+        public OpenCatalogueCommand OpenCatalogueCommand => Resolve<OpenCatalogueCommand>();
 
         public OpenCatalogueItemCommand OpenCatalogueItemCommand => Resolve<OpenCatalogueItemCommand>();
 

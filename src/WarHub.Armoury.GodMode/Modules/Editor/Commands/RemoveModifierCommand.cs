@@ -5,10 +5,10 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System;
     using System.Threading.Tasks;
+    using AppServices;
     using Bindables;
     using Models;
     using Mvvm.Commands;
-    using Services;
 
     public class RemoveModifierCommand : ProgressingAsyncCommandBase<ModifierFacade>
     {

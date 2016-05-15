@@ -1,7 +1,7 @@
 ﻿// WarHub licenses this file to you under the MIT license.
 // See LICENSE file in the project root for more information.
 
-namespace WarHub.Armoury.GodMode.Services
+namespace WarHub.Armoury.GodMode.AppServices
 {
     using System.Threading.Tasks;
     using Xamarin.Forms;

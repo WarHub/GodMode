@@ -6,10 +6,10 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AppServices;
     using Bindables;
     using Demo;
     using Model;
-    using Services;
 
     public class ProfileModifierViewModel :
         ModifierViewModelBase<ProfileModifierViewModel, IProfileModifier, string, ProfileModifierAction, IIdentifier>

@@ -6,10 +6,10 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
     using System;
     using System.Collections.Generic;
     using System.Windows.Input;
+    using AppServices;
     using Bindables;
     using Model;
     using Models;
-    using Services;
 
     public abstract class ModifierViewModelBase<TViewModel, TModifier, TValue, TAction, TField> :
         GenericViewModel<TViewModel, TModifier>, IConditionItemsListViewModel
