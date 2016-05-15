@@ -6,7 +6,7 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
     using System;
     using System.Threading.Tasks;
     using Bindables;
-    using Modules.Editor.Models;
+    using Models;
     using Mvvm.Commands;
     using Services;
 

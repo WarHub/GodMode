@@ -5,9 +5,9 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using Modules.Editor.Models;
-    using Modules.Editor.ViewModels;
+    using Models;
     using Services;
+    using ViewModels;
 
     public class OpenLinkTargetAsSharedCommand : OpenLinkTargetAsChildCommand
     {

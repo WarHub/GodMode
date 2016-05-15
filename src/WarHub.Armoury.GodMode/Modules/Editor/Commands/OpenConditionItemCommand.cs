@@ -5,10 +5,10 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using GodMode.Commands;
     using Model;
-    using Modules.Editor.Models;
-    using Modules.Editor.ViewModels;
-    using Modules.Editor.Views;
+    using Models;
     using Services;
+    using ViewModels;
+    using Views;
 
     public class OpenConditionItemCommand : NavigateCommandBase<ConditionItemFacade>
     {
