@@ -1,9 +1,10 @@
 ﻿{
   "dependencies": {
     "Autofac": "3.5.2",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
+    "PCLStorage": "1.0.2",
     "WarHub.Mvvm": "1.0.1",
-    "Xamarin.Forms": "2.1.0.6524"
+    "Xamarin.Forms": "2.2.0.31"
   },
   "frameworks": {
     "uap10.0": {}
