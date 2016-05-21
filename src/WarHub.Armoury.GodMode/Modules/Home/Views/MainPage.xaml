@@ -8,8 +8,9 @@
              BindingContext="{x:Static views:ViewModelLocator.MainViewModel}"
              Title="GodMode">
 
-    <StackLayout VerticalOptions="CenterAndExpand">
+    <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
         <Label Text="{Binding MainText}" VerticalOptions="Center" HorizontalOptions="Center" />
         <Button Text="Open Demo Catalogue" Command="{Binding OpenCatalogueCommand}" />
+      <Button Text="Open Data Management" Command="{Binding OpenRemoteDataIndexCommand}" />
     </StackLayout>
 </ContentPage>

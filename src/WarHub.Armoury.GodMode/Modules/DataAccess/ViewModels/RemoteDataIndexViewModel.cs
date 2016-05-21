@@ -3,6 +3,7 @@
 
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
 {
+    using System.Windows.Input;
     using Commands;
     using Model;
     using Model.DataAccess;
@@ -10,19 +11,25 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
 
     public class RemoteDataIndexViewModel : ViewModelBase
     {
-        public RemoteDataIndexViewModel(IRemoteDataService remoteDataService, AddRemoteDataSourceCommand addRemoteDataSourceCommand, DownloadDataSourceCommand downloadDataSourceCommand)
+        public RemoteDataIndexViewModel(IRemoteDataService remoteDataService,
+            DownloadDataSourceCommand downloadDataSourceCommand, RemoveDataSourceCommand removeDataSourceCommand,
+            BeginAddRemoteDataSourceCommand beginAddRemoteDataSourceCommand)
         {
             RemoteDataService = remoteDataService;
-            AddRemoteDataSourceCommand = addRemoteDataSourceCommand;
             DownloadDataSourceCommand = downloadDataSourceCommand;
+            RemoveDataSourceCommand = removeDataSourceCommand;
+            BeginAddRemoteDataSourceCommand = beginAddRemoteDataSourceCommand;
         }
+
+        public ICommand BeginAddRemoteDataSourceCommand { get; }
+
 
         public IObservableReadonlySet<RemoteDataSourceInfo> DataSourceInfos => RemoteDataService.SourceInfos;
 
+        public ICommand DownloadDataSourceCommand { get; }
+
+        public ICommand RemoveDataSourceCommand { get; }
+
         private IRemoteDataService RemoteDataService { get; }
-
-        public AddRemoteDataSourceCommand AddRemoteDataSourceCommand { get; }
-
-        public DownloadDataSourceCommand DownloadDataSourceCommand { get; }
     }
 }

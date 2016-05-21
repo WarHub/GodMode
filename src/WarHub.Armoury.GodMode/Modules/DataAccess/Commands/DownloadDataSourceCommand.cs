@@ -4,9 +4,10 @@
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 {
     using System;
-    using System.IO;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Model.BattleScribe.Files;
     using Model.DataAccess;
     using Model.Repo;
     using Mvvm.Commands;
@@ -33,33 +34,20 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
                 var uri = new Uri(index.IndexUri, remoteDataInfo.IndexPathSuffix);
                 using (var client = new HttpClient())
                 using (var stream = await client.GetStreamAsync(uri))
-                using (var memoryStream = new MemoryStream())
                 {
-                    await stream.CopyToAsync(memoryStream);
-                    memoryStream.Seek(0, SeekOrigin.Begin);
                     switch (remoteDataInfo.DataType)
                     {
                         case RemoteDataType.Catalogue:
-                            var catInfo = CatalogueInfo.CreateFromStream(memoryStream);
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            using (var outStream = await RepoStorageService.GetCatalogueOutputStreamAsync(catInfo))
-                            {
-                                await memoryStream.CopyToAsync(outStream);
-                            }
+                            await CatalogueFile.MoveToRepoStorageAsync(stream, uri.Segments.Last(), RepoStorageService);
                             break;
                         case RemoteDataType.GameSystem:
-                            var gstInfo = GameSystemInfo.CreateFromStream(memoryStream);
-                            memoryStream.Seek(0, SeekOrigin.Begin);
-                            using (var outStream = await RepoStorageService.GetGameSystemOutputStreamAsync(gstInfo))
-                            {
-                                await memoryStream.CopyToAsync(outStream);
-                            }
+                            await GameSystemFile.MoveToRepoStorageAsync(stream, uri.Segments.Last(), RepoStorageService);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
                 }
-                ProgressPercent = (++i/index.RemoteDataInfos.Count)*100;
+                ProgressPercent = ++i/index.RemoteDataInfos.Count*100;
             }
         }
 

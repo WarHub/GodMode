@@ -40,9 +40,16 @@
     <Compile Include="Behaviors\TappedBehavior.cs" />
     <Compile Include="CommandExtensions.cs" />
     <Compile Include="Commands\CommandsAutofacModule.cs" />
-    <Compile Include="Modules\DataAccess\Commands\AddRemoteDataSourceCommand.cs" />
+    <Compile Include="Modules\DataAccess\Commands\AddDataSourceCommand.cs" />
+    <Compile Include="Modules\DataAccess\Commands\BeginAddRemoteDataSourceCommand.cs" />
     <Compile Include="Modules\DataAccess\Commands\DownloadDataSourceCommand.cs" />
+    <Compile Include="Modules\DataAccess\Commands\OpenRemoteDataIndexCommand.cs" />
+    <Compile Include="Modules\DataAccess\Commands\RemoveDataSourceCommand.cs" />
+    <Compile Include="Modules\DataAccess\ViewModels\AddRemoteDataSourceViewModel.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\RemoteDataIndexViewModel.cs" />
+    <Compile Include="Modules\DataAccess\Views\AddRemoteDataSourcePage.xaml.cs">
+      <DependentUpon>AddRemoteDataSourcePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Modules\DataAccess\Views\RemoteDataIndexPage.xaml.cs">
       <DependentUpon>RemoteDataIndexPage.xaml</DependentUpon>
     </Compile>
@@ -375,6 +382,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Modules\DataAccess\Views\RemoteDataIndexPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Modules\DataAccess\Views\AddRemoteDataSourcePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

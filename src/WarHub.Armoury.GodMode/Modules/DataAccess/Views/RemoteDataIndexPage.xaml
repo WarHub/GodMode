@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:behaviors="clr-namespace:WarHub.Armoury.GodMode.Behaviors;assembly=WarHub.Armoury.GodMode"
@@ -6,23 +6,47 @@
              x:Class="WarHub.Armoury.GodMode.Modules.DataAccess.Views.RemoteDataIndexPage"
              x:Name="Page"
              BindingContext="{x:Static views:ViewModelLocator.RemoteDataIndexViewModel}"
-             Title="Remote Data Sources">
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
+             Title="Remote Data Sources"
+             IsBusy="{Binding DownloadDataSourceCommand.IsInProgress}">
+
+    <ContentPage.Resources>
+      <ResourceDictionary>
+        <DataTemplate x:Key="ItemTemplate">
+          <TextCell Text="{Binding Name}" Detail="{Binding IndexUri}">
+            <TextCell.ContextActions>
+              <MenuItem Text="delete"
+                        Command="{Binding BindingContext.RemoveDataSourceCommand, Source={x:Reference Page}}"
+                        IsDestructive="True" />
+            </TextCell.ContextActions>
+          </TextCell>
+        </DataTemplate>
+      </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Grid>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="Auto" />
-      </Grid.ColumnDefinitions>
-      <Button Grid.Column="1" Text="New" Command="{Binding AddRemoteDataSourceCommand}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+        </Grid>
+
+        <ListView Grid.Row="1"
+                  ItemsSource="{Binding DataSourceInfos}"
+                  ItemTemplate="{StaticResource ItemTemplate}"
+                  behaviors:ItemSelectedBehavior.Command="{Binding DownloadDataSourceCommand}" />
     </Grid>
 
-    <ListView Grid.Row="1" x:Name="ItemsListView"
-                                              ItemsSource="{Binding CatalogueItems}"
-                                              behaviors:ItemSelectedBehavior.Command="{Binding OpenCatalogueItemCommand}" />
-  </Grid>
+    <ContentPage.ToolbarItems>
+      <ToolbarItem Text="Add" Order="Primary" Command="{Binding BeginAddRemoteDataSourceCommand}">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource" WinPhone="Assets/plus.png" />
+        </ToolbarItem.Icon>
+      </ToolbarItem>
+    </ContentPage.ToolbarItems>
 </ContentPage>
