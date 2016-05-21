@@ -2,17 +2,16 @@
 
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-            xmlns:views1="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.Views;assembly=WarHub.Armoury.GodMode"
-            xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
+            xmlns:views="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.Views;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.RulePage"
             x:Name="Page"
-            BindingContext="{x:Static views1:ViewModelLocator.RuleViewModel}"
+            BindingContext="{x:Static views:ViewModelLocator.RuleViewModel}"
             Title="{Binding Name, StringFormat='{0} (Rule)'}">
 
     <ContentPage Title="Properties">
         <ScrollView>
             <StackLayout Orientation="Vertical">
-                <views1:IdentifierView BindingContext="{Binding Source={x:Reference Page}, Path=BindingContext.Id}" />
+                <views:IdentifierView BindingContext="{Binding Source={x:Reference Page}, Path=BindingContext.Id}" />
 
                 <Label>Rule Name</Label>
                 <Entry Text="{Binding Name}" Placeholder="Rule Name" />
@@ -20,7 +19,7 @@
                 <Label>Is hidden</Label>
                 <Switch IsToggled="{Binding IsHidden}" />
 
-                <views1:BookIndexView BindingContext="{Binding Source={x:Reference Page}, Path=BindingContext.Book}" />
+                <views:BookIndexView BindingContext="{Binding Source={x:Reference Page}, Path=BindingContext.Book}" />
 
                 <Label>Description</Label>
                 <Editor Text="{Binding Description}" />
@@ -28,6 +27,6 @@
         </ScrollView>
     </ContentPage>
 
-    <views1:ModifiersListPage />
+    <views:ModifiersListPage />
 
 </TabbedPage>

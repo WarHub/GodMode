@@ -3,11 +3,10 @@
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:controls="clr-namespace:WarHub.Armoury.GodMode.Controls;assembly=WarHub.Armoury.GodMode"
-            xmlns:views1="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.Views;assembly=WarHub.Armoury.GodMode"
-            xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
+            xmlns:views="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.Views;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.RuleModifierPage"
             x:Name="Page"
-            BindingContext="{x:Static views1:ViewModelLocator.RuleModifierViewModel}"
+            BindingContext="{x:Static views:ViewModelLocator.RuleModifierViewModel}"
             Title="Rule Modifier">
 
     <ContentPage Title="Properties">
@@ -25,6 +24,6 @@
         </ScrollView>
     </ContentPage>
 
-    <views1:ConditionItemsListPage />
+    <views:ConditionItemsListPage />
 
 </TabbedPage>

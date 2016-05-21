@@ -4,10 +4,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:WarHub.Armoury.GodMode.Controls;assembly=WarHub.Armoury.GodMode"
              xmlns:behaviors="clr-namespace:WarHub.Armoury.GodMode.Behaviors;assembly=WarHub.Armoury.GodMode"
+             xmlns:views="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.Views;assembly=WarHub.Armoury.GodMode"
              x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.CatalogueItemsListPage"
              x:Name="Page"
              Title="{Binding Source={x:Reference Page}, Path=ElementsCount, StringFormat='Elements ({0})'}">
-    <Grid>
+  <ContentPage.BindingContext>
+    <!--<x:Static Member="views:ViewModelLocator.CatalogueViewModel" />-->
+  </ContentPage.BindingContext>
+  <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
