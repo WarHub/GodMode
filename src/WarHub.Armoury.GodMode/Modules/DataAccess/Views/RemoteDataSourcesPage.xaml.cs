@@ -5,9 +5,9 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Views
 {
     using Xamarin.Forms;
 
-    public partial class AddRemoteDataSourcePage : ContentPage
+    public partial class RemoteDataSourcesPage : ContentPage
     {
-        public AddRemoteDataSourcePage()
+        public RemoteDataSourcesPage()
         {
             InitializeComponent();
         }

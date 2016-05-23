@@ -13,7 +13,7 @@ namespace WarHub.Armoury.GodMode.Modules.Home.ViewModels
     {
         private ICommand _openCatalogueCommand;
 
-        public MainViewModel(ICommandsAggregateService commands, OpenRemoteDataIndexCommand openRemoteDataIndexCommand)
+        public MainViewModel(ICommandsAggregateService commands, OpenRemoteDataSourcesCommand openRemoteDataIndexCommand)
         {
             Commands = commands;
             OpenRemoteDataIndexCommand = openRemoteDataIndexCommand;
@@ -24,7 +24,7 @@ namespace WarHub.Armoury.GodMode.Modules.Home.ViewModels
         public ICommand OpenCatalogueCommand
             => _openCatalogueCommand ?? (_openCatalogueCommand = Commands.OpenCatalogueCommand.SetParameter(new CatalogueInfo(Demo.DemoLoader.Catalogue)));
 
-        public OpenRemoteDataIndexCommand OpenRemoteDataIndexCommand { get; }
+        public OpenRemoteDataSourcesCommand OpenRemoteDataIndexCommand { get; }
 
         private ICommandsAggregateService Commands { get; }
     }

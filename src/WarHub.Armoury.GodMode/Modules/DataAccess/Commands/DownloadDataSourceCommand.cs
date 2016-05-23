@@ -7,6 +7,7 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using AppServices;
     using Model.BattleScribe.Files;
     using Model.DataAccess;
     using Model.Repo;
@@ -14,11 +15,17 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 
     public class DownloadDataSourceCommand : ProgressingAsyncCommandBase<RemoteDataSourceInfo>
     {
-        public DownloadDataSourceCommand(IRemoteDataService remoteDataService, IRepoStorageService repoStorageService)
+        public DownloadDataSourceCommand(IRemoteDataService remoteDataService, IRepoStorageService repoStorageService,
+            IDialogService dialogService)
         {
             RemoteDataService = remoteDataService;
             RepoStorageService = repoStorageService;
+            DialogService = dialogService;
+            UseHandleExecutionException = true;
+            RethrowExecutionException = false;
         }
+
+        private IDialogService DialogService { get; }
 
         private IRemoteDataService RemoteDataService { get; }
 
@@ -28,7 +35,10 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
         {
             var index = await RemoteDataService.DownloadIndexAsync(parameter);
             var i = 0;
-            foreach (var remoteDataInfo in index.RemoteDataInfos)
+            var orderedRemoteDataInfos =
+                index.RemoteDataInfos.Where(info => info.DataType == RemoteDataType.GameSystem).Concat(index
+                    .RemoteDataInfos.Where(info => info.DataType == RemoteDataType.Catalogue));
+            foreach (var remoteDataInfo in orderedRemoteDataInfos)
             {
                 OperationTitle = $"Downloading {remoteDataInfo.Name}";
                 var uri = new Uri(index.IndexUri, remoteDataInfo.IndexPathSuffix);
@@ -52,5 +62,10 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
         }
 
         protected override bool CanExecuteCore(RemoteDataSourceInfo parameter) => parameter != null;
+
+        protected override void HandleExecutionException(Exception e)
+        {
+            DialogService.ShowDialogAsync("Error", e.Message, "oh well");
+        }
     }
 }

@@ -43,15 +43,24 @@
     <Compile Include="Modules\DataAccess\Commands\AddDataSourceCommand.cs" />
     <Compile Include="Modules\DataAccess\Commands\BeginAddRemoteDataSourceCommand.cs" />
     <Compile Include="Modules\DataAccess\Commands\DownloadDataSourceCommand.cs" />
-    <Compile Include="Modules\DataAccess\Commands\OpenRemoteDataIndexCommand.cs" />
+    <Compile Include="Modules\DataAccess\Commands\DownloadSingleDataItemCommand.cs" />
+    <Compile Include="Modules\DataAccess\Commands\OpenRemoteDataSourceIndexCommand.cs" />
+    <Compile Include="Modules\DataAccess\Commands\OpenRemoteDataSourcesCommand.cs" />
     <Compile Include="Modules\DataAccess\Commands\RemoveDataSourceCommand.cs" />
+    <Compile Include="Modules\DataAccess\Controls\GroupingFilteringUpdateItemListView.cs" />
+    <Compile Include="Modules\DataAccess\Converters\RemoteDataUpdateInfoToDetailConverter.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\AddRemoteDataSourceViewModel.cs" />
-    <Compile Include="Modules\DataAccess\ViewModels\RemoteDataIndexViewModel.cs" />
+    <Compile Include="Modules\DataAccess\ViewModels\RemoteDataSourceIndexViewModel.cs" />
+    <Compile Include="Modules\DataAccess\ViewModels\RemoteDataSourcesViewModel.cs" />
+    <Compile Include="Modules\DataAccess\ViewModels\RemoteDataUpdateInfoViewModel.cs" />
     <Compile Include="Modules\DataAccess\Views\AddRemoteDataSourcePage.xaml.cs">
       <DependentUpon>AddRemoteDataSourcePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Modules\DataAccess\Views\RemoteDataIndexPage.xaml.cs">
-      <DependentUpon>RemoteDataIndexPage.xaml</DependentUpon>
+    <Compile Include="Modules\DataAccess\Views\RemoteDataSourceIndexPage.xaml.cs">
+      <DependentUpon>RemoteDataSourceIndexPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\DataAccess\Views\RemoteDataSourcesPage.xaml.cs">
+      <DependentUpon>RemoteDataSourcesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\DataAccess\Views\ViewModelLocator.cs" />
     <Compile Include="Modules\Editor\Commands\CreateCatalogueItemCommand.cs" />
@@ -381,13 +390,19 @@
     <Folder Include="Modules\Home\Services\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Modules\DataAccess\Views\RemoteDataIndexPage.xaml">
+    <EmbeddedResource Include="Modules\DataAccess\Views\RemoteDataSourcesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Modules\DataAccess\Views\AddRemoteDataSourcePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Modules\DataAccess\Views\RemoteDataSourceIndexPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

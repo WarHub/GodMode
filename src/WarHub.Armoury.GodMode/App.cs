@@ -7,6 +7,7 @@ namespace WarHub.Armoury.GodMode
     using System.Reflection;
     using System.Threading.Tasks;
     using Autofac;
+    using Model.BattleScribe.Services;
     using Model.DataAccess;
     using Model.DataAccess.Autofac;
     using Modules.Home.Commands;
@@ -45,6 +46,7 @@ namespace WarHub.Armoury.GodMode
             builder.RegisterAssemblyModules(GetType().GetTypeInfo().Assembly);
             builder.RegisterModule<DataAccessModule>();
             builder.RegisterType<Dispatcher>().AsImplementedInterfaces();
+            builder.RegisterType<BattleScribeRepoManager>().AsImplementedInterfaces();
             return builder.Build();
         }
 

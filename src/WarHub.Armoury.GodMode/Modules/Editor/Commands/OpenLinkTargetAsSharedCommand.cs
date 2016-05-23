@@ -20,7 +20,7 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
         {
         }
 
-        protected override async Task Navigate(NavTuple navTuple)
+        protected override async Task NavigateAsync(NavTuple navTuple)
         {
             while (NavigationService.NavigationStack.Count > 0)
             {

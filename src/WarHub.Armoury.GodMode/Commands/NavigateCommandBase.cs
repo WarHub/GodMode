@@ -42,7 +42,7 @@ namespace WarHub.Armoury.GodMode.Commands
                         GetErrorString(), "Oh well");
                 return;
             }
-            await Navigate(navTuple);
+            await NavigateAsync(navTuple);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace WarHub.Armoury.GodMode.Commands
         /// </summary>
         /// <param name="navTuple"></param>
         /// <returns></returns>
-        protected virtual async Task Navigate(NavTuple navTuple)
+        protected virtual async Task NavigateAsync(NavTuple navTuple)
         {
             await NavigationService.NavigateAsync(navTuple.Page, navTuple.ViewModel);
         }
@@ -106,7 +106,7 @@ namespace WarHub.Armoury.GodMode.Commands
                         GetErrorString(parameter), "Oh well");
                 return;
             }
-            await Navigate(navTuple);
+            await NavigateAsync(navTuple);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace WarHub.Armoury.GodMode.Commands
         /// </summary>
         /// <param name="navTuple"></param>
         /// <returns></returns>
-        protected virtual async Task Navigate(NavTuple navTuple)
+        protected virtual async Task NavigateAsync(NavTuple navTuple)
         {
             await NavigationService.NavigateAsync(navTuple.Page, navTuple.ViewModel);
         }

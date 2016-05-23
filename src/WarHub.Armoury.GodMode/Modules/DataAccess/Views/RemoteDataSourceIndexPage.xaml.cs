@@ -5,11 +5,16 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Views
 {
     using Xamarin.Forms;
 
-    public partial class AddRemoteDataSourcePage : ContentPage
+    public partial class RemoteDataSourceIndexPage : ContentPage
     {
-        public AddRemoteDataSourcePage()
+        public RemoteDataSourceIndexPage()
         {
             InitializeComponent();
+        }
+
+        private void SearchBar_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            ItemsListView.Filter(e.NewTextValue);
         }
     }
 }

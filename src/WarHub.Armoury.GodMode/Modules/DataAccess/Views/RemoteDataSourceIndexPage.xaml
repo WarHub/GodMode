@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:WarHub.Armoury.GodMode.Behaviors;assembly=WarHub.Armoury.GodMode"
+             xmlns:views="clr-namespace:WarHub.Armoury.GodMode.Modules.DataAccess.Views;assembly=WarHub.Armoury.GodMode"
+             xmlns:converters="clr-namespace:WarHub.Armoury.GodMode.Modules.DataAccess.Converters;assembly=WarHub.Armoury.GodMode"
+             xmlns:controls="clr-namespace:WarHub.Armoury.GodMode.Modules.DataAccess.Controls;assembly=WarHub.Armoury.GodMode"
+             x:Class="WarHub.Armoury.GodMode.Modules.DataAccess.Views.RemoteDataSourceIndexPage"
+             x:Name="Page"
+             BindingContext="{x:Static views:ViewModelLocator.RemoteDataSourceIndexViewModel}"
+             Title="Remote Data Sources">
+
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:RemoteDataUpdateInfoToDetailConverter x:Key="RemoteDataUpdateInfoToDetailConverter" />
+            <DataTemplate x:Key="ItemTemplate">
+                <TextCell Text="{Binding RemoteDataInfo.Name}"
+                          Detail="{Binding Converter={StaticResource RemoteDataUpdateInfoToDetailConverter}}"
+                          Command="{Binding DownloadCommand}"
+                          CommandParameter="{Binding}" />
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+          <SearchBar Placeholder="Search" TextChanged="SearchBar_OnTextChanged" />
+        </Grid>
+
+      <controls:GroupingFilteringUpdateItemListView
+        Grid.Row="1"
+        x:Name="ItemsListView"
+        Header="Game systems:"
+        ItemsBaseSource="{Binding UpdateInfos}"
+        ItemTemplate="{StaticResource ItemTemplate}" />
+      
+    </Grid>
+</ContentPage>
