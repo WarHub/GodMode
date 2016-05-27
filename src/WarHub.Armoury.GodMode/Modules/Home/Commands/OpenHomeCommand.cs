@@ -4,16 +4,18 @@
 namespace WarHub.Armoury.GodMode.Modules.Home.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using AppServices;
     using GodMode.Commands;
     using ViewModels;
     using Views;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class OpenHomeCommand : NavigateCommandBase
     {
-        public OpenHomeCommand(IDialogService dialogService, INavigationService navigationService,
-            Func<MainViewModel> mainVmFactory) : base(dialogService, navigationService)
+        public OpenHomeCommand(IAppCommandDependencyAggregate dependencyAggregate, INavigationService navigationService,
+            Func<MainViewModel> mainVmFactory) : base(dependencyAggregate, navigationService)
         {
             MainVmFactory = mainVmFactory;
         }

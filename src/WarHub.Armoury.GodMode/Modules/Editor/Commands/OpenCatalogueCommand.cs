@@ -4,6 +4,7 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using AppServices;
     using Demo;
     using GodMode.Commands;
@@ -12,11 +13,12 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
     using ViewModels;
     using Views;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class OpenCatalogueCommand : NavigateCommandBase<CatalogueInfo>
     {
-        public OpenCatalogueCommand(IDialogService dialogService, INavigationService navigationService,
-            Func<ICatalogue, CatalogueViewModel> catalogueVmFactory)
-            : base(dialogService, navigationService)
+        public OpenCatalogueCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            INavigationService navigationService, Func<ICatalogue, CatalogueViewModel> catalogueVmFactory)
+            : base(dependencyAggregate, navigationService)
         {
             CatalogueVmFactory = catalogueVmFactory;
         }

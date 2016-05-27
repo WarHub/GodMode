@@ -29,7 +29,7 @@ namespace WarHub.Armoury.GodMode.Bindables
             Map = map;
             ReverseMap = reverseMap;
             Key = key;
-            ShortKey = ShortenKey(key);
+            ShortKey = key.ShortenKey();
             Items = new ObservableCollection<T>(itemsSource.Select(map));
             ((INotifyPropertyChanged) Items).PropertyChanged += OnItemsPropertyChanged;
             Items.CollectionChanged += OnItemsCollectionChanged;
@@ -124,16 +124,6 @@ namespace WarHub.Armoury.GodMode.Bindables
         private void OnItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             CollectionChangedCore?.Invoke(this, e);
-        }
-
-        private static string ShortenKey(string key)
-        {
-            if (string.IsNullOrWhiteSpace(key))
-            {
-                return null;
-            }
-            var words = key.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
-            return string.Join(" ", words.Select(word => $"{word.Substring(0, 1)}."));
         }
 
         private void OnItemsPropertyChanged(object sender, PropertyChangedEventArgs e)

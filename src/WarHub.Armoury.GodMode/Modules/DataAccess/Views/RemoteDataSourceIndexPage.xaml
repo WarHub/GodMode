@@ -5,6 +5,7 @@
              xmlns:views="clr-namespace:WarHub.Armoury.GodMode.Modules.DataAccess.Views;assembly=WarHub.Armoury.GodMode"
              xmlns:converters="clr-namespace:WarHub.Armoury.GodMode.Modules.DataAccess.Converters;assembly=WarHub.Armoury.GodMode"
              xmlns:controls="clr-namespace:WarHub.Armoury.GodMode.Modules.DataAccess.Controls;assembly=WarHub.Armoury.GodMode"
+             xmlns:converters1="clr-namespace:WarHub.Armoury.GodMode.Converters;assembly=WarHub.Armoury.GodMode"
              x:Class="WarHub.Armoury.GodMode.Modules.DataAccess.Views.RemoteDataSourceIndexPage"
              x:Name="Page"
              BindingContext="{x:Static views:ViewModelLocator.RemoteDataSourceIndexViewModel}"
@@ -13,10 +14,14 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:RemoteDataUpdateInfoToDetailConverter x:Key="RemoteDataUpdateInfoToDetailConverter" />
+            <converters:RemoteAgainstLocalInfoToDetailConverter x:Key="RemoteAgainstLocalInfoToDetailConverter" />
+            <converters:RemoteAgainstLocalInfoToDetailColorConverter
+                x:Key="RemoteAgainstLocalInfoToDetailColorConverter" />
+            <converters1:ProgressPercentToProgressConverter x:Key="ProgressPercentToProgressConverter" />
             <DataTemplate x:Key="ItemTemplate">
-                <TextCell Text="{Binding RemoteDataInfo.Name}"
-                          Detail="{Binding Converter={StaticResource RemoteDataUpdateInfoToDetailConverter}}"
+                <TextCell Text="{Binding DataName}"
+                          Detail="{Binding RemoteAgainstLocalInfo, Converter={StaticResource RemoteAgainstLocalInfoToDetailConverter}}"
+                          DetailColor="{Binding RemoteAgainstLocalInfo, Converter={StaticResource RemoteAgainstLocalInfoToDetailColorConverter}}"
                           Command="{Binding DownloadCommand}"
                           CommandParameter="{Binding}" />
             </DataTemplate>
@@ -26,23 +31,49 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Grid.Row="0" Text="Status:" />
+            <Label Grid.Column="1" Grid.Row="0" Text="{Binding DownloadCommand.OperationTitle}"
+                   HorizontalTextAlignment="End" />
+            <ProgressBar Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1"
+                         IsVisible="{Binding DownloadCommand.IsInProgress}"
+                         Progress="{Binding DownloadCommand.ProgressPercent, Converter={StaticResource ProgressPercentToProgressConverter}}" />
+        </Grid>
+
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-          <SearchBar Placeholder="Search" TextChanged="SearchBar_OnTextChanged" />
+            <SearchBar Placeholder="Search" TextChanged="SearchBar_OnTextChanged" />
         </Grid>
 
-      <controls:GroupingFilteringUpdateItemListView
-        Grid.Row="1"
-        x:Name="ItemsListView"
-        Header="Game systems:"
-        ItemsBaseSource="{Binding UpdateInfos}"
-        ItemTemplate="{StaticResource ItemTemplate}" />
-      
+        <controls:GroupingFilteringUpdateItemListView
+            Grid.Row="2"
+            x:Name="ItemsListView"
+            Header="Game systems:"
+            ItemsBaseSource="{Binding UpdateInfos}"
+            ItemTemplate="{StaticResource ItemTemplate}" />
+
     </Grid>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Download" Command="{Binding DownloadCommand}" CommandParameter="{Binding}">
+            <ToolbarItem.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource" WinPhone="Assets/download.png" />
+            </ToolbarItem.Icon>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
 </ContentPage>

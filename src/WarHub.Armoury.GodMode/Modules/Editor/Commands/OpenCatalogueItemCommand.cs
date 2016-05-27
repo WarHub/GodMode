@@ -4,6 +4,7 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using AppServices;
     using GodMode.Commands;
     using Model;
@@ -11,24 +12,24 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
     using ViewModels;
     using Views;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class OpenCatalogueItemCommand : NavigateCommandBase<CatalogueItemFacade>
     {
-        public OpenCatalogueItemCommand(INavigationService navigationService, IDialogService dialogService,
-            Func<IEntry, EntryViewModel> entryVmFactory, Func<IEntryLink, EntryLinkViewModel> entryLinkVmFactory,
-            Func<IGroup, GroupViewModel> groupVmFactory, Func<IGroupLink, GroupLinkViewModel> groupLinkVmFactory,
-            Func<IProfile, ProfileViewModel> profileVmFactory,
-            Func<IProfileLink, ProfileLinkViewModel> profileLinkVmFactory,
-            Func<IRule, RuleViewModel> ruleVmFactory, Func<IRuleLink, RuleLinkViewModel> ruleLinkVmFactory)
-            : base(dialogService, navigationService)
+        public OpenCatalogueItemCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            INavigationService navigationService, Func<IEntryLink, EntryLinkViewModel> entryLinkVmFactory,
+            Func<IEntry, EntryViewModel> entryVmFactory, Func<IGroupLink, GroupLinkViewModel> groupLinkVmFactory,
+            Func<IGroup, GroupViewModel> groupVmFactory, Func<IProfileLink, ProfileLinkViewModel> profileLinkVmFactory,
+            Func<IProfile, ProfileViewModel> profileVmFactory, Func<IRuleLink, RuleLinkViewModel> ruleLinkVmFactory,
+            Func<IRule, RuleViewModel> ruleVmFactory) : base(dependencyAggregate, navigationService)
         {
-            EntryVmFactory = entryVmFactory;
             EntryLinkVmFactory = entryLinkVmFactory;
-            GroupVmFactory = groupVmFactory;
+            EntryVmFactory = entryVmFactory;
             GroupLinkVmFactory = groupLinkVmFactory;
-            ProfileVmFactory = profileVmFactory;
+            GroupVmFactory = groupVmFactory;
             ProfileLinkVmFactory = profileLinkVmFactory;
-            RuleVmFactory = ruleVmFactory;
+            ProfileVmFactory = profileVmFactory;
             RuleLinkVmFactory = ruleLinkVmFactory;
+            RuleVmFactory = ruleVmFactory;
         }
 
         private Func<IEntryLink, EntryLinkViewModel> EntryLinkVmFactory { get; }

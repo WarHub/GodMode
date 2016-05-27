@@ -39,7 +39,13 @@
     <Compile Include="Behaviors\ItemSelectedBehavior.cs" />
     <Compile Include="Behaviors\TappedBehavior.cs" />
     <Compile Include="CommandExtensions.cs" />
-    <Compile Include="Commands\CommandsAutofacModule.cs" />
+    <Compile Include="Commands\AppAsyncCommandBase.cs" />
+    <Compile Include="Commands\AppCommandBase.cs" />
+    <Compile Include="Commands\CommandExceptionHandlingExtensions.cs" />
+    <Compile Include="Commands\IAppCommandDependencyAggregate.cs" />
+    <Compile Include="Commands\NavTupleExtensions.cs" />
+    <Compile Include="Commands\WrappingCommand.cs" />
+    <Compile Include="Converters\ProgressPercentToProgressConverter.cs" />
     <Compile Include="Modules\DataAccess\Commands\AddDataSourceCommand.cs" />
     <Compile Include="Modules\DataAccess\Commands\BeginAddRemoteDataSourceCommand.cs" />
     <Compile Include="Modules\DataAccess\Commands\DownloadDataSourceCommand.cs" />
@@ -48,7 +54,8 @@
     <Compile Include="Modules\DataAccess\Commands\OpenRemoteDataSourcesCommand.cs" />
     <Compile Include="Modules\DataAccess\Commands\RemoveDataSourceCommand.cs" />
     <Compile Include="Modules\DataAccess\Controls\GroupingFilteringUpdateItemListView.cs" />
-    <Compile Include="Modules\DataAccess\Converters\RemoteDataUpdateInfoToDetailConverter.cs" />
+    <Compile Include="Modules\DataAccess\Converters\RemoteAgainstLocalInfoToDetailColorConverter.cs" />
+    <Compile Include="Modules\DataAccess\Converters\RemoteAgainstLocalInfoToDetailConverter.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\AddRemoteDataSourceViewModel.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\RemoteDataSourceIndexViewModel.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\RemoteDataSourcesViewModel.cs" />
@@ -114,6 +121,26 @@
     <Compile Include="Modules\Editor\Views\ViewModelLocator.cs" />
     <Compile Include="Modules\Home\Commands\OpenHomeCommand.cs" />
     <Compile Include="Modules\Home\Views\ViewModelLocator.cs" />
+    <Compile Include="Modules\StorageExplorer\Commands\DeleteFileCommand.cs" />
+    <Compile Include="Modules\StorageExplorer\Commands\OpenFileDetailsCommand.cs" />
+    <Compile Include="Modules\StorageExplorer\Commands\OpenFolderCommand.cs" />
+    <Compile Include="Modules\StorageExplorer\Commands\OpenStorageHomeCommand.cs" />
+    <Compile Include="Modules\StorageExplorer\Commands\DeleteFolderCommand.cs" />
+    <Compile Include="Modules\StorageExplorer\Controls\GroupingStorageItemListView.cs" />
+    <Compile Include="Modules\StorageExplorer\Controls\StorageItemTemplateSelector.cs" />
+    <Compile Include="Modules\StorageExplorer\ViewModels\StorageFileDetailsViewModel.cs" />
+    <Compile Include="Modules\StorageExplorer\ViewModels\StorageFolderViewModel.cs" />
+    <Compile Include="Modules\StorageExplorer\ViewModels\StorageHomeViewModel.cs" />
+    <Compile Include="Modules\StorageExplorer\Views\StorageFilePage.xaml.cs">
+      <DependentUpon>StorageFilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\StorageExplorer\Views\StorageFolderPage.xaml.cs">
+      <DependentUpon>StorageFolderPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\StorageExplorer\Views\StorageHomePage.xaml.cs">
+      <DependentUpon>StorageHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\StorageExplorer\Views\ViewModelLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppServices\ICommandsAggregateService.cs" />
     <Compile Include="AppServices\IDialogService.cs" />
@@ -123,7 +150,7 @@
     <Compile Include="AppServices\Implementations\PageService.cs" />
     <Compile Include="AppServices\INavigationService.cs" />
     <Compile Include="AppServices\IPageService.cs" />
-    <Compile Include="AppServices\ServicesAutofacModule.cs" />
+    <Compile Include="GodModeAutofacModule.cs" />
     <Compile Include="Modules\Editor\ViewModels\BookIndexViewModel.cs" />
     <Compile Include="Modules\Editor\ViewModels\CatalogueConditionGroupViewModel.cs" />
     <Compile Include="Modules\Editor\ViewModels\CatalogueConditionViewModel.cs" />
@@ -403,6 +430,24 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Modules\DataAccess\Views\RemoteDataSourceIndexPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Modules\StorageExplorer\Views\StorageHomePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Modules\StorageExplorer\Views\StorageFolderPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Modules\StorageExplorer\Views\StorageFilePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

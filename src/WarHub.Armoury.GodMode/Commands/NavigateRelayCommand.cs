@@ -4,40 +4,58 @@
 namespace WarHub.Armoury.GodMode.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using AppServices;
-    using Mvvm.Commands;
 
-    public class NavigateRelayCommand<T> : ProgressingAsyncCommandBase<T>
+    public delegate NavTuple NavTupleFactory();
+
+    public delegate NavTuple NavTupleFactory<in T>(T parameter);
+
+    public delegate NavigateRelayCommand<T> NavigateWithParamCommandFactory<T>(
+        NavTupleFactory<T> navTupleFactory, Func<NavTuple, INavigationService, Task> navigateAsyncFunc = null,
+        Func<T, bool> canExecuteFunc = null);
+
+    public delegate NavigateRelayCommand NavigateCommandFactory(
+        NavTupleFactory navTupleFactory, Func<NavTuple, INavigationService, Task> navigateAsyncFunc = null,
+        Func<bool> canExecuteFunc = null);
+
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    public sealed class NavigateRelayCommand<T> : NavigateCommandBase<T>
     {
-        public NavigateRelayCommand(INavigationService navigationService)
+        public NavigateRelayCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            INavigationService navigationService, NavTupleFactory<T> navTupleFactory,
+            Func<NavTuple, INavigationService, Task> navigateAsyncFunc = null, Func<T, bool> canExecuteFunc = null)
+            : base(dependencyAggregate, navigationService)
         {
-            NavigationService = navigationService;
+            if (navTupleFactory == null)
+                throw new ArgumentNullException(nameof(navTupleFactory));
+            CanExecuteFunc = canExecuteFunc;
+            NavTupleFactory = navTupleFactory;
+            NavigateAsyncFunc = navigateAsyncFunc;
         }
 
-        protected INavigationService NavigationService { get; }
+        private Func<T, bool> CanExecuteFunc { get; }
 
-        private Func<T, bool> CanExecuteFunc { get; set; }
+        private Func<NavTuple, INavigationService, Task> NavigateAsyncFunc { get; }
 
-        private Func<T, INavigationService, Task> NavigateAsync { get; set; }
+        private NavTupleFactory<T> NavTupleFactory { get; }
 
-        public NavigateRelayCommand<T> Configure(Func<T, INavigationService, Task> navigateAsync,
-            Func<T, bool> canExecuteFunc = null)
+        protected override async Task NavigateAsync(NavTuple navTuple)
         {
-            return new NavigateRelayCommand<T>(NavigationService)
+            if (NavigateAsyncFunc != null)
             {
-                NavigateAsync = navigateAsync,
-                CanExecuteFunc = canExecuteFunc
-            };
-        }
-
-        protected override async Task ExecuteCoreAsync(T parameter)
-        {
-            var task = NavigateAsync?.Invoke(parameter, NavigationService);
-            if (task != null)
-            {
-                await task;
+                await NavigateAsyncFunc(navTuple, NavigationService);
             }
+            else
+            {
+                await base.NavigateAsync(navTuple);
+            }
+        }
+
+        protected override NavTuple GetNavTuple(T parameter)
+        {
+            return NavTupleFactory(parameter);
         }
 
         protected override bool CanExecuteCore(T parameter)
@@ -46,35 +64,47 @@ namespace WarHub.Armoury.GodMode.Commands
         }
     }
 
-    public class NavigateRelayCommand : ProgressingAsyncCommandBase
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    public sealed class NavigateRelayCommand : NavigateCommandBase
     {
-        public NavigateRelayCommand(INavigationService navigationService)
+        public NavigateRelayCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            INavigationService navigationService, NavTupleFactory navTupleFactory,
+            Func<NavTuple, INavigationService, Task> navigateAsyncFunc = null, Func<bool> canExecuteFunc = null)
+            : base(dependencyAggregate, navigationService)
         {
-            NavigationService = navigationService;
+            if (navTupleFactory == null)
+                throw new ArgumentNullException(nameof(navTupleFactory));
+            CanExecuteFunc = canExecuteFunc;
+            NavigateAsyncFunc = navigateAsyncFunc;
+            NavTupleFactory = navTupleFactory;
         }
 
-        protected INavigationService NavigationService { get; }
+        private Func<bool> CanExecuteFunc { get; }
 
-        private Func<INavigationService, Task> NavigateAsync { get; set; }
+        private Func<NavTuple, INavigationService, Task> NavigateAsyncFunc { get; }
 
-        public NavigateRelayCommand Configure(Func<INavigationService, Task> navigateAsync)
+        private NavTupleFactory NavTupleFactory { get; }
+
+        protected override async Task NavigateAsync(NavTuple navTuple)
         {
-            return new NavigateRelayCommand(NavigationService) {NavigateAsync = navigateAsync};
-        }
-
-        public NavigateRelayCommand<T> Configure<T>(Func<T, INavigationService, Task> navigateAsync,
-            Func<T, bool> canExecuteFunc = null)
-        {
-            return new NavigateRelayCommand<T>(NavigationService).Configure(navigateAsync, canExecuteFunc);
-        }
-
-        protected override async Task ExecuteCoreAsync()
-        {
-            var task = NavigateAsync?.Invoke(NavigationService);
-            if (task != null)
+            if (NavigateAsyncFunc != null)
             {
-                await task;
+                await NavigateAsyncFunc(navTuple, NavigationService);
             }
+            else
+            {
+                await base.NavigateAsync(navTuple);
+            }
+        }
+
+        protected override NavTuple GetNavTuple()
+        {
+            return NavTupleFactory();
+        }
+
+        protected override bool CanExecuteCore()
+        {
+            return CanExecuteFunc?.Invoke() ?? true;
         }
     }
 }

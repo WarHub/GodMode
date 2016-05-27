@@ -3,6 +3,7 @@
 
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using AppServices;
     using GodMode.Commands;
@@ -10,14 +11,16 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
     using ViewModels;
     using Views;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class OpenRemoteDataSourceIndexCommand : NavigateCommandBase<RemoteDataSourceInfo>
     {
-        public OpenRemoteDataSourceIndexCommand(IDialogService dialogService, INavigationService navigationService,
-            RemoteDataSourceIndexVmFactory remoteDataSourceIndexVmFactory, IRemoteDataService remoteDataService)
-            : base(dialogService, navigationService)
+        public OpenRemoteDataSourceIndexCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            INavigationService navigationService, IRemoteDataService remoteDataService,
+            RemoteDataSourceIndexVmFactory remoteDataSourceIndexVmFactory)
+            : base(dependencyAggregate, navigationService)
         {
-            RemoteDataSourceIndexVmFactory = remoteDataSourceIndexVmFactory;
             RemoteDataService = remoteDataService;
+            RemoteDataSourceIndexVmFactory = remoteDataSourceIndexVmFactory;
         }
 
         private IRemoteDataService RemoteDataService { get; }

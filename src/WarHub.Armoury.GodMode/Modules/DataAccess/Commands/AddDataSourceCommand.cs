@@ -5,16 +5,19 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 {
     using System;
     using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using AppServices;
     using GodMode.Commands;
     using Model.DataAccess;
     using ViewModels;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class AddDataSourceCommand : NavigateCommandBase<AddRemoteDataSourceViewModel>
     {
-        public AddDataSourceCommand(IDialogService dialogService, INavigationService navigationService,
-            IRemoteDataService remoteDataService) : base(dialogService, navigationService)
+        public AddDataSourceCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            INavigationService navigationService, IRemoteDataService remoteDataService)
+            : base(dependencyAggregate, navigationService)
         {
             RemoteDataService = remoteDataService;
         }

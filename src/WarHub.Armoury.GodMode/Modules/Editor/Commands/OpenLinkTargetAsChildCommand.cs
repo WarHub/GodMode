@@ -4,6 +4,7 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using AppServices;
     using GodMode.Commands;
     using Model;
@@ -11,12 +12,14 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
     using ViewModels;
     using Views;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
     public class OpenLinkTargetAsChildCommand : NavigateCommandBase<CatalogueItemFacade>
     {
-        public OpenLinkTargetAsChildCommand(IDialogService dialogService, INavigationService navigationService,
-            Func<IEntry, EntryViewModel> entryVmFactory, Func<IGroup, GroupViewModel> groupVmFactory,
-            Func<IProfile, ProfileViewModel> profileVmFactory, Func<IRule, RuleViewModel> ruleVmFactory)
-            : base(dialogService, navigationService)
+        public OpenLinkTargetAsChildCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            INavigationService navigationService, Func<IEntry, EntryViewModel> entryVmFactory,
+            Func<IGroup, GroupViewModel> groupVmFactory, Func<IProfile, ProfileViewModel> profileVmFactory,
+            Func<IRule, RuleViewModel> ruleVmFactory) : base(dependencyAggregate, navigationService)
         {
             EntryVmFactory = entryVmFactory;
             GroupVmFactory = groupVmFactory;

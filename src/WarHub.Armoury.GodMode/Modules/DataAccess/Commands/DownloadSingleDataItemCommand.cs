@@ -4,17 +4,20 @@
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using GodMode.Commands;
     using Model.BattleScribe.Files;
     using Model.Repo;
-    using Mvvm.Commands;
     using ViewModels;
 
-    public class DownloadSingleDataItemCommand : ProgressingAsyncCommandBase<RemoteDataUpdateInfoViewModel>
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    public class DownloadSingleDataItemCommand : AppAsyncCommandBase<RemoteDataUpdateInfoViewModel>
     {
-        public DownloadSingleDataItemCommand(IRepoStorageService repoStorageService)
+        public DownloadSingleDataItemCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            IRepoStorageService repoStorageService) : base(dependencyAggregate)
         {
             RepoStorageService = repoStorageService;
         }
@@ -25,7 +28,7 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
         {
             var remoteDataInfo = parameter.RemoteDataInfo;
             var indexUri = parameter.IndexUri;
-            OperationTitle = $"Downloading {remoteDataInfo.Name}";
+            OperationTitle = $"Downloading {parameter.DataName}";
             var uri = new Uri(indexUri, remoteDataInfo.IndexPathSuffix);
             using (var client = new HttpClient())
             using (var stream = await client.GetStreamAsync(uri))
@@ -42,6 +45,9 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
                         throw new ArgumentOutOfRangeException();
                 }
             }
+            parameter.UpdateLocalInfo();
         }
+
+        protected override bool CanExecuteCore(RemoteDataUpdateInfoViewModel parameter) => parameter != null;
     }
 }

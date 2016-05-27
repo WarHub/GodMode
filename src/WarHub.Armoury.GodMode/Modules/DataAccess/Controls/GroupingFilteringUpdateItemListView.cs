@@ -8,7 +8,7 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Controls
 
     public class GroupingFilteringUpdateItemListView : GroupingFilteringListViewBase<RemoteDataUpdateInfoViewModel>
     {
-        public override string SelectKey(RemoteDataUpdateInfoViewModel item)
+        protected override string SelectKey(RemoteDataUpdateInfoViewModel item)
         {
             return item.RemoteDataInfo.Name;
         }

@@ -3,6 +3,7 @@
 
 namespace WarHub.Armoury.GodMode
 {
+    using System;
     using Commands;
     using Mvvm.Commands;
 
@@ -16,6 +17,12 @@ namespace WarHub.Armoury.GodMode
         public static ICommand SetParameter<T>(this ICommand<T> command, T parameter)
         {
             return new ParameterWrapperCommand(command, parameter);
+        }
+
+        public static System.Windows.Input.ICommand WrapWith(this System.Windows.Input.ICommand innerCommand,
+            Action<object> preExecuteAction = null, Action<object> postExecuteAction = null)
+        {
+            return new WrappingCommand(innerCommand, preExecuteAction, postExecuteAction);
         }
     }
 }

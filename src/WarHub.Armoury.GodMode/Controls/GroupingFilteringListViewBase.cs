@@ -64,7 +64,7 @@ namespace WarHub.Armoury.GodMode.Controls
             EndRefresh();
         }
 
-        public abstract string SelectKey(T item);
+        protected abstract string SelectKey(T item);
 
         private static IEnumerable<IBindableGrouping<T>> EmptyGrouping()
         {

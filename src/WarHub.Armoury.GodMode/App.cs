@@ -4,6 +4,7 @@
 namespace WarHub.Armoury.GodMode
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
     using System.Threading.Tasks;
     using Autofac;
@@ -43,28 +44,8 @@ namespace WarHub.Armoury.GodMode
         private IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterAssemblyModules(GetType().GetTypeInfo().Assembly);
-            builder.RegisterModule<DataAccessModule>();
-            builder.RegisterType<Dispatcher>().AsImplementedInterfaces();
-            builder.RegisterType<BattleScribeRepoManager>().AsImplementedInterfaces();
+            builder.RegisterModule<GodModeAutofacModule>();
             return builder.Build();
-        }
-
-        private class Dispatcher : IDispatcher
-        {
-            public Task InvokeOnUiAsync(Action action)
-            {
-                var task = new Task(action);
-                Device.BeginInvokeOnMainThread(() => task.RunSynchronously());
-                return task;
-            }
-
-            public Task InvokeOnUiAsync(Func<Task> asyncAction)
-            {
-                var task = new Task(async () => await asyncAction());
-                Device.BeginInvokeOnMainThread(() => task.RunSynchronously());
-                return task;
-            }
         }
     }
 }

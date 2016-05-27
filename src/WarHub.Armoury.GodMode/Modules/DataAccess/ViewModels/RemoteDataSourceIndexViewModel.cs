@@ -4,20 +4,24 @@
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Bindables;
+    using Commands;
     using Model.Repo;
     using Mvvm;
 
     public delegate RemoteDataSourceIndexViewModel RemoteDataSourceIndexVmFactory(
         RemoteDataSourceIndex remoteDataSourceIndex);
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class RemoteDataSourceIndexViewModel : ViewModelBase
     {
         public RemoteDataSourceIndexViewModel(RemoteDataSourceIndex remoteDataSourceIndex,
-            RemoteDataUpdateInfoVmFactory remoteDataUpdateInfoVmFactory)
+            RemoteDataUpdateInfoVmFactory remoteDataUpdateInfoVmFactory, DownloadDataSourceCommand downloadCommand)
         {
             RemoteDataSourceIndex = remoteDataSourceIndex;
+            DownloadCommand = downloadCommand;
             GameSystemUpdateInfoViewModels = RemoteDataSourceIndex.RemoteDataInfos
                 .Where(info => info.DataType == RemoteDataType.GameSystem)
                 .OrderBy(info => info.Name)
@@ -32,9 +36,7 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
                 .ToBindableGrouping("Catalogues", "cat");
         }
 
-        public IBindableGrouping<RemoteDataUpdateInfoViewModel> CatalogueUpdateInfoViewModels { get; }
-
-        public IBindableGrouping<RemoteDataUpdateInfoViewModel> GameSystemUpdateInfoViewModels { get; }
+        public DownloadDataSourceCommand DownloadCommand { get; }
 
         public IEnumerable<IBindableGrouping<RemoteDataUpdateInfoViewModel>> UpdateInfos
         {
@@ -44,6 +46,10 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
                 yield return CatalogueUpdateInfoViewModels;
             }
         }
+
+        public IBindableGrouping<RemoteDataUpdateInfoViewModel> CatalogueUpdateInfoViewModels { get; }
+
+        public IBindableGrouping<RemoteDataUpdateInfoViewModel> GameSystemUpdateInfoViewModels { get; }
 
         private RemoteDataSourceIndex RemoteDataSourceIndex { get; }
     }

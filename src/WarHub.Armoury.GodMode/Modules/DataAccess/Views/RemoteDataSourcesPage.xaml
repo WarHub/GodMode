@@ -15,6 +15,7 @@
                     <TextCell.ContextActions>
                         <MenuItem Text="delete"
                                   Command="{Binding BindingContext.RemoveDataSourceCommand, Source={x:Reference Page}}"
+                                  CommandParameter="{Binding}"
                                   IsDestructive="True" />
                     </TextCell.ContextActions>
                 </TextCell>

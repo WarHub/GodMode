@@ -1,0 +1,67 @@
+﻿// WarHub licenses this file to you under the MIT license.
+// See LICENSE file in the project root for more information.
+
+namespace WarHub.Armoury.GodMode.Commands
+{
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+    using AppServices;
+    using Mvvm.Commands;
+
+    /// <summary>
+    ///     Wraps execution exceptions into UI dialog.
+    /// </summary>
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public abstract class AppCommandBase : ProgressingCommandBase
+    {
+        protected AppCommandBase(IAppCommandDependencyAggregate dependencyAggregate)
+        {
+            if (dependencyAggregate == null)
+                throw new ArgumentNullException(nameof(dependencyAggregate));
+            DependencyAggregate = dependencyAggregate;
+            UseHandleExecutionException = true;
+            RethrowExecutionException = false;
+        }
+
+        protected IDialogService DialogService => DependencyAggregate.DialogService;
+
+        private IAppCommandDependencyAggregate DependencyAggregate { get; }
+
+        /// <summary>
+        ///     Shows UI dialog with exception message.
+        /// </summary>
+        /// <param name="e">Exception shown in dialog.</param>
+        protected override void HandleExecutionException(Exception e)
+        {
+            DependencyAggregate.HandleException(e);
+        }
+    }
+
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public abstract class AppCommandBase<T> : ProgressingCommandBase<T>
+    {
+        protected AppCommandBase(IAppCommandDependencyAggregate dependencyAggregate)
+        {
+            if (dependencyAggregate == null)
+                throw new ArgumentNullException(nameof(dependencyAggregate));
+            DependencyAggregate = dependencyAggregate;
+            UseHandleExecutionException = true;
+            RethrowExecutionException = false;
+        }
+
+        protected IDialogService DialogService => DependencyAggregate.DialogService;
+
+        private IAppCommandDependencyAggregate DependencyAggregate { get; }
+
+        /// <summary>
+        ///     Shows UI dialog with exception message.
+        /// </summary>
+        /// <param name="e">Exception shown in dialog.</param>
+        protected override void HandleExecutionException(Exception e)
+        {
+            DependencyAggregate.HandleException(e);
+        }
+    }
+}

@@ -4,6 +4,7 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using AppServices;
     using GodMode.Commands;
     using Model;
@@ -11,14 +12,15 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
     using ViewModels;
     using Views;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class OpenModifierCommand : NavigateCommandBase<ModifierFacade>
     {
-        public OpenModifierCommand(IDialogService dialogService, INavigationService navigationService,
-            Func<IEntryModifier, EntryModifierViewModel> entryModifierVmFactory,
+        public OpenModifierCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            INavigationService navigationService, Func<IEntryModifier, EntryModifierViewModel> entryModifierVmFactory,
             Func<IGroupModifier, GroupModifierViewModel> groupModifierVmFactory,
             Func<IProfileModifier, ProfileModifierViewModel> profileModifierVmFactory,
             Func<IRuleModifier, RuleModifierViewModel> ruleModifierVmFactory)
-            : base(dialogService, navigationService)
+            : base(dependencyAggregate, navigationService)
         {
             EntryModifierVmFactory = entryModifierVmFactory;
             GroupModifierVmFactory = groupModifierVmFactory;

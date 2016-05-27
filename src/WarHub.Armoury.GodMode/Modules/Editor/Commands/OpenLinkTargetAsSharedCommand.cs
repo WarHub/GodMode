@@ -4,6 +4,7 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
     using AppServices;
@@ -11,12 +12,15 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
     using Model;
     using ViewModels;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class OpenLinkTargetAsSharedCommand : OpenLinkTargetAsChildCommand
     {
-        public OpenLinkTargetAsSharedCommand(IDialogService dialogService, INavigationService navigationService,
-            Func<IEntry, EntryViewModel> entryVmFactory, Func<IGroup, GroupViewModel> groupVmFactory,
-            Func<IProfile, ProfileViewModel> profileVmFactory, Func<IRule, RuleViewModel> ruleVmFactory)
-            : base(dialogService, navigationService, entryVmFactory, groupVmFactory, profileVmFactory, ruleVmFactory)
+        public OpenLinkTargetAsSharedCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            INavigationService navigationService, Func<IEntry, EntryViewModel> entryVmFactory,
+            Func<IGroup, GroupViewModel> groupVmFactory, Func<IProfile, ProfileViewModel> profileVmFactory,
+            Func<IRule, RuleViewModel> ruleVmFactory)
+            : base(
+                dependencyAggregate, navigationService, entryVmFactory, groupVmFactory, profileVmFactory, ruleVmFactory)
         {
         }
 

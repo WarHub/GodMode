@@ -3,10 +3,12 @@
 
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows.Input;
     using Commands;
     using Mvvm;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class AddRemoteDataSourceViewModel : ViewModelBase
     {
         private string _name;

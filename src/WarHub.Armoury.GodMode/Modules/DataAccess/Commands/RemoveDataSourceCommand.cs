@@ -3,12 +3,15 @@
 
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 {
+    using System.Diagnostics.CodeAnalysis;
+    using GodMode.Commands;
     using Model.DataAccess;
-    using Mvvm.Commands;
 
-    public class RemoveDataSourceCommand : ProgressingCommandBase<RemoteDataSourceInfo>
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    public class RemoveDataSourceCommand : AppCommandBase<RemoteDataSourceInfo>
     {
-        public RemoveDataSourceCommand(IRemoteDataService remoteDataService)
+        public RemoveDataSourceCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            IRemoteDataService remoteDataService) : base(dependencyAggregate)
         {
             RemoteDataService = remoteDataService;
         }
@@ -20,9 +23,6 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
             RemoteDataService.RemoveSource(parameter);
         }
 
-        protected override bool CanExecuteCore(RemoteDataSourceInfo parameter)
-        {
-            return parameter != null;
-        }
+        protected override bool CanExecuteCore(RemoteDataSourceInfo parameter) => parameter != null;
     }
 }

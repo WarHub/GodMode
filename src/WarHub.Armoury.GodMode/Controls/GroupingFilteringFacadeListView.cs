@@ -12,6 +12,6 @@ namespace WarHub.Armoury.GodMode.Controls
             ItemTemplate = FacadeCellTemplateFactory.Create();
         }
 
-        public override string SelectKey(IModelFacade item) => item.Name;
+        protected override string SelectKey(IModelFacade item) => item.Name;
     }
 }

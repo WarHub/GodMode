@@ -4,44 +4,43 @@
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using AppServices;
+    using GodMode.Commands;
     using Model.BattleScribe.Files;
     using Model.DataAccess;
     using Model.Repo;
-    using Mvvm.Commands;
+    using ViewModels;
 
-    public class DownloadDataSourceCommand : ProgressingAsyncCommandBase<RemoteDataSourceInfo>
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class DownloadDataSourceCommand : AppAsyncCommandBase<RemoteDataSourceIndexViewModel>
     {
-        public DownloadDataSourceCommand(IRemoteDataService remoteDataService, IRepoStorageService repoStorageService,
-            IDialogService dialogService)
+        public DownloadDataSourceCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            IRemoteDataService remoteDataService, IRepoStorageService repoStorageService) : base(dependencyAggregate)
         {
             RemoteDataService = remoteDataService;
             RepoStorageService = repoStorageService;
-            DialogService = dialogService;
-            UseHandleExecutionException = true;
-            RethrowExecutionException = false;
+            OperationTitle = "Ready";
+            IsExecutionBlocking = true;
         }
-
-        private IDialogService DialogService { get; }
 
         private IRemoteDataService RemoteDataService { get; }
 
         private IRepoStorageService RepoStorageService { get; }
 
-        protected override async Task ExecuteCoreAsync(RemoteDataSourceInfo parameter)
+        protected override async Task ExecuteCoreAsync(RemoteDataSourceIndexViewModel parameter)
         {
-            var index = await RemoteDataService.DownloadIndexAsync(parameter);
+            var updateInfos =
+                parameter.GameSystemUpdateInfoViewModels.Concat(parameter.CatalogueUpdateInfoViewModels).ToArray();
             var i = 0;
-            var orderedRemoteDataInfos =
-                index.RemoteDataInfos.Where(info => info.DataType == RemoteDataType.GameSystem).Concat(index
-                    .RemoteDataInfos.Where(info => info.DataType == RemoteDataType.Catalogue));
-            foreach (var remoteDataInfo in orderedRemoteDataInfos)
+            foreach (var updateInfo in updateInfos)
             {
+                var remoteDataInfo = updateInfo.RemoteDataInfo;
                 OperationTitle = $"Downloading {remoteDataInfo.Name}";
-                var uri = new Uri(index.IndexUri, remoteDataInfo.IndexPathSuffix);
+                var uri = new Uri(updateInfo.IndexUri, remoteDataInfo.IndexPathSuffix);
                 using (var client = new HttpClient())
                 using (var stream = await client.GetStreamAsync(uri))
                 {
@@ -57,15 +56,12 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
                             throw new ArgumentOutOfRangeException();
                     }
                 }
-                ProgressPercent = ++i/index.RemoteDataInfos.Count*100;
+                updateInfo.UpdateLocalInfo();
+                ProgressPercent = (int?) (100d*++i/updateInfos.Length);
             }
+            OperationTitle = "Ready";
         }
 
-        protected override bool CanExecuteCore(RemoteDataSourceInfo parameter) => parameter != null;
-
-        protected override void HandleExecutionException(Exception e)
-        {
-            DialogService.ShowDialogAsync("Error", e.Message, "oh well");
-        }
+        protected override bool CanExecuteCore(RemoteDataSourceIndexViewModel parameter) => parameter != null;
     }
 }

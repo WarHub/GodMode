@@ -4,6 +4,7 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using AppServices;
     using GodMode.Commands;
     using Model;
@@ -11,12 +12,14 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
     using ViewModels;
     using Views;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class OpenConditionItemCommand : NavigateCommandBase<ConditionItemFacade>
     {
-        public OpenConditionItemCommand(IDialogService dialogService, INavigationService navigationService,
+        public OpenConditionItemCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            INavigationService navigationService,
             Func<ICatalogueCondition, CatalogueConditionViewModel> conditionVmFactory,
             Func<IConditionGroup, CatalogueConditionGroupViewModel> groupVmFactory)
-            : base(dialogService, navigationService)
+            : base(dependencyAggregate, navigationService)
         {
             ConditionVmFactory = conditionVmFactory;
             GroupVmFactory = groupVmFactory;
