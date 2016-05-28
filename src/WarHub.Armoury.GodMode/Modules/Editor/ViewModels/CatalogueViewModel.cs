@@ -5,37 +5,34 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System;
     using System.Collections.Generic;
-    using System.Windows.Input;
-    using AppServices;
+    using System.Diagnostics.CodeAnalysis;
     using Bindables;
+    using Commands;
     using Model;
     using Models;
 
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class CatalogueViewModel : GenericViewModel<ICatalogue>, ICatalogueItemsListViewModel
     {
-        public CatalogueViewModel(ICatalogue model, ICommandsAggregateService commands,
-            Func<IIdentifier, IdentifierViewModel> identifierVmFactory)
+        public CatalogueViewModel(ICatalogue model, Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
+            Func<IBindableMap<CatalogueItemFacade>, RemoveCatalogueItemCommand> removeCommandFactory,
+            CreateItemInCatalogueCommandFactory createItemInCatalogueCommandFactory,
+            OpenCatalogueItemCommand openCatalogueItemCommand)
             : base(model)
         {
-            Commands = commands;
-            SharedEntries = Catalogue.SharedEntries.ToBindableMap("shared entries", asShared: true,
-                removeCommand: Commands.RemoveCatalogueItemCommand.For(() => SharedEntries));
-            SharedGroups = Catalogue.SharedGroups.ToBindableMap("shared groups", asShared: true,
-                removeCommand: Commands.RemoveCatalogueItemCommand.For(() => SharedGroups));
-            SharedProfiles = Catalogue.SharedProfiles.ToBindableMap("shared profiles", asShared: true,
-                removeCommand: Commands.RemoveCatalogueItemCommand.For(() => SharedProfiles));
-            SharedRules = Catalogue.SharedRules.ToBindableMap("shared rules", asShared: true,
-                removeCommand: Commands.RemoveCatalogueItemCommand.For(() => SharedRules));
-            Entries = Catalogue.Entries.ToBindableMap("entries",
-                Commands.RemoveCatalogueItemCommand.For(() => Entries));
-            EntryLinks = Catalogue.EntryLinks.ToBindableMap("entry links",
-                Commands.RemoveCatalogueItemCommand.For(() => EntryLinks));
-            Rules = Catalogue.Rules.ToBindableMap("rules",
-                Commands.RemoveCatalogueItemCommand.For(() => Rules));
-            RuleLinks = Catalogue.RuleLinks.ToBindableMap("rule links",
-                Commands.RemoveCatalogueItemCommand.For(() => RuleLinks));
+            OpenCatalogueItemCommand = openCatalogueItemCommand;
+            SharedEntries = Catalogue.SharedEntries.ToBindableMap("shared entries", removeCommandFactory);
+            SharedGroups = Catalogue.SharedGroups.ToBindableMap("shared groups", removeCommandFactory);
+            SharedProfiles = Catalogue.SharedProfiles.ToBindableMap("shared profiles", removeCommandFactory);
+            SharedRules = Catalogue.SharedRules.ToBindableMap("shared rules", removeCommandFactory);
+            Entries = Catalogue.Entries.ToBindableMap("entries", removeCommandFactory);
+            EntryLinks = Catalogue.EntryLinks.ToBindableMap("entry links", removeCommandFactory);
+            Rules = Catalogue.Rules.ToBindableMap("rules", removeCommandFactory);
+            RuleLinks = Catalogue.RuleLinks.ToBindableMap("rule links", removeCommandFactory);
             Id = identifierVmFactory(Catalogue.Id);
-            CreateCatalogueItemCommand = Commands.CreateCatalogueItemCommand.EnableFor(Catalogue);
+            CreateCatalogueItemCommand = createItemInCatalogueCommandFactory(Catalogue);
         }
 
         public string AuthorContact
@@ -82,8 +79,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 
         private ICatalogue Catalogue => Model;
 
-        private ICommandsAggregateService Commands { get; }
-
         private BindableMap<CatalogueItemFacade, IRootEntry> Entries { get; }
 
         private BindableMap<CatalogueItemFacade, IRootLink> EntryLinks { get; }
@@ -115,8 +110,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             }
         }
 
-        public ICommand CreateCatalogueItemCommand { get; }
+        public CreateCatalogueItemCommandBase CreateCatalogueItemCommand { get; }
 
-        public ICommand OpenCatalogueItemCommand => Commands.OpenCatalogueItemCommand;
+        public OpenCatalogueItemCommand OpenCatalogueItemCommand { get; }
     }
 }

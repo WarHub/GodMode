@@ -4,27 +4,28 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Models
 {
     using Model;
+    using Mvvm.Commands;
 
     public static class ModifierFacadeExtensions
     {
-        public static ModifierFacade ToFacade(this IEntryModifier modifier)
+        public static ModifierFacade ToFacade(this IEntryModifier modifier, ICommand<ModifierFacade> removeCommand)
         {
-            return new ModifierFacade(modifier);
+            return new ModifierFacade(modifier, removeCommand);
         }
 
-        public static ModifierFacade ToFacade(this IGroupModifier modifier)
+        public static ModifierFacade ToFacade(this IGroupModifier modifier, ICommand<ModifierFacade> removeCommand)
         {
-            return new ModifierFacade(modifier);
+            return new ModifierFacade(modifier, removeCommand);
         }
 
-        public static ModifierFacade ToFacade(this IProfileModifier modifier)
+        public static ModifierFacade ToFacade(this IProfileModifier modifier, ICommand<ModifierFacade> removeCommand)
         {
-            return new ModifierFacade(modifier);
+            return new ModifierFacade(modifier, removeCommand);
         }
 
-        public static ModifierFacade ToFacade(this IRuleModifier modifier)
+        public static ModifierFacade ToFacade(this IRuleModifier modifier, ICommand<ModifierFacade> removeCommand)
         {
-            return new ModifierFacade(modifier);
+            return new ModifierFacade(modifier, removeCommand);
         }
     }
 }

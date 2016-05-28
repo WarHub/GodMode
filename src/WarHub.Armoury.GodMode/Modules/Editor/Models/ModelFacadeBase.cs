@@ -4,47 +4,48 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Models
 {
     using System.ComponentModel;
-    using System.Runtime.CompilerServices;
     using Mvvm.Commands;
 
     public abstract class ModelFacadeBase : IModelFacade, INotifyPropertyChanged
     {
-        private readonly object _lockObject = new object();
-        private ICommand _removeCommand;
-
-        private bool IsSubscribed => PropertyChangedCore != null;
-
         public abstract string Detail { get; }
 
         public abstract object Model { get; }
 
         public abstract string Name { get; }
 
-        public ICommand RemoveCommand
+        public abstract ICommand RemoveCommand { get; }
+
+        public override bool Equals(object obj)
         {
-            get { return _removeCommand; }
-            set
-            {
-                if (_removeCommand == value)
-                {
-                    return;
-                }
-                _removeCommand = value;
-                PropertyChangedCore?.Invoke(this, new PropertyChangedEventArgs(nameof(RemoveCommand)));
-            }
+            var other = obj as ModelFacadeBase;
+            return other != null && Model != null && other.Model != null && Model.Equals(other.Model);
         }
+
+        public override int GetHashCode()
+        {
+            // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
+            return Model?.GetHashCode() ?? base.GetHashCode();
+        }
+
+        #region PropertyChanged
+
+        private readonly object _lockObject = new object();
+
+        private bool IsSubscribed => PropertyChangedCore != null;
+
+        private bool ModelIsNotifyPropertyChanged() => Model is INotifyPropertyChanged;
 
         public event PropertyChangedEventHandler PropertyChanged
         {
             add
             {
+                if (!ModelIsNotifyPropertyChanged())
+                {
+                    return;
+                }
                 lock (_lockObject)
                 {
-                    var notifyItem = Model as INotifyPropertyChanged;
-                    if (notifyItem == null)
-                    {
-                        return;
-                    }
                     if (!IsSubscribed)
                     {
                         OnPropertyChangedSubscribed();
@@ -54,13 +55,12 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Models
             }
             remove
             {
+                if (!ModelIsNotifyPropertyChanged())
+                {
+                    return;
+                }
                 lock (_lockObject)
                 {
-                    var notifyItem = Model as INotifyPropertyChanged;
-                    if (notifyItem == null)
-                    {
-                        return;
-                    }
                     PropertyChangedCore -= value;
                     if (!IsSubscribed)
                     {
@@ -96,26 +96,11 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Models
         {
         }
 
-        protected void RaiseThisPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChangedCore?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         protected void RaisePropertyChanged(string propertyName)
         {
             PropertyChangedCore?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public override bool Equals(object obj)
-        {
-            var other = obj as ModelFacadeBase;
-            return other != null && Model != null && other.Model != null && Model.Equals(other.Model);
-        }
-
-        public override int GetHashCode()
-        {
-            // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
-            return Model?.GetHashCode() ?? base.GetHashCode();
-        }
+        #endregion
     }
 }

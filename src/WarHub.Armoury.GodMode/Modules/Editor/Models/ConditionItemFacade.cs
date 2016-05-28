@@ -8,20 +8,23 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Models
     using System.ComponentModel;
     using Bindables;
     using Model;
+    using Mvvm.Commands;
 
     public class ConditionItemFacade : ModelFacadeBase
     {
-        public ConditionItemFacade(ICatalogueCondition condition)
+        public ConditionItemFacade(ICatalogueCondition condition, ICommand<ConditionItemFacade> removeCommand)
         {
             Item = condition;
+            RemoveCommand = removeCommand?.SetParameter(this);
             ItemKind = ConditionItemKind.Condition;
             GetNameFunc = condition.Stringify;
             GetDetailFunc = null;
         }
 
-        public ConditionItemFacade(ICatalogueConditionGroup group)
+        public ConditionItemFacade(ICatalogueConditionGroup group, ICommand<ConditionItemFacade> removeCommand)
         {
             Item = group;
+            RemoveCommand = removeCommand?.SetParameter(this);
             ItemKind = ConditionItemKind.Group;
             GetNameFunc = group.Type.ToString;
             GetDetailFunc = group.ToDetailString;
@@ -32,6 +35,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Models
         public override object Model => Item;
 
         public override string Name => GetNameFunc?.Invoke();
+
+        public override ICommand RemoveCommand { get; }
 
         public object Item { get; }
 

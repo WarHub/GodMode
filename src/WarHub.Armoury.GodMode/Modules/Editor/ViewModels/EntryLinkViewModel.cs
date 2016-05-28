@@ -5,35 +5,48 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System;
     using System.Collections.Generic;
-    using System.Windows.Input;
-    using AppServices;
+    using System.Diagnostics.CodeAnalysis;
     using Bindables;
+    using Commands;
     using Model;
     using Models;
+    using Mvvm.Commands;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class EntryLinkViewModel : GenericViewModel<IEntryLink>, IRootItemViewModel, IModifiersListViewModel
     {
-        public EntryLinkViewModel(IEntryLink model, ICommandsAggregateService commands,
-            Func<IIdentifier, IdentifierViewModel> identifierVmFactory) : base(model)
+        public EntryLinkViewModel(IEntryLink model,
+            Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
+            CreateEntryModifierCommandFactory createModifierCommandFactory,
+            OpenModifierCommand openModifierCommand,
+            Func<IBindableMap<ModifierFacade>, RemoveModifierCommand> removeModifierCommandFactory,
+            OpenLinkTargetAsChildCommand openLinkTargetAsChildCommand,
+            OpenLinkTargetAsSharedCommand openLinkTargetAsSharedCommand)
+            : base(model)
         {
-            Commands = commands;
+            OpenModifierCommand = openModifierCommand;
+            CreateModifierCommand = createModifierCommandFactory(Link.Modifiers);
             Id = identifierVmFactory(Link.Id);
             RootLink = Link as IRootLink;
             IsRootItem = RootLink != null;
             Categories = Link.Context.Catalogue.SystemContext.Categories.PrependWith(new NoCategory());
-            Modifiers = Link.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
+            Modifiers = Link.Modifiers.ToBindableMap(null, removeModifierCommandFactory);
+            OpenLinkTargetAsChildCommand = openLinkTargetAsChildCommand.SetParameter(Link.ToFacade(null));
+            OpenLinkTargetAsSharedCommand = openLinkTargetAsSharedCommand.SetParameter(Link.ToFacade(null));
         }
+
+        public CreateEntryModifierCommand CreateModifierCommand { get; }
 
         public IdentifierViewModel Id { get; }
 
-
         public BindableMap<ModifierFacade, IEntryModifier> Modifiers { get; }
 
-        public ICommand OpenLinkTargetAsChildCommand
-            => Commands.OpenLinkTargetAsChildCommand.SetParameter(Link.ToFacade());
+        public ICommand OpenLinkTargetAsChildCommand { get; }
 
-        public ICommand OpenLinkTargetAsSharedCommand
-            => Commands.OpenLinkTargetAsSharedCommand.SetParameter(Link.ToFacade());
+        public ICommand OpenLinkTargetAsSharedCommand { get; }
 
         public IEnumerable<IEntry> SharedEntries => Link.Context.Catalogue.SharedEntries;
 
@@ -43,17 +56,15 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             set { Set(() => Link.Target == value, () => Link.Target = value); }
         }
 
-        private ICommandsAggregateService Commands { get; }
-
         private IEntryLink Link => Model;
 
         private IRootLink RootLink { get; }
 
-        public ICommand CreateModifierCommand => Commands.CreateModifierCommand.EnableFor(Link.Modifiers);
-
-        public ICommand OpenModifierCommand => Commands.OpenModifierCommand;
+        public OpenModifierCommand OpenModifierCommand { get; }
 
         IBindableGrouping<ModifierFacade> IModifiersListViewModel.Modifiers => Modifiers;
+
+        ICommand IModifiersListViewModel.CreateModifierCommand => CreateModifierCommand;
 
         public IEnumerable<ICategory> Categories { get; }
 

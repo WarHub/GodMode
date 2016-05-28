@@ -11,26 +11,25 @@ namespace WarHub.Armoury.GodMode.Bindables
     using System.ComponentModel;
     using System.Linq;
     using Mvvm;
+    using Mvvm.Commands;
+
+    public delegate T FacadeFactory<in TSource, out T>(TSource model, ICommand<T> removeCommand);
 
     public class BindableMap<T, TSource> : IBindableMap<T>
     {
         private readonly object _objectLock = new object();
 
-        public BindableMap(IList<TSource> itemsSource, Func<TSource, T> map, Func<T, TSource> reverseMap,
+        public BindableMap(Func<IBindableMap<T>, ICommand<T>> removeCommandFactory, IList<TSource> itemsSource,
+            FacadeFactory<TSource, T> facadeFactory, Func<T, TSource> reverseMap,
             string key = null)
         {
-            if (itemsSource == null)
-                throw new ArgumentNullException(nameof(itemsSource));
-            if (map == null)
-                throw new ArgumentNullException(nameof(map));
-            if (reverseMap == null)
-                throw new ArgumentNullException(nameof(reverseMap));
+            RemoveCommand = removeCommandFactory(this);
             ItemsSource = itemsSource;
-            Map = map;
+            Map = model => facadeFactory(model, RemoveCommand);
             ReverseMap = reverseMap;
             Key = key;
             ShortKey = key.ShortenKey();
-            Items = new ObservableCollection<T>(itemsSource.Select(map));
+            Items = new ObservableCollection<T>(itemsSource.Select(Map));
             ((INotifyPropertyChanged) Items).PropertyChanged += OnItemsPropertyChanged;
             Items.CollectionChanged += OnItemsCollectionChanged;
         }
@@ -42,6 +41,8 @@ namespace WarHub.Armoury.GodMode.Bindables
         private IList<TSource> ItemsSource { get; }
 
         private Func<TSource, T> Map { get; }
+
+        public ICommand<T> RemoveCommand { get; }
 
         private Func<T, TSource> ReverseMap { get; }
 

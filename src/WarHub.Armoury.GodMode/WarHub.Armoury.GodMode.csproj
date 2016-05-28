@@ -38,6 +38,7 @@
     <Compile Include="App.cs" />
     <Compile Include="Behaviors\ItemSelectedBehavior.cs" />
     <Compile Include="Behaviors\TappedBehavior.cs" />
+    <Compile Include="Bindables\BindableMapBuilder.cs" />
     <Compile Include="CommandExtensions.cs" />
     <Compile Include="Commands\AppAsyncCommandBase.cs" />
     <Compile Include="Commands\AppCommandBase.cs" />
@@ -70,12 +71,18 @@
       <DependentUpon>RemoteDataSourcesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Modules\DataAccess\Views\ViewModelLocator.cs" />
-    <Compile Include="Modules\Editor\Commands\CreateCatalogueItemCommand.cs" />
+    <Compile Include="Modules\Editor\Commands\CreateCatalogueItemCommandBase.cs" />
     <Compile Include="Modules\Editor\Commands\CreateConditionItemCommand.cs" />
-    <Compile Include="Modules\Editor\Commands\CreateModifierCommand.cs" />
+    <Compile Include="Modules\Editor\Commands\CreateEntryModifierCommand.cs" />
+    <Compile Include="Modules\Editor\Commands\CreateGroupModifierCommand.cs" />
     <Compile Include="Commands\NavigateCommandBase.cs" />
     <Compile Include="Commands\NavigateRelayCommand.cs" />
     <Compile Include="Commands\NavTuple.cs" />
+    <Compile Include="Modules\Editor\Commands\CreateItemInCatalogueCommand.cs" />
+    <Compile Include="Modules\Editor\Commands\CreateItemInEntryCommand.cs" />
+    <Compile Include="Modules\Editor\Commands\CreateItemInGroupCommand.cs" />
+    <Compile Include="Modules\Editor\Commands\CreateProfileModifierCommand.cs" />
+    <Compile Include="Modules\Editor\Commands\CreateRuleModifierCommand.cs" />
     <Compile Include="Modules\Editor\Commands\OpenCatalogueCommand.cs" />
     <Compile Include="Modules\Editor\Commands\OpenCatalogueItemCommand.cs" />
     <Compile Include="Modules\Editor\Commands\OpenConditionItemCommand.cs" />
@@ -142,9 +149,7 @@
     </Compile>
     <Compile Include="Modules\StorageExplorer\Views\ViewModelLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AppServices\ICommandsAggregateService.cs" />
     <Compile Include="AppServices\IDialogService.cs" />
-    <Compile Include="AppServices\Implementations\CommandsAggregateService.cs" />
     <Compile Include="AppServices\Implementations\DialogService.cs" />
     <Compile Include="AppServices\Implementations\NavigationService.cs" />
     <Compile Include="AppServices\Implementations\PageService.cs" />

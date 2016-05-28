@@ -13,16 +13,11 @@ namespace WarHub.Armoury.GodMode
         {
             var container = BuildContainer();
             
-            //TODO remove
-            ServiceProvider = container;
-
             // The root page of your application
             MainPage = new NavigationPage();
 
             container.Resolve<OpenHomeCommand>().Execute();
         }
-
-        public static IComponentContext ServiceProvider { get; private set; }
 
         protected override void OnStart()
         {

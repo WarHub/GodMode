@@ -5,31 +5,42 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows.Input;
-    using AppServices;
     using Bindables;
+    using Commands;
     using Model;
     using Models;
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class GroupLinkViewModel : GenericViewModel<IGroupLink>, IModifiersListViewModel
     {
-        public GroupLinkViewModel(IGroupLink model, ICommandsAggregateService commands,
-            Func<IIdentifier, IdentifierViewModel> identifierVmFactory) : base(model)
+        public GroupLinkViewModel(IGroupLink model, Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
+            Func<IBindableMap<ModifierFacade>, RemoveModifierCommand> removeCommandFactory,
+            CreateGroupModifierCommandFactory createGroupModifierCommandFactory,
+            OpenModifierCommand openModifierCommand, OpenLinkTargetAsChildCommand openLinkTargetAsChildCommand,
+            OpenLinkTargetAsSharedCommand openLinkTargetAsSharedCommand) : base(model)
         {
-            Commands = commands;
+            OpenModifierCommand = openModifierCommand;
             Id = identifierVmFactory(Link.Id);
-            Modifiers = Link.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
+            Modifiers = Link.Modifiers.ToBindableMap(removeCommand: removeCommandFactory);
+            CreateModifierCommand = createGroupModifierCommandFactory(Link.Modifiers);
+            OpenLinkTargetAsChildCommand = openLinkTargetAsChildCommand.SetParameter(Link.ToFacade(null));
+            OpenLinkTargetAsSharedCommand = openLinkTargetAsSharedCommand.SetParameter(Link.ToFacade(null));
         }
+
+        public CreateGroupModifierCommand CreateModifierCommand { get; }
 
         public IdentifierViewModel Id { get; }
 
         public BindableMap<ModifierFacade, IGroupModifier> Modifiers { get; }
 
-        public ICommand OpenLinkTargetAsChildCommand
-            => Commands.OpenLinkTargetAsChildCommand.SetParameter(Link.ToFacade());
+        public ICommand OpenLinkTargetAsChildCommand { get; }
 
-        public ICommand OpenLinkTargetAsSharedCommand
-            => Commands.OpenLinkTargetAsSharedCommand.SetParameter(Link.ToFacade());
+        public ICommand OpenLinkTargetAsSharedCommand { get; }
 
         public IEnumerable<IGroup> SharedGroups => Link.Context.Catalogue.SharedGroups;
 
@@ -39,13 +50,11 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             set { Set(() => Link.Target == value, () => Link.Target = value); }
         }
 
-        private ICommandsAggregateService Commands { get; }
-
         private IGroupLink Link => Model;
 
-        public ICommand CreateModifierCommand => Commands.CreateModifierCommand.EnableFor(Link.Modifiers);
+        Mvvm.Commands.ICommand IModifiersListViewModel.CreateModifierCommand => CreateModifierCommand;
 
-        public ICommand OpenModifierCommand => Commands.OpenModifierCommand;
+        public OpenModifierCommand OpenModifierCommand { get; }
 
         IBindableGrouping<ModifierFacade> IModifiersListViewModel.Modifiers => Modifiers;
     }

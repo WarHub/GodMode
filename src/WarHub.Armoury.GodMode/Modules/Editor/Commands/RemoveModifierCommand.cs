@@ -3,52 +3,27 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
-    using System;
-    using System.Threading.Tasks;
-    using AppServices;
+    using System.Diagnostics.CodeAnalysis;
     using Bindables;
+    using GodMode.Commands;
     using Models;
-    using Mvvm.Commands;
 
-    public class RemoveModifierCommand : ProgressingAsyncCommandBase<ModifierFacade>
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    public class RemoveModifierCommand : AppCommandBase<ModifierFacade>
     {
-        public RemoveModifierCommand(IDialogService dialogService, Func<IBindableMap<ModifierFacade>> getMapFunc = null)
+        public RemoveModifierCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            IBindableMap<ModifierFacade> facades) : base(dependencyAggregate)
         {
-            if (dialogService == null)
-                throw new ArgumentNullException(nameof(dialogService));
-            DialogService = dialogService;
-            GetMapFunc = getMapFunc;
+            Facades = facades;
         }
 
-        private IDialogService DialogService { get; }
+        private IBindableMap<ModifierFacade> Facades { get; }
 
-        private Func<IBindableMap<ModifierFacade>> GetMapFunc { get; }
-
-        public RemoveModifierCommand For(Func<IBindableMap<ModifierFacade>> getMapFunc)
+        protected override void ExecuteCore(ModifierFacade parameter)
         {
-            return new RemoveModifierCommand(DialogService, getMapFunc);
+            Facades.Remove(parameter);
         }
 
-        protected override async Task ExecuteCoreAsync(ModifierFacade parameter)
-        {
-            var bindableMap = GetMapFunc?.Invoke();
-            if (bindableMap == null || parameter == null)
-            {
-                await InformRequestCannotBeProcessedAsync();
-                return;
-            }
-            bindableMap.Remove(parameter);
-        }
-
-        private async Task InformRequestCannotBeProcessedAsync()
-        {
-            await
-                DialogService.ShowDialogAsync("Ooops",
-                    "Something's wrong: the request cannot be processed." +
-                    " Additional info: the command was not set up properly.",
-                    "ok");
-        }
-
-        protected override bool CanExecuteCore(ModifierFacade parameter) => parameter != null && GetMapFunc != null;
+        protected override bool CanExecuteCore(ModifierFacade parameter) => parameter != null;
     }
 }

@@ -4,9 +4,10 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System.ComponentModel;
-    using System.Windows.Input;
     using Bindables;
+    using Commands;
     using Models;
+    using Mvvm.Commands;
 
     public interface IModifiersListViewModel : INotifyPropertyChanged
     {
@@ -14,6 +15,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 
         IBindableGrouping<ModifierFacade> Modifiers { get; }
 
-        ICommand OpenModifierCommand { get; }
+        OpenModifierCommand OpenModifierCommand { get; }
     }
 }

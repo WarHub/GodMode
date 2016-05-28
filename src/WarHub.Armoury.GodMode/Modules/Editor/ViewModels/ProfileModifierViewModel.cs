@@ -3,18 +3,28 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
     using AppServices;
     using Bindables;
+    using Commands;
     using Model;
+    using Models;
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class ProfileModifierViewModel :
         ModifierViewModelBase<IProfileModifier, string, ProfileModifierAction, IIdentifier>
     {
-        public ProfileModifierViewModel(IProfileModifier model, ICommandsAggregateService commands,
-            IDialogService dialogService) : base(model, commands)
+        public ProfileModifierViewModel(IProfileModifier model,
+            CreateConditionItemCommandFactory createConditionItemCommandFactory,
+            OpenConditionItemCommand openConditionItemCommand,
+            Func<IBindableMap<ConditionItemFacade>, RemoveConditionItemCommand> removeCommandFactory,
+            IDialogService dialogService)
+            : base(model, createConditionItemCommandFactory, openConditionItemCommand, removeCommandFactory)
         {
             DialogService = dialogService;
             ParentProfile = Modifier.GetParentProfile();

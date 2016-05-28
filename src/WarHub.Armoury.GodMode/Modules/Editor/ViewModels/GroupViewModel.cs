@@ -5,49 +5,49 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Windows.Input;
-    using AppServices;
     using Bindables;
+    using Commands;
     using Model;
     using Models;
+    using Mvvm.Commands;
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class GroupViewModel : GenericViewModel<IGroup>, IModifiersListViewModel, ICatalogueItemsListViewModel
     {
         private CatalogueItemFacade _defaultChoice;
         private IEnumerable<CatalogueItemFacade> _defaultChoices;
 
-        public GroupViewModel(IGroup model, ICommandsAggregateService commands,
+        public GroupViewModel(IGroup model,
             Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
-            Func<IEntryLimits, EntryLimitsViewModel> entryLimitsVmFactory)
+            Func<IEntryLimits, EntryLimitsViewModel> entryLimitsVmFactory,
+            OpenCatalogueItemCommand openCatalogueItemCommand,
+            OpenModifierCommand openModifierCommand,
+            BindableMapBuilder bindableMapBuilder,
+            CreateItemInGroupCommandFactory createItemInGroupCommandFactory,
+            CreateGroupModifierCommandFactory createGroupModifierCommandFactory)
             : base(model)
         {
-            Commands = commands;
-            Entries = Group.Entries.ToBindableMap("entries",
-                Commands.RemoveCatalogueItemCommand.For(() => Entries));
-            EntryLinks = Group.EntryLinks.ToBindableMap("entry links",
-                Commands.RemoveCatalogueItemCommand.For(() => EntryLinks));
-            Groups = Group.Groups.ToBindableMap("groups",
-                Commands.RemoveCatalogueItemCommand.For(() => Groups));
-            GroupLinks = Group.GroupLinks.ToBindableMap("group links",
-                Commands.RemoveCatalogueItemCommand.For(() => GroupLinks));
+            OpenCatalogueItemCommand = openCatalogueItemCommand;
+            OpenModifierCommand = openModifierCommand;
+            Entries = bindableMapBuilder.Create(Group.Entries, "entries");
+            EntryLinks = bindableMapBuilder.Create(Group.EntryLinks, "entry links");
+            Groups = bindableMapBuilder.Create(Group.Groups, "groups");
+            GroupLinks = bindableMapBuilder.Create(Group.GroupLinks, "group links");
             Id = identifierVmFactory(Group.Id);
             Limits = entryLimitsVmFactory(Group.Limits);
-            Modifiers = Group.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
-            DefaultChoices =
-                Group.GetEntryLinkPairs()
-                    .Select(pair => pair.HasLink ? pair.Link.ToFacade() : pair.Entry.ToFacade())
-                    .PrependWith(NoChoiceItemFacade)
-                    .ToArray();
-            DefaultChoice = Group.DefaultChoice == null
-                ? NoChoiceItemFacade
-                : DefaultChoices.First(
-                    facade =>
-                        Group.DefaultChoice.Equals(facade.IsLink
-                            ? ((IEntryLink) facade.Item).Target
-                            : (IEntry) facade.Item));
-            CreateCatalogueItemCommand = Commands.CreateCatalogueItemCommand.EnableFor(Group);
+            Modifiers = bindableMapBuilder.Create(Group.Modifiers);
+            DefaultChoices = CreateDefaultChoices();
+            DefaultChoice = GetDefaultChoice();
+            CreateCatalogueItemCommand = createItemInGroupCommandFactory(Group);
+            CreateModifierCommand = createGroupModifierCommandFactory(Group.Modifiers);
         }
+
+        public CreateGroupModifierCommand CreateModifierCommand { get; }
 
         public CatalogueItemFacade DefaultChoice
         {
@@ -91,8 +91,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             set { Set(() => Group.Name == value, () => Group.Name = value); }
         }
 
-        private ICommandsAggregateService Commands { get; }
-
         private BindableMap<CatalogueItemFacade, IEntry> Entries { get; }
 
         private BindableMap<CatalogueItemFacade, IEntryLink> EntryLinks { get; }
@@ -104,7 +102,7 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         private BindableMap<CatalogueItemFacade, IGroup> Groups { get; }
 
         private CatalogueItemFacade NoChoiceItemFacade { get; } = new CatalogueItemFacade(null, CatalogueItemKind.Entry,
-            () => "None");
+            null, () => "None");
 
         public IEnumerable<IBindableGrouping<CatalogueItemFacade>> CatalogueItems
         {
@@ -117,15 +115,34 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             }
         }
 
-        public ICommand CreateCatalogueItemCommand { get; }
+        public CreateCatalogueItemCommandBase CreateCatalogueItemCommand { get; }
 
-        public ICommand OpenCatalogueItemCommand => Commands.OpenCatalogueItemCommand;
+        public OpenCatalogueItemCommand OpenCatalogueItemCommand { get; }
 
-        public ICommand CreateModifierCommand => Commands.CreateModifierCommand.EnableFor(Group.Modifiers);
+        ICommand IModifiersListViewModel.CreateModifierCommand => CreateModifierCommand;
 
-        public ICommand OpenModifierCommand => Commands.OpenModifierCommand;
+        public OpenModifierCommand OpenModifierCommand { get; }
 
         IBindableGrouping<ModifierFacade> IModifiersListViewModel.Modifiers => Modifiers;
+
+        private IEnumerable<CatalogueItemFacade> CreateDefaultChoices()
+        {
+            return Group.GetEntryLinkPairs()
+                .Select(pair => pair.HasLink ? pair.Link.ToFacade(null) : pair.Entry.ToFacade(null))
+                .PrependWith(NoChoiceItemFacade)
+                .ToArray();
+        }
+
+        private CatalogueItemFacade GetDefaultChoice()
+        {
+            return Group.DefaultChoice == null
+                ? NoChoiceItemFacade
+                : DefaultChoices.First(
+                    facade =>
+                        Group.DefaultChoice.Equals(facade.IsLink
+                            ? ((IEntryLink) facade.Item).Target
+                            : (IEntry) facade.Item));
+        }
 
         private void OnDefaultChoiceChanged()
         {

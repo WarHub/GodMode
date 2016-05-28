@@ -3,15 +3,23 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Collections.Generic;
-    using AppServices;
+    using System.Diagnostics.CodeAnalysis;
+    using Bindables;
+    using Commands;
     using Model;
+    using Models;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class GroupModifierViewModel :
         ModifierViewModelBase<IGroupModifier, decimal, EntryBaseModifierAction, GroupField>
     {
-        public GroupModifierViewModel(IGroupModifier model, ICommandsAggregateService commands)
-            : base(model, commands)
+        public GroupModifierViewModel(IGroupModifier model,
+            CreateConditionItemCommandFactory createConditionItemCommandFactory,
+            OpenConditionItemCommand openConditionItemCommand,
+            Func<IBindableMap<ConditionItemFacade>, RemoveConditionItemCommand> removeCommandFactory)
+            : base(model, createConditionItemCommandFactory, openConditionItemCommand, removeCommandFactory)
         {
             IsFieldActive = CanFieldBeActive();
             IsValueActive = CanValueBeActive();

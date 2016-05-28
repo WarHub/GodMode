@@ -5,13 +5,15 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Models
 {
     using System;
     using System.ComponentModel;
+    using Mvvm.Commands;
 
     public class CatalogueItemFacade : ModelFacadeBase
     {
-        public CatalogueItemFacade(object item, CatalogueItemKind itemKind, Func<string> getName,
-            Func<string> getDetail = null, bool isLink = false, bool isShared = false)
+        public CatalogueItemFacade(object item, CatalogueItemKind itemKind, ICommand<CatalogueItemFacade> removeCommand,
+            Func<string> getName, Func<string> getDetail = null, bool isLink = false, bool isShared = false)
         {
             GetName = getName;
+            RemoveCommand = removeCommand?.SetParameter(this);
             ItemKind = itemKind;
             GetDetail = getDetail;
             Item = item;
@@ -24,6 +26,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Models
         public override object Model => Item;
 
         public override string Name => GetName?.Invoke() ?? "(no name)";
+
+        public override ICommand RemoveCommand { get; }
 
         public bool IsLink { get; }
 

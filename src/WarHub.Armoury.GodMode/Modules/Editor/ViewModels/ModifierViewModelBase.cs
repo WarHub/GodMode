@@ -5,12 +5,17 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System;
     using System.Collections.Generic;
-    using System.Windows.Input;
-    using AppServices;
+    using System.Diagnostics.CodeAnalysis;
     using Bindables;
+    using Commands;
     using Model;
     using Models;
 
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
+    [SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ModifierViewModelBase<TModifier, TValue, TAction, TField> :
         GenericViewModel<TModifier>, IConditionItemsListViewModel
         where TModifier : ICatalogueModifier<TValue, TAction, TField>
@@ -18,16 +23,17 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         private bool _isFieldActive;
         private bool _isValueActive;
 
-        protected ModifierViewModelBase(TModifier model, ICommandsAggregateService commands) : base(model)
+        protected ModifierViewModelBase(TModifier model,
+            CreateConditionItemCommandFactory createConditionItemCommandFactory,
+            OpenConditionItemCommand openConditionItemCommand,
+            Func<IBindableMap<ConditionItemFacade>, RemoveConditionItemCommand> removeCommandFactory)
+            : base(model)
         {
-            if (commands == null)
-                throw new ArgumentNullException(nameof(commands));
-            Commands = commands;
+            OpenConditionItemCommand = openConditionItemCommand;
+            CreateConditionItemCommand = createConditionItemCommandFactory(Modifier);
             Repetition = new ModifierRepetitionViewModel(Modifier.Repetition);
-            ConditionsMap = Modifier.Conditions.ToBindableMap("conditions",
-                Commands.RemoveConditionItemCommand.For(() => ConditionsMap));
-            GroupsMap = Modifier.ConditionGroups.ToBindableMap("condition groups",
-                Commands.RemoveConditionItemCommand.For(() => GroupsMap));
+            ConditionsMap = Modifier.Conditions.ToBindableMap("conditions", removeCommandFactory);
+            GroupsMap = Modifier.ConditionGroups.ToBindableMap("condition groups", removeCommandFactory);
         }
 
         public TAction Action
@@ -87,8 +93,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             }
         }
 
-        protected ICommandsAggregateService Commands { get; }
-
         protected TModifier Modifier => Model;
 
         private BindableMap<ConditionItemFacade, ICatalogueCondition> ConditionsMap { get; }
@@ -104,9 +108,9 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             }
         }
 
-        public ICommand CreateConditionItemCommand => Commands.CreateConditionItemCommand.EnableFor(Modifier);
+        public CreateConditionItemCommand CreateConditionItemCommand { get; }
 
-        public ICommand OpenConditionItemCommand => Commands.OpenConditionItemCommand;
+        public OpenConditionItemCommand OpenConditionItemCommand { get; }
 
         protected virtual void OnActionChanged()
         {

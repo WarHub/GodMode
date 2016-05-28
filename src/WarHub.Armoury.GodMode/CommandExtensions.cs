@@ -9,7 +9,7 @@ namespace WarHub.Armoury.GodMode
 
     public static class CommandExtensions
     {
-        public static ICommand SetParameter(this ICommand command, object parameter)
+        public static ICommand SetParameter(this System.Windows.Input.ICommand command, object parameter)
         {
             return new ParameterWrapperCommand(command, parameter);
         }

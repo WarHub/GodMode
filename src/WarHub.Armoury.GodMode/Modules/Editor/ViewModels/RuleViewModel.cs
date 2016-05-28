@@ -4,25 +4,37 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System;
-    using System.Windows.Input;
-    using AppServices;
+    using System.Diagnostics.CodeAnalysis;
     using Bindables;
+    using Commands;
     using Model;
     using Models;
+    using Mvvm.Commands;
 
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBeMadeStatic.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class RuleViewModel : GenericViewModel<IRule>, IModifiersListViewModel
     {
-        public RuleViewModel(IRule model, ICommandsAggregateService commands,
+        public RuleViewModel(IRule model,
             Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
-            Func<IBookIndex, BookIndexViewModel> bookIndexVmFactory) : base(model)
+            Func<IBookIndex, BookIndexViewModel> bookIndexVmFactory,
+            BindableMapBuilder bindableMapBuilder,
+            OpenModifierCommand openModifierCommand,
+            CreateRuleModifierCommandFactory createRuleModifierCommandFactory) : base(model)
         {
-            Commands = commands;
             Id = identifierVmFactory(Rule.Id);
             Book = bookIndexVmFactory(Rule.Book);
-            Modifiers = Rule.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
+            Modifiers = bindableMapBuilder.Create(Rule.Modifiers);
+            OpenModifierCommand = openModifierCommand;
+            CreateModifierCommand = createRuleModifierCommandFactory(Rule.Modifiers);
         }
 
         public BookIndexViewModel Book { get; }
+
+        public CreateRuleModifierCommand CreateModifierCommand { get; }
 
         public string Description
         {
@@ -46,14 +58,12 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             set { Set(() => Rule.Name == value, () => Rule.Name = value); }
         }
 
-        private ICommandsAggregateService Commands { get; }
-
         private IRule Rule => Model;
 
-        public ICommand CreateModifierCommand => Commands.CreateModifierCommand.EnableFor(Rule.Modifiers);
+        ICommand IModifiersListViewModel.CreateModifierCommand => CreateModifierCommand;
+
+        public OpenModifierCommand OpenModifierCommand { get; }
 
         IBindableGrouping<ModifierFacade> IModifiersListViewModel.Modifiers => Modifiers;
-
-        public ICommand OpenModifierCommand => Commands.OpenModifierCommand;
     }
 }

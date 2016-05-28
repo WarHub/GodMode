@@ -5,28 +5,26 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
-    using AppServices;
+    using GodMode.Commands;
     using Model;
     using Models;
-    using Mvvm.Commands;
 
-    public class CreateConditionItemCommand : ProgressingAsyncCommandBase
+    public delegate CreateConditionItemCommand CreateConditionItemCommandFactory(
+        ICatalogueConditionNodeContainer nodeContainer);
+
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    public class CreateConditionItemCommand : AppAsyncCommandBase
     {
-        public CreateConditionItemCommand(IDialogService dialogService,
-            OpenConditionItemCommand openConditionItemCommand, ICatalogueConditionNodeContainer nodeContainer = null)
+        public CreateConditionItemCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            ICatalogueConditionNodeContainer nodeContainer, OpenConditionItemCommand openConditionItemCommand)
+            : base(dependencyAggregate)
         {
-            if (dialogService == null)
-                throw new ArgumentNullException(nameof(dialogService));
-            if (openConditionItemCommand == null)
-                throw new ArgumentNullException(nameof(openConditionItemCommand));
-            DialogService = dialogService;
-            OpenConditionItemCommand = openConditionItemCommand;
             NodeContainer = nodeContainer;
+            OpenConditionItemCommand = openConditionItemCommand;
         }
-
-        private IDialogService DialogService { get; }
 
         private static Dictionary<ItemKind, string> ItemKindNames { get; } = new Dictionary<ItemKind, string>
         {
@@ -41,18 +39,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 
         private OpenConditionItemCommand OpenConditionItemCommand { get; }
 
-        public CreateConditionItemCommand EnableFor(ICatalogueConditionNodeContainer nodeContainer)
-        {
-            return new CreateConditionItemCommand(DialogService, OpenConditionItemCommand, nodeContainer);
-        }
-
         protected override async Task ExecuteCoreAsync()
         {
-            if (NodeContainer == null)
-            {
-                await InformRequestCannotBeProcessedAsync();
-                return;
-            }
             var kindNames = GetKinds().Select(kind => ItemKindNames[kind]).ToArray();
             var chosenName = await QueryUserForItemKind(kindNames);
             if (!ItemKinds.ContainsKey(chosenName))
@@ -80,29 +68,21 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
             switch (kind)
             {
                 case ItemKind.Condition:
-                    return NodeContainer.Conditions.AddNew().ToFacade();
+                    return NodeContainer.Conditions.AddNew().ToFacade(null);
                 case ItemKind.ConditionGroup:
-                    return NodeContainer.ConditionGroups.AddNew().ToFacade();
+                    return NodeContainer.ConditionGroups.AddNew().ToFacade(null);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(kind), kind, null);
             }
         }
 
-        private IEnumerable<ItemKind> GetKinds()
+        private static IEnumerable<ItemKind> GetKinds()
         {
             yield return ItemKind.Condition;
             yield return ItemKind.ConditionGroup;
         }
 
         protected override bool CanExecuteCore() => NodeContainer != null;
-
-        private async Task InformRequestCannotBeProcessedAsync()
-        {
-            await
-                DialogService.ShowDialogAsync("Ooops",
-                    "Something's wrong: the request cannot be processed." +
-                    " Additional info: the command was not set up properly.", "ok");
-        }
 
         private async Task<string> QueryUserForItemKind(string[] configuredKindNames)
         {

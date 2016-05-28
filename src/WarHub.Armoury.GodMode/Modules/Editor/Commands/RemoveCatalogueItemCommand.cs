@@ -3,56 +3,30 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
-    using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
-    using AppServices;
     using Bindables;
+    using GodMode.Commands;
     using Models;
-    using Mvvm.Commands;
-
-    public class RemoveCatalogueItemCommand : ProgressingAsyncCommandBase<CatalogueItemFacade>
+    
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    public class RemoveCatalogueItemCommand : AppAsyncCommandBase<CatalogueItemFacade>
     {
-        public RemoveCatalogueItemCommand(IDialogService dialogService,
-            Func<IBindableMap<CatalogueItemFacade>> getMapFunc = null)
+        public RemoveCatalogueItemCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            IBindableMap<CatalogueItemFacade> facades) : base(dependencyAggregate)
         {
-            if (dialogService == null)
-                throw new ArgumentNullException(nameof(dialogService));
-            DialogService = dialogService;
-            GetMapFunc = getMapFunc;
+            Facades = facades;
         }
 
-        private IDialogService DialogService { get; }
-
-        private Func<IBindableMap<CatalogueItemFacade>> GetMapFunc { get; }
-
-        public RemoveCatalogueItemCommand For(Func<IBindableMap<CatalogueItemFacade>> getMapFunc)
-        {
-            return new RemoveCatalogueItemCommand(DialogService, getMapFunc);
-        }
+        private IBindableMap<CatalogueItemFacade> Facades { get; }
 
         protected override async Task ExecuteCoreAsync(CatalogueItemFacade parameter)
         {
-            var bindableMap = GetMapFunc?.Invoke();
-            if (bindableMap == null || parameter == null)
+            var isPermission = await GetPermissionAsync();
+            if (isPermission)
             {
-                await InformRequestCannotBeProcessedAsync();
-                return;
+                Facades.Remove(parameter);
             }
-            //TODO check dependencies
-            var result = await GetPermissionAsync();
-            if (result)
-            {
-                bindableMap.Remove(parameter);
-            }
-        }
-
-        private async Task InformRequestCannotBeProcessedAsync()
-        {
-            await
-                DialogService.ShowDialogAsync("Ooops",
-                    "Something's wrong: the request cannot be processed." +
-                    " Additional info: the command was not set up properly.",
-                    "ok");
         }
 
         private async Task<bool> GetPermissionAsync()
@@ -63,6 +37,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
                     "yes", "no");
         }
 
-        protected override bool CanExecuteCore(CatalogueItemFacade parameter) => parameter != null && GetMapFunc != null;
+        protected override bool CanExecuteCore(CatalogueItemFacade parameter) => parameter != null;
     }
 }

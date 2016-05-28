@@ -4,8 +4,10 @@
 namespace WarHub.Armoury.GodMode.Bindables
 {
     using System.Collections.Generic;
+    using Mvvm.Commands;
 
     public interface IBindableMap<T> : IBindableGrouping<T>, ICollection<T>
     {
+        ICommand<T> RemoveCommand { get; }
     }
 }

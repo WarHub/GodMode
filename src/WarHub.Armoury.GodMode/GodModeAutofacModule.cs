@@ -10,6 +10,7 @@ namespace WarHub.Armoury.GodMode
     using System.Threading.Tasks;
     using Autofac;
     using Autofac.Core;
+    using Bindables;
     using Model.BattleScribe.Services;
     using Model.DataAccess;
     using Model.DataAccess.Autofac;
@@ -23,6 +24,8 @@ namespace WarHub.Armoury.GodMode
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
+
+            builder.RegisterType<BindableMapBuilder>();
 
             // register concrete types
             builder.RegisterAssemblyTypes(ThisAssembly)

@@ -4,17 +4,20 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Models
 {
     using Model;
+    using Mvvm.Commands;
 
     public static class ConditionItemFacadeExtensions
     {
-        public static ConditionItemFacade ToFacade(this ICatalogueCondition condition)
+        public static ConditionItemFacade ToFacade(this ICatalogueCondition condition,
+            ICommand<ConditionItemFacade> removeCommand)
         {
-            return new ConditionItemFacade(condition);
+            return new ConditionItemFacade(condition, removeCommand);
         }
 
-        public static ConditionItemFacade ToFacade(this ICatalogueConditionGroup group)
+        public static ConditionItemFacade ToFacade(this ICatalogueConditionGroup group,
+            ICommand<ConditionItemFacade> removeCommand)
         {
-            return new ConditionItemFacade(group);
+            return new ConditionItemFacade(group, removeCommand);
         }
     }
 }

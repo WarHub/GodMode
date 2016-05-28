@@ -3,53 +3,27 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
-    using System;
-    using System.Threading.Tasks;
-    using AppServices;
+    using System.Diagnostics.CodeAnalysis;
     using Bindables;
+    using GodMode.Commands;
     using Models;
-    using Mvvm.Commands;
 
-    public class RemoveConditionItemCommand : ProgressingAsyncCommandBase<ConditionItemFacade>
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    public class RemoveConditionItemCommand : AppCommandBase<ConditionItemFacade>
     {
-        public RemoveConditionItemCommand(IDialogService dialogService,
-            Func<IBindableMap<ConditionItemFacade>> getMapFunc = null)
+        public RemoveConditionItemCommand(IAppCommandDependencyAggregate dependencyAggregate,
+            IBindableMap<ConditionItemFacade> facades) : base(dependencyAggregate)
         {
-            if (dialogService == null)
-                throw new ArgumentNullException(nameof(dialogService));
-            DialogService = dialogService;
-            GetMapFunc = getMapFunc;
+            Facades = facades;
         }
 
-        private IDialogService DialogService { get; }
+        private IBindableMap<ConditionItemFacade> Facades { get; }
 
-        private Func<IBindableMap<ConditionItemFacade>> GetMapFunc { get; }
-
-        public RemoveConditionItemCommand For(Func<IBindableMap<ConditionItemFacade>> getMapFunc)
+        protected override void ExecuteCore(ConditionItemFacade parameter)
         {
-            return new RemoveConditionItemCommand(DialogService, getMapFunc);
+            Facades.Remove(parameter);
         }
 
-        protected override async Task ExecuteCoreAsync(ConditionItemFacade parameter)
-        {
-            var bindableMap = GetMapFunc?.Invoke();
-            if (bindableMap == null || parameter == null)
-            {
-                await InformRequestCannotBeProcessedAsync();
-                return;
-            }
-            bindableMap.Remove(parameter);
-        }
-
-        private async Task InformRequestCannotBeProcessedAsync()
-        {
-            await
-                DialogService.ShowDialogAsync("Ooops",
-                    "Something's wrong: the request cannot be processed." +
-                    " Additional info: the command was not set up properly.",
-                    "ok");
-        }
-
-        protected override bool CanExecuteCore(ConditionItemFacade parameter) => parameter != null && GetMapFunc != null;
+        protected override bool CanExecuteCore(ConditionItemFacade parameter) => parameter != null;
     }
 }

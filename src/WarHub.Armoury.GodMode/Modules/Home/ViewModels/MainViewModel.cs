@@ -3,38 +3,34 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Home.ViewModels
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Windows.Input;
-    using AppServices;
     using DataAccess.Commands;
     using Demo;
+    using Editor.Commands;
     using Model.Repo;
     using Mvvm;
     using StorageExplorer.Commands;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class MainViewModel : ViewModelBase
     {
-        private ICommand _openCatalogueCommand;
-
-        public MainViewModel(ICommandsAggregateService commands, OpenRemoteDataSourcesCommand openRemoteDataIndexCommand,
+        public MainViewModel(
+            OpenCatalogueCommand openCatalogueCommand,
+            OpenRemoteDataSourcesCommand openRemoteDataIndexCommand,
             OpenStorageHomeCommand openStorageHomeCommand)
         {
-            Commands = commands;
+            OpenCatalogueCommand = openCatalogueCommand.SetParameter(new CatalogueInfo(DemoLoader.Catalogue));
             OpenRemoteDataIndexCommand = openRemoteDataIndexCommand;
             OpenStorageHomeCommand = openStorageHomeCommand;
         }
 
         public string MainText { get; } = "Welcome in GodMode! This is Xamarin.Forms application.";
 
-        public ICommand OpenCatalogueCommand
-            =>
-                _openCatalogueCommand ??
-                (_openCatalogueCommand =
-                    Commands.OpenCatalogueCommand.SetParameter(new CatalogueInfo(DemoLoader.Catalogue)));
+        public ICommand OpenCatalogueCommand { get; }
 
         public OpenRemoteDataSourcesCommand OpenRemoteDataIndexCommand { get; }
 
         public OpenStorageHomeCommand OpenStorageHomeCommand { get; }
-
-        private ICommandsAggregateService Commands { get; }
     }
 }

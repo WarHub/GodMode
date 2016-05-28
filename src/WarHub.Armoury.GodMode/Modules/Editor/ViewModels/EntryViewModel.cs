@@ -5,49 +5,56 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System;
     using System.Collections.Generic;
-    using System.Windows.Input;
-    using AppServices;
+    using System.Diagnostics.CodeAnalysis;
     using Bindables;
+    using Commands;
     using Model;
     using Models;
+    using Mvvm.Commands;
 
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBeMadeStatic.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class EntryViewModel : GenericViewModel<IEntry>, IRootItemViewModel,
         IModifiersListViewModel, ICatalogueItemsListViewModel
     {
-        public EntryViewModel(IEntry model, ICommandsAggregateService commands,
+        public EntryViewModel(IEntry model,
             Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
             Func<IBookIndex, BookIndexViewModel> bookIndexVmFactory,
-            Func<IEntryLimits, EntryLimitsViewModel> entryLimitsVmFactory)
+            Func<IEntryLimits, EntryLimitsViewModel> entryLimitsVmFactory,
+            CreateItemInEntryCommandFactory createItemInEntryCommandFactory,
+            BindableMapBuilder bindableMapBuilder,
+            OpenCatalogueItemCommand openCatalogueItemCommand, OpenModifierCommand openModifierCommand,
+            CreateEntryModifierCommandFactory createEntryModifierCommandFactory)
             : base(model)
         {
-            Commands = commands;
-            Entries = Entry.Entries.ToBindableMap("entries",
-                Commands.RemoveCatalogueItemCommand.For(() => Entries));
-            EntryLinks = Entry.EntryLinks.ToBindableMap("entry links",
-                Commands.RemoveCatalogueItemCommand.For(() => EntryLinks));
-            Groups = Entry.Groups.ToBindableMap("groups",
-                Commands.RemoveCatalogueItemCommand.For(() => Groups));
-            GroupLinks = Entry.GroupLinks.ToBindableMap("group links",
-                Commands.RemoveCatalogueItemCommand.For(() => GroupLinks));
-            Profiles = Entry.Profiles.ToBindableMap("profiles",
-                Commands.RemoveCatalogueItemCommand.For(() => Profiles));
-            ProfileLinks = Entry.ProfileLinks.ToBindableMap("profile links",
-                Commands.RemoveCatalogueItemCommand.For(() => ProfileLinks));
-            Rules = Entry.Rules.ToBindableMap("rules",
-                Commands.RemoveCatalogueItemCommand.For(() => Rules));
-            RuleLinks = Entry.RuleLinks.ToBindableMap("rule links",
-                Commands.RemoveCatalogueItemCommand.For(() => RuleLinks));
+            Entries = bindableMapBuilder.Create(Entry.Entries, "entries");
+            EntryLinks = bindableMapBuilder.Create(Entry.EntryLinks, "entry links");
+            Groups = bindableMapBuilder.Create(Entry.Groups, "groups");
+            GroupLinks = bindableMapBuilder.Create(Entry.GroupLinks, "group links");
+            Profiles = bindableMapBuilder.Create(Entry.Profiles, "profiles");
+            ProfileLinks = bindableMapBuilder.Create(Entry.ProfileLinks, "profile links");
+            Rules = bindableMapBuilder.Create(Entry.Rules, "rules");
+            RuleLinks = bindableMapBuilder.Create(Entry.RuleLinks, "rule links");
             Id = identifierVmFactory(Entry.Id);
             Book = bookIndexVmFactory(Entry.Book);
             Limits = entryLimitsVmFactory(Entry.Limits);
             RootEntry = Entry as IRootEntry;
             IsRootItem = RootEntry != null;
             Categories = Entry.Context.Catalogue.SystemContext.Categories.PrependWith(new NoCategory());
-            Modifiers = Entry.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
-            CreateCatalogueItemCommand = Commands.CreateCatalogueItemCommand.EnableFor(Entry);
+            Modifiers = bindableMapBuilder.Create(Entry.Modifiers);
+
+            OpenCatalogueItemCommand = openCatalogueItemCommand;
+            OpenModifierCommand = openModifierCommand;
+            CreateCatalogueItemCommand = createItemInEntryCommandFactory(Entry);
+            CreateModifierCommand = createEntryModifierCommandFactory(Entry.Modifiers);
         }
 
         public BookIndexViewModel Book { get; }
+
+        public CreateEntryModifierCommand CreateModifierCommand { get; }
 
         public EntryType EntryType
         {
@@ -95,8 +102,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             set { Set(() => Entry.PointCost == value, () => Entry.PointCost = value); }
         }
 
-        private ICommandsAggregateService Commands { get; }
-
         private BindableMap<CatalogueItemFacade, IEntry> Entries { get; }
 
         private IEntry Entry => Model;
@@ -132,13 +137,13 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             }
         }
 
-        public ICommand CreateCatalogueItemCommand { get; }
+        public CreateCatalogueItemCommandBase CreateCatalogueItemCommand { get; }
 
-        public ICommand OpenCatalogueItemCommand => Commands.OpenCatalogueItemCommand;
+        public OpenCatalogueItemCommand OpenCatalogueItemCommand { get; }
 
-        public ICommand CreateModifierCommand => Commands.CreateModifierCommand.EnableFor(Entry.Modifiers);
+        ICommand IModifiersListViewModel.CreateModifierCommand => CreateModifierCommand;
 
-        public ICommand OpenModifierCommand => Commands.OpenModifierCommand;
+        public OpenModifierCommand OpenModifierCommand { get; }
 
         IBindableGrouping<ModifierFacade> IModifiersListViewModel.Modifiers => Modifiers;
 

@@ -5,16 +5,16 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Windows.Input;
     using Bindables;
+    using Commands;
     using Models;
 
     public interface ICatalogueItemsListViewModel : INotifyPropertyChanged
     {
         IEnumerable<IBindableGrouping<CatalogueItemFacade>> CatalogueItems { get; }
 
-        ICommand CreateCatalogueItemCommand { get; }
+        CreateCatalogueItemCommandBase CreateCatalogueItemCommand { get; }
 
-        ICommand OpenCatalogueItemCommand { get; }
+        OpenCatalogueItemCommand OpenCatalogueItemCommand { get; }
     }
 }

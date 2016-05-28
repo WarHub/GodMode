@@ -3,24 +3,29 @@
 
 namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
+    using System;
     using System.Collections.Generic;
-    using System.Windows.Input;
-    using AppServices;
+    using System.Diagnostics.CodeAnalysis;
     using Bindables;
+    using Commands;
     using Model;
     using Models;
 
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class CatalogueConditionGroupViewModel : GenericViewModel<ICatalogueConditionGroup>,
         IConditionItemsListViewModel
     {
-        public CatalogueConditionGroupViewModel(ICatalogueConditionGroup model, ICommandsAggregateService commands)
+        public CatalogueConditionGroupViewModel(ICatalogueConditionGroup model,
+            Func<IBindableMap<ConditionItemFacade>, RemoveConditionItemCommand> removeCommandFactory,
+            CreateConditionItemCommandFactory createConditionItemCommandFactory,
+            OpenConditionItemCommand openConditionItemCommand)
             : base(model)
         {
-            Commands = commands;
-            ConditionsMap = Group.Conditions.ToBindableMap("conditions",
-                Commands.RemoveConditionItemCommand.For(() => ConditionsMap));
-            GroupsMap = Group.ConditionGroups.ToBindableMap("condition groups",
-                Commands.RemoveConditionItemCommand.For(() => GroupsMap));
+            OpenConditionItemCommand = openConditionItemCommand;
+            CreateConditionItemCommand = createConditionItemCommandFactory(Group);
+            ConditionsMap = Group.Conditions.ToBindableMap("conditions", removeCommandFactory);
+            GroupsMap = Group.ConditionGroups.ToBindableMap("condition groups", removeCommandFactory);
         }
 
         public ConditionGroupType Kind
@@ -38,8 +43,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             }
         }
 
-        private ICommandsAggregateService Commands { get; }
-
         private BindableMap<ConditionItemFacade, ICatalogueCondition> ConditionsMap { get; }
 
         private ICatalogueConditionGroup Group => Model;
@@ -55,8 +58,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             }
         }
 
-        public ICommand CreateConditionItemCommand => Commands.CreateConditionItemCommand.EnableFor(Group);
+        public CreateConditionItemCommand CreateConditionItemCommand { get; }
 
-        public ICommand OpenConditionItemCommand => Commands.OpenConditionItemCommand;
+        public OpenConditionItemCommand OpenConditionItemCommand { get; }
     }
 }

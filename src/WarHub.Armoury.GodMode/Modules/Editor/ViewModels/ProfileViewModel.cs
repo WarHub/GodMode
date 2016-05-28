@@ -5,29 +5,38 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Windows.Input;
-    using AppServices;
     using Bindables;
+    using Commands;
     using Model;
     using Models;
+    using Mvvm.Commands;
 
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBeMadeStatic.Global")]
+    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class ProfileViewModel : GenericViewModel<IProfile>, IModifiersListViewModel
     {
         private IReadOnlyList<CharacteristicViewModel> _characteristics;
 
-        public ProfileViewModel(IProfile model, ICommandsAggregateService commands,
+        public ProfileViewModel(IProfile model,
             Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
             Func<IBookIndex, BookIndexViewModel> bookIndexVmFactory,
-            Func<ICharacteristic, CharacteristicViewModel> characteristicVmFactory)
+            Func<ICharacteristic, CharacteristicViewModel> characteristicVmFactory,
+            BindableMapBuilder bindableMapBuilder,
+            OpenModifierCommand openModifierCommand,
+            CreateProfileModifierCommandFactory createProfileModifierCommandFactory)
             : base(model)
         {
-            Commands = commands;
-            CharacteristicVmFactory = characteristicVmFactory;
             Id = identifierVmFactory(Profile.Id);
             Book = bookIndexVmFactory(Profile.Book);
-            Modifiers =
-                Profile.Modifiers.ToBindableMap(removeCommand: Commands.RemoveModifierCommand.For(() => Modifiers));
+            Modifiers = bindableMapBuilder.Create(Profile.Modifiers);
+            CharacteristicVmFactory = characteristicVmFactory;
+            OpenModifierCommand = openModifierCommand;
+            CreateModifierCommand = createProfileModifierCommandFactory(Profile.Modifiers);
             UpdateCharacteristicViewModels();
         }
 
@@ -38,6 +47,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             get { return _characteristics; }
             private set { Set(ref _characteristics, value); }
         }
+
+        public CreateProfileModifierCommand CreateModifierCommand { get; }
 
         public IdentifierViewModel Id { get; }
 
@@ -71,15 +82,13 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
 
         private Func<ICharacteristic, CharacteristicViewModel> CharacteristicVmFactory { get; }
 
-        private ICommandsAggregateService Commands { get; }
-
         private IProfile Profile => Model;
 
-        public ICommand CreateModifierCommand => Commands.CreateModifierCommand.EnableFor(Profile.Modifiers);
+        ICommand IModifiersListViewModel.CreateModifierCommand => CreateModifierCommand;
+
+        public OpenModifierCommand OpenModifierCommand { get; }
 
         IBindableGrouping<ModifierFacade> IModifiersListViewModel.Modifiers => Modifiers;
-
-        public ICommand OpenModifierCommand => Commands.OpenModifierCommand;
 
         private void UpdateModelCharacteristics()
         {

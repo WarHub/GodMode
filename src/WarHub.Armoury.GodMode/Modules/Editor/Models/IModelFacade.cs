@@ -13,6 +13,6 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Models
 
         string Name { get; }
 
-        ICommand RemoveCommand { get; set; }
+        ICommand RemoveCommand { get; }
     }
 }

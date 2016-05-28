@@ -10,30 +10,37 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Models
     using System.Linq;
     using Bindables;
     using Model;
+    using Mvvm.Commands;
 
     public class ModifierFacade : ModelFacadeBase
     {
-        private ModifierFacade(ICatalogueConditionNodeContainer modifier, ModifierKind kind, Func<string> getNameFunc)
+        private ModifierFacade(ICatalogueConditionNodeContainer modifier, ModifierKind kind, Func<string> getNameFunc,
+            ICommand<ModifierFacade> removeCommand)
         {
             Modifier = modifier;
             Kind = kind;
             GetNameFunc = getNameFunc;
+            RemoveCommand = removeCommand?.SetParameter(this);
             GetDetailFunc = modifier.ToDetailString;
         }
 
-        public ModifierFacade(IEntryModifier modifier) : this(modifier, ModifierKind.Entry, modifier.Stringify)
+        public ModifierFacade(IEntryModifier modifier, ICommand<ModifierFacade> removeCommand)
+            : this(modifier, ModifierKind.Entry, modifier.Stringify, removeCommand)
         {
         }
 
-        public ModifierFacade(IGroupModifier modifier) : this(modifier, ModifierKind.Group, modifier.Stringify)
+        public ModifierFacade(IGroupModifier modifier, ICommand<ModifierFacade> removeCommand)
+            : this(modifier, ModifierKind.Group, modifier.Stringify, removeCommand)
         {
         }
 
-        public ModifierFacade(IProfileModifier modifier) : this(modifier, ModifierKind.Profile, modifier.Stringify)
+        public ModifierFacade(IProfileModifier modifier, ICommand<ModifierFacade> removeCommand)
+            : this(modifier, ModifierKind.Profile, modifier.Stringify, removeCommand)
         {
         }
 
-        public ModifierFacade(IRuleModifier modifier) : this(modifier, ModifierKind.Rule, modifier.Stringify)
+        public ModifierFacade(IRuleModifier modifier, ICommand<ModifierFacade> removeCommand)
+            : this(modifier, ModifierKind.Rule, modifier.Stringify, removeCommand)
         {
         }
 
@@ -42,6 +49,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.Models
         public override object Model => Modifier;
 
         public override string Name => GetNameFunc?.Invoke();
+
+        public override ICommand RemoveCommand { get; }
 
         public ModifierKind Kind { get; }
 

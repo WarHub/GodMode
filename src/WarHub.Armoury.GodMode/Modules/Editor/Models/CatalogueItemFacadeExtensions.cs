@@ -4,58 +4,105 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Models
 {
     using Model;
+    using Mvvm.Commands;
 
     public static class CatalogueItemFacadeExtensions
     {
-        public static CatalogueItemFacade ToFacade(this IEntry entry, bool isShared = false)
+        #region Shared
+
+        public static CatalogueItemFacade ToFacadeShared(this IEntry entry, ICommand<CatalogueItemFacade> removeCommand)
         {
-            return new CatalogueItemFacade(entry, CatalogueItemKind.Entry, () => entry.Name, isShared: isShared);
+            return new CatalogueItemFacade(entry, CatalogueItemKind.Entry, removeCommand, () => entry.Name,
+                isShared: true);
         }
 
-        public static CatalogueItemFacade ToFacade(this IGroup group, bool isShared = false)
+        public static CatalogueItemFacade ToFacadeShared(this IGroup group, ICommand<CatalogueItemFacade> removeCommand)
         {
-            return new CatalogueItemFacade(group, CatalogueItemKind.Group, () => group.Name, isShared: isShared);
+            return new CatalogueItemFacade(group, CatalogueItemKind.Group, removeCommand, () => group.Name,
+                isShared: true);
         }
 
-        public static CatalogueItemFacade ToFacade(this IProfile profile, bool isShared = false)
+        public static CatalogueItemFacade ToFacadeShared(this IProfile profile, ICommand<CatalogueItemFacade> removeCommand)
         {
-            return new CatalogueItemFacade(profile, CatalogueItemKind.Profile, () => profile.Name, isShared: isShared);
+            return new CatalogueItemFacade(profile, CatalogueItemKind.Profile, removeCommand, () => profile.Name,
+                isShared: true);
         }
 
-        public static CatalogueItemFacade ToFacade(this IRule rule, bool isShared = false)
+        public static CatalogueItemFacade ToFacadeShared(this IRule rule, ICommand<CatalogueItemFacade> removeCommand)
         {
-            return new CatalogueItemFacade(rule, CatalogueItemKind.Rule, () => rule.Name, isShared: isShared);
+            return new CatalogueItemFacade(rule, CatalogueItemKind.Rule, removeCommand, () => rule.Name, 
+                isShared: true);
         }
 
-        public static CatalogueItemFacade ToFacade(this IEntryLink entryLink)
+        #endregion
+
+        #region Not Shared
+
+        public static CatalogueItemFacade ToFacade(this IEntry entry, ICommand<CatalogueItemFacade> removeCommand)
         {
-            return new CatalogueItemFacade(entryLink, CatalogueItemKind.Entry, () => entryLink.Target.Name, isLink: true);
+            return new CatalogueItemFacade(entry, CatalogueItemKind.Entry, removeCommand, () => entry.Name);
         }
 
-        public static CatalogueItemFacade ToFacade(this IGroupLink groupLink)
+        public static CatalogueItemFacade ToFacade(this IGroup group, ICommand<CatalogueItemFacade> removeCommand)
         {
-            return new CatalogueItemFacade(groupLink, CatalogueItemKind.Group, () => groupLink.Target.Name, isLink: true);
+            return new CatalogueItemFacade(group, CatalogueItemKind.Group, removeCommand, () => group.Name);
         }
 
-        public static CatalogueItemFacade ToFacade(this IProfileLink profileLink)
+        public static CatalogueItemFacade ToFacade(this IProfile profile, ICommand<CatalogueItemFacade> removeCommand)
         {
-            return new CatalogueItemFacade(profileLink, CatalogueItemKind.Profile, () => profileLink.Target.Name,
+            return new CatalogueItemFacade(profile, CatalogueItemKind.Profile, removeCommand, () => profile.Name);
+        }
+
+        public static CatalogueItemFacade ToFacade(this IRule rule, ICommand<CatalogueItemFacade> removeCommand)
+        {
+            return new CatalogueItemFacade(rule, CatalogueItemKind.Rule, removeCommand, () => rule.Name);
+        }
+
+        #endregion
+
+        #region Links
+
+        public static CatalogueItemFacade ToFacade(this IEntryLink entryLink,
+            ICommand<CatalogueItemFacade> removeCommand)
+        {
+            return new CatalogueItemFacade(entryLink, CatalogueItemKind.Entry, removeCommand,
+                () => entryLink.Target.Name, isLink: true);
+        }
+
+        public static CatalogueItemFacade ToFacade(this IGroupLink groupLink,
+            ICommand<CatalogueItemFacade> removeCommand)
+        {
+            return new CatalogueItemFacade(groupLink, CatalogueItemKind.Group, removeCommand,
+                () => groupLink.Target.Name, isLink: true);
+        }
+
+        public static CatalogueItemFacade ToFacade(this IProfileLink profileLink,
+            ICommand<CatalogueItemFacade> removeCommand)
+        {
+            return new CatalogueItemFacade(profileLink, CatalogueItemKind.Profile, removeCommand,
+                () => profileLink.Target.Name,
                 isLink: true);
         }
 
-        public static CatalogueItemFacade ToFacade(this IRuleLink ruleLink)
+        public static CatalogueItemFacade ToFacade(this IRuleLink ruleLink, ICommand<CatalogueItemFacade> removeCommand)
         {
-            return new CatalogueItemFacade(ruleLink, CatalogueItemKind.Rule, () => ruleLink.Target.Name, isLink: true);
+            return new CatalogueItemFacade(ruleLink, CatalogueItemKind.Rule, removeCommand, () => ruleLink.Target.Name,
+                isLink: true);
         }
 
-        public static CatalogueItemFacade ToFacade(this IRootEntry rootEntry)
+        public static CatalogueItemFacade ToFacade(this IRootEntry rootEntry,
+            ICommand<CatalogueItemFacade> removeCommand)
         {
-            return new CatalogueItemFacade(rootEntry, CatalogueItemKind.Entry, () => rootEntry.Name);
+            return new CatalogueItemFacade(rootEntry, CatalogueItemKind.Entry, removeCommand, () => rootEntry.Name);
         }
 
-        public static CatalogueItemFacade ToFacade(this IRootLink rootLink)
+        public static CatalogueItemFacade ToFacade(this IRootLink rootLink, ICommand<CatalogueItemFacade> removeCommand)
         {
-            return new CatalogueItemFacade(rootLink, CatalogueItemKind.Entry, () => rootLink.Target.Name, isLink: true);
+            return new CatalogueItemFacade(rootLink, CatalogueItemKind.Entry, removeCommand, () => rootLink.Target.Name,
+                isLink: true);
         }
+
+        #endregion
+
     }
 }

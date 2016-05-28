@@ -11,121 +11,192 @@ namespace WarHub.Armoury.GodMode.Bindables
 
     public static class BindableMapExtensions
     {
-        public static BindableMap<TFacade, TModel> ToBindableMap<TFacade, TModel>(this IList<TModel> models,
-            Func<TModel, TFacade> mapFunc, Func<TFacade, TModel> reverseMap, string key = null,
-            ICommand<IModelFacade> removeCommand = null)
+        private static ICommand<TFacade> GetDisabledCommand<TFacade>()
         {
-            return new BindableMap<TFacade, TModel>(models, mapFunc, reverseMap, key);
+            return new RelayCommand<TFacade>(_ => { }, _ => false);
         }
 
-        public static BindableMap<TFacade, TModel> ToBindableMap<TFacade, TModel>(this IList<TModel> models,
-            Func<TModel, TFacade> mapFunc, string key = null, ICommand<TFacade> removeCommand = null)
-            where TFacade : IModelFacade
+        public static BindableMap<TFacade, TModel> ToBindableMap<TFacade, TModel>(
+            this IList<TModel> models, FacadeFactory<TModel, TFacade> facadeFactory, string key = null,
+            Func<IBindableMap<TFacade>, ICommand<TFacade>> removeCommandFactory = null) where TFacade : IModelFacade
         {
-            return new BindableMap<TFacade, TModel>(models, x =>
-            {
-                var facade = mapFunc(x);
-                facade.RemoveCommand = removeCommand?.SetParameter(facade) ?? new RelayCommand(() => { }, () => false);
-                return facade;
-            }, facade => (TModel) facade.Model, key);
+            removeCommandFactory = removeCommandFactory ?? (_ => GetDisabledCommand<TFacade>());
+            return new BindableMap<TFacade, TModel>(removeCommandFactory, models, facadeFactory,
+                facade => (TModel) facade.Model, key);
         }
+
+        #region Conditions
 
         public static BindableMap<ConditionItemFacade, ICatalogueCondition> ToBindableMap(
             this INodeSimple<ICatalogueCondition> collection, string key = null,
-            ICommand<ConditionItemFacade> removeCommand = null)
+            Func<IBindableMap<ConditionItemFacade>, ICommand<ConditionItemFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(condition => condition.ToFacade(), key, removeCommand);
+            return collection.ToBindableMap(ConditionItemFacadeExtensions.ToFacade, key, removeCommand);
         }
 
         public static BindableMap<ConditionItemFacade, ICatalogueConditionGroup> ToBindableMap(
             this INodeSimple<ICatalogueConditionGroup> collection, string key = null,
-            ICommand<ConditionItemFacade> removeCommand = null)
+            Func<IBindableMap<ConditionItemFacade>, ICommand<ConditionItemFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(group => group.ToFacade(), key, removeCommand);
+            return collection.ToBindableMap(ConditionItemFacadeExtensions.ToFacade, key, removeCommand);
         }
 
-        public static BindableMap<CatalogueItemFacade, IEntry> ToBindableMap(this IList<IEntry> collection,
-            string key = null, ICommand<CatalogueItemFacade> removeCommand = null, bool asShared = false)
+        #endregion
+
+        #region Links
+
+        public static BindableMap<CatalogueItemFacade, IEntryLink> ToBindableMap(
+            this IList<IEntryLink> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(entry => entry.ToFacade(asShared), key, removeCommand);
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacade, key, removeCommand);
         }
 
-        public static BindableMap<CatalogueItemFacade, IGroup> ToBindableMap(this IList<IGroup> collection,
-            string key = null, ICommand<CatalogueItemFacade> removeCommand = null, bool asShared = false)
+        public static BindableMap<CatalogueItemFacade, IGroupLink> ToBindableMap(
+            this IList<IGroupLink> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(group => group.ToFacade(asShared), key, removeCommand);
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacade, key, removeCommand);
         }
 
-        public static BindableMap<CatalogueItemFacade, IProfile> ToBindableMap(this IList<IProfile> collection,
-            string key = null, ICommand<CatalogueItemFacade> removeCommand = null, bool asShared = false)
+        public static BindableMap<CatalogueItemFacade, IProfileLink> ToBindableMap(
+            this IList<IProfileLink> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(profile => profile.ToFacade(asShared), key, removeCommand);
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacade, key, removeCommand);
         }
 
-        public static BindableMap<CatalogueItemFacade, IRule> ToBindableMap(this IList<IRule> collection,
-            string key = null, ICommand<CatalogueItemFacade> removeCommand = null, bool asShared = false)
+        public static BindableMap<CatalogueItemFacade, IRuleLink> ToBindableMap(
+            this IList<IRuleLink> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(rule => rule.ToFacade(asShared), key, removeCommand);
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacade, key, removeCommand);
         }
 
-        public static BindableMap<CatalogueItemFacade, IEntryLink> ToBindableMap(this IList<IEntryLink> collection,
-            string key = null, ICommand<CatalogueItemFacade> removeCommand = null)
+        public static BindableMap<CatalogueItemFacade, IRootEntry> ToBindableMap(
+            this IList<IRootEntry> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(link => link.ToFacade(), key, removeCommand);
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacade, key, removeCommand);
         }
 
-        public static BindableMap<CatalogueItemFacade, IGroupLink> ToBindableMap(this IList<IGroupLink> collection,
-            string key = null, ICommand<CatalogueItemFacade> removeCommand = null)
+        public static BindableMap<CatalogueItemFacade, IRootLink> ToBindableMap(
+            this IList<IRootLink> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(link => link.ToFacade(), key, removeCommand);
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacade, key, removeCommand);
         }
 
-        public static BindableMap<CatalogueItemFacade, IProfileLink> ToBindableMap(this IList<IProfileLink> collection,
-            string key = null, ICommand<CatalogueItemFacade> removeCommand = null)
+        #endregion
+
+        #region Modifiers
+
+        public static BindableMap<ModifierFacade, IEntryModifier> ToBindableMap(
+            this IList<IEntryModifier> collection, string key = null,
+            Func<IBindableMap<ModifierFacade>, ICommand<ModifierFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(link => link.ToFacade(), key, removeCommand);
+            return collection.ToBindableMap(ModifierFacadeExtensions.ToFacade, key, removeCommand);
         }
 
-        public static BindableMap<CatalogueItemFacade, IRuleLink> ToBindableMap(this IList<IRuleLink> collection,
-            string key = null, ICommand<CatalogueItemFacade> removeCommand = null)
+        public static BindableMap<ModifierFacade, IGroupModifier> ToBindableMap(
+            this IList<IGroupModifier> collection, string key = null,
+            Func<IBindableMap<ModifierFacade>, ICommand<ModifierFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(link => link.ToFacade(), key, removeCommand);
-        }
-
-        public static BindableMap<CatalogueItemFacade, IRootEntry> ToBindableMap(this IList<IRootEntry> collection,
-            string key = null, ICommand<CatalogueItemFacade> removeCommand = null)
-        {
-            return collection.ToBindableMap(entry => entry.ToFacade(), key, removeCommand);
-        }
-
-        public static BindableMap<CatalogueItemFacade, IRootLink> ToBindableMap(this IList<IRootLink> collection,
-            string key = null, ICommand<CatalogueItemFacade> removeCommand = null)
-        {
-            return collection.ToBindableMap(link => link.ToFacade(), key, removeCommand);
-        }
-
-        public static BindableMap<ModifierFacade, IEntryModifier> ToBindableMap(this IList<IEntryModifier> collection,
-            string key = null, ICommand<ModifierFacade> removeCommand = null)
-        {
-            return collection.ToBindableMap(modifier => modifier.ToFacade(), key, removeCommand);
-        }
-
-        public static BindableMap<ModifierFacade, IGroupModifier> ToBindableMap(this IList<IGroupModifier> collection,
-            string key = null, ICommand<ModifierFacade> removeCommand = null)
-        {
-            return collection.ToBindableMap(modifier => modifier.ToFacade(), key, removeCommand);
+            return collection.ToBindableMap(ModifierFacadeExtensions.ToFacade, key, removeCommand);
         }
 
         public static BindableMap<ModifierFacade, IProfileModifier> ToBindableMap(
-            this IList<IProfileModifier> collection, string key = null, ICommand<ModifierFacade> removeCommand = null)
+            this IList<IProfileModifier> collection, string key = null,
+            Func<IBindableMap<ModifierFacade>, ICommand<ModifierFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(modifier => modifier.ToFacade(), key, removeCommand);
+            return collection.ToBindableMap(ModifierFacadeExtensions.ToFacade, key, removeCommand);
         }
 
-        public static BindableMap<ModifierFacade, IRuleModifier> ToBindableMap(this IList<IRuleModifier> collection,
-            string key = null, ICommand<ModifierFacade> removeCommand = null)
+        public static BindableMap<ModifierFacade, IRuleModifier> ToBindableMap(
+            this IList<IRuleModifier> collection, string key = null,
+            Func<IBindableMap<ModifierFacade>, ICommand<ModifierFacade>> removeCommand = null)
         {
-            return collection.ToBindableMap(modifier => modifier.ToFacade(), key, removeCommand);
+            return collection.ToBindableMap(ModifierFacadeExtensions.ToFacade, key, removeCommand);
         }
+
+        #endregion
+
+        #region Shared
+
+        public static BindableMap<CatalogueItemFacade, IEntry> ToBindableMapShared(
+            this IList<IEntry> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
+        {
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacadeShared, key, removeCommand);
+        }
+
+        public static BindableMap<CatalogueItemFacade, IGroup> ToBindableMapShared(
+            this IList<IGroup> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
+        {
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacadeShared, key, removeCommand);
+        }
+
+        public static BindableMap<CatalogueItemFacade, IProfile> ToBindableMapShared(
+            this IList<IProfile> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
+        {
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacadeShared, key, removeCommand);
+        }
+
+        public static BindableMap<CatalogueItemFacade, IRule> ToBindableMapShared(
+            this IList<IRule> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
+        {
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacadeShared, key, removeCommand);
+        }
+
+        #endregion
+
+        #region Not Shared
+
+        public static BindableMap<CatalogueItemFacade, IEntry> ToBindableMap(
+            this IList<IEntry> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
+        {
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacadeShared, key, removeCommand);
+        }
+
+        public static BindableMap<CatalogueItemFacade, IGroup> ToBindableMap(
+            this IList<IGroup> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
+        {
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacadeShared, key, removeCommand);
+        }
+
+        public static BindableMap<CatalogueItemFacade, IProfile> ToBindableMap(
+            this IList<IProfile> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
+        {
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacadeShared, key, removeCommand);
+        }
+
+        public static BindableMap<CatalogueItemFacade, IRule> ToBindableMap(
+            this IList<IRule> collection,
+            string key = null,
+            Func<IBindableMap<CatalogueItemFacade>, ICommand<CatalogueItemFacade>> removeCommand = null)
+        {
+            return collection.ToBindableMap(CatalogueItemFacadeExtensions.ToFacadeShared, key, removeCommand);
+        }
+
+        #endregion
     }
 }
