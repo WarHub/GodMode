@@ -9,8 +9,8 @@ namespace WarHub.Armoury.GodMode.Commands
     {
         public static void HandleException(this IAppCommandDependencyAggregate dependencyAggregate, Exception exception)
         {
+            dependencyAggregate.Log.Warn?.With("Command failed.", exception);
             dependencyAggregate.DialogService.ShowDialogAsync("Operation failed", exception.Message, "oh well");
-            // TODO log exception?
         }
     }
 }

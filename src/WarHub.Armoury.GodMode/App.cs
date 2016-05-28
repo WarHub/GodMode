@@ -3,14 +3,7 @@
 
 namespace WarHub.Armoury.GodMode
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Reflection;
-    using System.Threading.Tasks;
     using Autofac;
-    using Model.BattleScribe.Services;
-    using Model.DataAccess;
-    using Model.DataAccess.Autofac;
     using Modules.Home.Commands;
     using Xamarin.Forms;
 
@@ -18,10 +11,15 @@ namespace WarHub.Armoury.GodMode
     {
         public App()
         {
-            ServiceProvider = BuildContainer();
+            var container = BuildContainer();
+            
+            //TODO remove
+            ServiceProvider = container;
+
             // The root page of your application
             MainPage = new NavigationPage();
-            ServiceProvider.Resolve<OpenHomeCommand>().Execute();
+
+            container.Resolve<OpenHomeCommand>().Execute();
         }
 
         public static IComponentContext ServiceProvider { get; private set; }
@@ -41,7 +39,7 @@ namespace WarHub.Armoury.GodMode
             // Handle when your app resumes
         }
 
-        private IContainer BuildContainer()
+        private static IContainer BuildContainer()
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule<GodModeAutofacModule>();

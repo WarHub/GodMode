@@ -12,31 +12,35 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
     using Mvvm;
 
     public delegate RemoteDataSourceIndexViewModel RemoteDataSourceIndexVmFactory(
-        RemoteDataSourceIndex remoteDataSourceIndex);
+        RemoteSourceDataIndex remoteSourceDataIndex);
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class RemoteDataSourceIndexViewModel : ViewModelBase
     {
-        public RemoteDataSourceIndexViewModel(RemoteDataSourceIndex remoteDataSourceIndex,
+        public RemoteDataSourceIndexViewModel(RemoteSourceDataIndex remoteSourceDataIndex,
             RemoteDataUpdateInfoVmFactory remoteDataUpdateInfoVmFactory, DownloadDataSourceCommand downloadCommand)
         {
-            RemoteDataSourceIndex = remoteDataSourceIndex;
+            RemoteSourceDataIndex = remoteSourceDataIndex;
             DownloadCommand = downloadCommand;
-            GameSystemUpdateInfoViewModels = RemoteDataSourceIndex.RemoteDataInfos
+            GameSystemUpdateInfoViewModels = RemoteSourceDataIndex.RemoteDataInfos
                 .Where(info => info.DataType == RemoteDataType.GameSystem)
                 .OrderBy(info => info.Name)
-                .Select(info => remoteDataUpdateInfoVmFactory(info, RemoteDataSourceIndex.IndexUri))
+                .Select(info => remoteDataUpdateInfoVmFactory(info, RemoteSourceDataIndex.IndexUri))
                 .ToArray()
                 .ToBindableGrouping("Game systems", "gst");
-            CatalogueUpdateInfoViewModels = RemoteDataSourceIndex.RemoteDataInfos
+            CatalogueUpdateInfoViewModels = RemoteSourceDataIndex.RemoteDataInfos
                 .Where(info => info.DataType == RemoteDataType.Catalogue)
                 .OrderBy(info => info.Name)
-                .Select(info => remoteDataUpdateInfoVmFactory(info, RemoteDataSourceIndex.IndexUri))
+                .Select(info => remoteDataUpdateInfoVmFactory(info, RemoteSourceDataIndex.IndexUri))
                 .ToArray()
                 .ToBindableGrouping("Catalogues", "cat");
         }
 
+        public IBindableGrouping<RemoteDataUpdateInfoViewModel> CatalogueUpdateInfoViewModels { get; }
+
         public DownloadDataSourceCommand DownloadCommand { get; }
+
+        public IBindableGrouping<RemoteDataUpdateInfoViewModel> GameSystemUpdateInfoViewModels { get; }
 
         public IEnumerable<IBindableGrouping<RemoteDataUpdateInfoViewModel>> UpdateInfos
         {
@@ -47,10 +51,6 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
             }
         }
 
-        public IBindableGrouping<RemoteDataUpdateInfoViewModel> CatalogueUpdateInfoViewModels { get; }
-
-        public IBindableGrouping<RemoteDataUpdateInfoViewModel> GameSystemUpdateInfoViewModels { get; }
-
-        private RemoteDataSourceIndex RemoteDataSourceIndex { get; }
+        private RemoteSourceDataIndex RemoteSourceDataIndex { get; }
     }
 }

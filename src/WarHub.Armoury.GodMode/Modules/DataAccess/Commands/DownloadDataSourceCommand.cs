@@ -19,15 +19,16 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
     public class DownloadDataSourceCommand : AppAsyncCommandBase<RemoteDataSourceIndexViewModel>
     {
         public DownloadDataSourceCommand(IAppCommandDependencyAggregate dependencyAggregate,
-            IRemoteDataService remoteDataService, IRepoStorageService repoStorageService) : base(dependencyAggregate)
+            IRemoteSourceIndexService remoteSourceIndexService, IRepoStorageService repoStorageService)
+            : base(dependencyAggregate)
         {
-            RemoteDataService = remoteDataService;
+            RemoteSourceIndexService = remoteSourceIndexService;
             RepoStorageService = repoStorageService;
             OperationTitle = "Ready";
             IsExecutionBlocking = true;
         }
 
-        private IRemoteDataService RemoteDataService { get; }
+        private IRemoteSourceIndexService RemoteSourceIndexService { get; }
 
         private IRepoStorageService RepoStorageService { get; }
 

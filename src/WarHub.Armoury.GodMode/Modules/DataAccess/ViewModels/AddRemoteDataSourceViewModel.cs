@@ -4,7 +4,6 @@
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
 {
     using System.Diagnostics.CodeAnalysis;
-    using System.Windows.Input;
     using Commands;
     using Mvvm;
 
@@ -19,7 +18,7 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
             AddDataSourceCommand = addDataSourceCommand;
         }
 
-        public ICommand AddDataSourceCommand { get; }
+        public AddDataSourceCommand AddDataSourceCommand { get; }
 
         public string Name
         {

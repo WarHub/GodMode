@@ -4,19 +4,25 @@
 namespace WarHub.Armoury.GodMode.Commands
 {
     using AppServices;
+    using Model.DataAccess;
 
     public interface IAppCommandDependencyAggregate
     {
         IDialogService DialogService { get; }
+
+        ILog Log { get; }
     }
 
     public class AppCommandDependencyAggregate : IAppCommandDependencyAggregate
     {
-        public AppCommandDependencyAggregate(IDialogService dialogService)
+        public AppCommandDependencyAggregate(IDialogService dialogService, ILog log)
         {
             DialogService = dialogService;
+            Log = log;
         }
 
         public IDialogService DialogService { get; }
+
+        public ILog Log { get; }
     }
 }

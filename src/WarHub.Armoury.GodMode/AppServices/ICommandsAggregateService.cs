@@ -3,7 +3,6 @@
 
 namespace WarHub.Armoury.GodMode.AppServices
 {
-    using Commands;
     using Modules.Editor.Commands;
 
     public interface ICommandsAggregateService
@@ -13,8 +12,6 @@ namespace WarHub.Armoury.GodMode.AppServices
         CreateConditionItemCommand CreateConditionItemCommand { get; }
 
         CreateModifierCommand CreateModifierCommand { get; }
-
-        NavigateRelayCommand NavigateRelayCommand { get; }
 
         OpenCatalogueCommand OpenCatalogueCommand { get; }
 

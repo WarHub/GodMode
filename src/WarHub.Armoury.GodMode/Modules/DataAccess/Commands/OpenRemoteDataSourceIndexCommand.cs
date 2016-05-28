@@ -8,14 +8,15 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
     using AppServices;
     using GodMode.Commands;
     using Model.DataAccess;
+    using Model.Repo;
     using ViewModels;
     using Views;
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-    public class OpenRemoteDataSourceIndexCommand : NavigateCommandBase<RemoteDataSourceInfo>
+    public class OpenRemoteDataSourceIndexCommand : NavigateCommandBase<RemoteSource>
     {
         public OpenRemoteDataSourceIndexCommand(IAppCommandDependencyAggregate dependencyAggregate,
-            INavigationService navigationService, IRemoteDataService remoteDataService,
+            INavigationService navigationService, IRemoteSourceIndexService remoteDataService,
             RemoteDataSourceIndexVmFactory remoteDataSourceIndexVmFactory)
             : base(dependencyAggregate, navigationService)
         {
@@ -23,11 +24,11 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
             RemoteDataSourceIndexVmFactory = remoteDataSourceIndexVmFactory;
         }
 
-        private IRemoteDataService RemoteDataService { get; }
+        private IRemoteSourceIndexService RemoteDataService { get; }
 
         private RemoteDataSourceIndexVmFactory RemoteDataSourceIndexVmFactory { get; }
 
-        protected override async Task ExecuteCoreAsync(RemoteDataSourceInfo parameter)
+        protected override async Task ExecuteCoreAsync(RemoteSource parameter)
         {
             var index = await RemoteDataService.DownloadIndexAsync(parameter);
             var vm = RemoteDataSourceIndexVmFactory(index);
@@ -35,7 +36,7 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
             await NavigateAsync(navTuple);
         }
 
-        protected override bool CanExecuteCore(RemoteDataSourceInfo parameter)
+        protected override bool CanExecuteCore(RemoteSource parameter)
         {
             return parameter != null;
         }

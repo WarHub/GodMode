@@ -4,21 +4,15 @@
 namespace WarHub.Armoury.GodMode.AppServices.Implementations
 {
     using Autofac;
-    using Commands;
     using Modules.Editor.Commands;
 
     public class CommandsAggregateService : ICommandsAggregateService
     {
-        private NavigateRelayCommand _navigateRelayCommand;
-
         public CreateCatalogueItemCommand CreateCatalogueItemCommand => Resolve<CreateCatalogueItemCommand>();
 
         public CreateConditionItemCommand CreateConditionItemCommand => Resolve<CreateConditionItemCommand>();
 
         public CreateModifierCommand CreateModifierCommand => Resolve<CreateModifierCommand>();
-
-        public NavigateRelayCommand NavigateRelayCommand
-            => _navigateRelayCommand ?? (_navigateRelayCommand = Resolve<NavigateRelayCommand>());
 
         public OpenCatalogueCommand OpenCatalogueCommand => Resolve<OpenCatalogueCommand>();
 

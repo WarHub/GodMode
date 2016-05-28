@@ -7,17 +7,18 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
     using Commands;
     using Model;
     using Model.DataAccess;
+    using Model.Repo;
     using Mvvm;
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class RemoteDataSourcesViewModel : ViewModelBase
     {
-        public RemoteDataSourcesViewModel(IRemoteDataService remoteDataService,
+        public RemoteDataSourcesViewModel(IRemoteSourceIndexService remoteSourceIndexService,
             RemoveDataSourceCommand removeDataSourceCommand,
             BeginAddRemoteDataSourceCommand beginAddRemoteDataSourceCommand,
             OpenRemoteDataSourceIndexCommand openRemoteDataSourceIndexCommand)
         {
-            RemoteDataService = remoteDataService;
+            RemoteSourceIndexService = remoteSourceIndexService;
             RemoveDataSourceCommand = removeDataSourceCommand;
             BeginAddRemoteDataSourceCommand = beginAddRemoteDataSourceCommand;
             OpenRemoteDataSourceIndexCommand = openRemoteDataSourceIndexCommand;
@@ -25,12 +26,12 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
 
         public BeginAddRemoteDataSourceCommand BeginAddRemoteDataSourceCommand { get; }
 
-        public IObservableReadonlySet<RemoteDataSourceInfo> DataSourceInfos => RemoteDataService.SourceInfos;
+        public IObservableReadonlySet<RemoteSource> DataSourceInfos => RemoteSourceIndexService.SourceInfos;
 
         public OpenRemoteDataSourceIndexCommand OpenRemoteDataSourceIndexCommand { get; }
 
         public RemoveDataSourceCommand RemoveDataSourceCommand { get; }
 
-        private IRemoteDataService RemoteDataService { get; }
+        private IRemoteSourceIndexService RemoteSourceIndexService { get; }
     }
 }

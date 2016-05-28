@@ -10,19 +10,20 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
     using AppServices;
     using GodMode.Commands;
     using Model.DataAccess;
+    using Model.Repo;
     using ViewModels;
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class AddDataSourceCommand : NavigateCommandBase<AddRemoteDataSourceViewModel>
     {
         public AddDataSourceCommand(IAppCommandDependencyAggregate dependencyAggregate,
-            INavigationService navigationService, IRemoteDataService remoteDataService)
+            INavigationService navigationService, IRemoteSourceIndexService remoteSourceIndexService)
             : base(dependencyAggregate, navigationService)
         {
-            RemoteDataService = remoteDataService;
+            RemoteSourceIndexService = remoteSourceIndexService;
         }
 
-        private IRemoteDataService RemoteDataService { get; }
+        private IRemoteSourceIndexService RemoteSourceIndexService { get; }
 
         protected override bool CanExecuteCore(AddRemoteDataSourceViewModel parameter)
         {
@@ -45,8 +46,8 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 
         protected override async Task ExecuteCoreAsync(AddRemoteDataSourceViewModel parameter)
         {
-            var remoteSourceInfo = new RemoteDataSourceInfo(parameter.Name, parameter.Url);
-            RemoteDataService.AddSource(remoteSourceInfo);
+            var remoteSourceInfo = new RemoteSource(parameter.Name, parameter.Url);
+            RemoteSourceIndexService.AddSource(remoteSourceInfo);
             await NavigationService.PopAsync();
         }
 
