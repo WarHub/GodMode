@@ -58,6 +58,7 @@
     <Compile Include="Modules\DataAccess\Converters\RemoteAgainstLocalInfoToDetailColorConverter.cs" />
     <Compile Include="Modules\DataAccess\Converters\RemoteAgainstLocalInfoToDetailConverter.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\AddRemoteDataSourceViewModel.cs" />
+    <Compile Include="Modules\DataAccess\ViewModels\DataIndexViewModel.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\RemoteDataSourceIndexViewModel.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\RemoteDataSourcesViewModel.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\RemoteDataUpdateInfoViewModel.cs" />
