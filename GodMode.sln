@@ -17,6 +17,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarHub.Armoury.GodMode.Wind
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarHub.Armoury.GodMode.WinPhone", "src\WarHub.Armoury.GodMode.WinPhone\WarHub.Armoury.GodMode.WinPhone.csproj", "{5B27DB6D-8793-4B40-928E-B975605FF667}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{41F0765D-1EEB-48CC-AD0B-882B249DECEB}"
+	ProjectSection(SolutionItems) = preProject
+		NuGet.config = NuGet.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU

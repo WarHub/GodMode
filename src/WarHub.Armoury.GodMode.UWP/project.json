@@ -4,7 +4,7 @@
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
     "PCLStorage": "1.0.2",
     "WarHub.Mvvm": "1.0.1",
-    "Xamarin.Forms": "2.2.0.31"
+    "Xamarin.Forms": "2.2.0.45"
   },
   "frameworks": {
     "uap10.0": {}
