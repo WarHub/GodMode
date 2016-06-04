@@ -4,31 +4,24 @@
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
     using GodMode.Commands;
     using Model.BattleScribe.Files;
-    using Model.DataAccess;
     using Model.Repo;
     using ViewModels;
 
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class DownloadDataSourceCommand : AppAsyncCommandBase<RemoteDataSourceIndexViewModel>
     {
         public DownloadDataSourceCommand(IAppCommandDependencyAggregate dependencyAggregate,
-            IRemoteSourceIndexService remoteSourceIndexService, IRepoStorageService repoStorageService)
+            IRepoStorageService repoStorageService)
             : base(dependencyAggregate)
         {
-            RemoteSourceIndexService = remoteSourceIndexService;
             RepoStorageService = repoStorageService;
             OperationTitle = "Ready";
             IsExecutionBlocking = true;
         }
-
-        private IRemoteSourceIndexService RemoteSourceIndexService { get; }
 
         private IRepoStorageService RepoStorageService { get; }
 

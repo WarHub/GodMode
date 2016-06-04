@@ -3,18 +3,27 @@
 
 namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
 {
+    using Commands;
     using Model;
     using Model.Repo;
     using Mvvm;
 
     public class DataIndexViewModel : ViewModelBase
     {
-        public DataIndexViewModel(IDataIndexService dataIndexService)
+        public DataIndexViewModel(IDataIndexService dataIndexService, RemoveSystemCommand removeSystemCommand,
+            RefreshDataIndexCommand refreshDataIndexCommand, OpenSystemIndexCommand openSystemIndexCommand)
         {
             DataIndexService = dataIndexService;
+            RemoveSystemCommand = removeSystemCommand;
+            RefreshDataIndexCommand = refreshDataIndexCommand;
+            OpenSystemIndexCommand = openSystemIndexCommand;
         }
 
-        // TODO add open system index command
+        public OpenSystemIndexCommand OpenSystemIndexCommand { get; }
+
+        public RefreshDataIndexCommand RefreshDataIndexCommand { get; }
+
+        public RemoveSystemCommand RemoveSystemCommand { get; }
 
         public IObservableReadonlySet<ISystemIndex> SystemIndexes => DataIndexService.SystemIndexes;
 

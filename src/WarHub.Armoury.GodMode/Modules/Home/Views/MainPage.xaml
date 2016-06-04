@@ -13,5 +13,6 @@
         <Button Text="Open Demo Catalogue" Command="{Binding OpenCatalogueCommand}" />
         <Button Text="Open Data Management" Command="{Binding OpenRemoteDataIndexCommand}" />
         <Button Text="Open Storage browser" Command="{Binding OpenStorageHomeCommand}" />
+        <Button Text="Open Data index" Command="{Binding OpenDataIndexCommand}" />
     </StackLayout>
 </ContentPage>

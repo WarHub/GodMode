@@ -16,12 +16,14 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
         public RemoteDataSourcesViewModel(IRemoteSourceIndexService remoteSourceIndexService,
             RemoveDataSourceCommand removeDataSourceCommand,
             BeginAddRemoteDataSourceCommand beginAddRemoteDataSourceCommand,
-            OpenRemoteDataSourceIndexCommand openRemoteDataSourceIndexCommand)
+            OpenRemoteDataSourceIndexCommand openRemoteDataSourceIndexCommand,
+            RefreshRemoteDataSourcesCommand refreshRemoteDataSourcesCommand)
         {
             RemoteSourceIndexService = remoteSourceIndexService;
             RemoveDataSourceCommand = removeDataSourceCommand;
             BeginAddRemoteDataSourceCommand = beginAddRemoteDataSourceCommand;
             OpenRemoteDataSourceIndexCommand = openRemoteDataSourceIndexCommand;
+            RefreshRemoteDataSourcesCommand = refreshRemoteDataSourcesCommand;
         }
 
         public BeginAddRemoteDataSourceCommand BeginAddRemoteDataSourceCommand { get; }
@@ -29,6 +31,8 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
         public IObservableReadonlySet<RemoteSource> DataSourceInfos => RemoteSourceIndexService.SourceInfos;
 
         public OpenRemoteDataSourceIndexCommand OpenRemoteDataSourceIndexCommand { get; }
+
+        public RefreshRemoteDataSourcesCommand RefreshRemoteDataSourcesCommand { get; }
 
         public RemoveDataSourceCommand RemoveDataSourceCommand { get; }
 

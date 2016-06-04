@@ -4,31 +4,36 @@
 namespace WarHub.Armoury.GodMode.Modules.Editor.Commands
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
+    using System.Threading.Tasks;
     using AppServices;
-    using Demo;
     using GodMode.Commands;
     using Model;
     using Model.Repo;
     using ViewModels;
     using Views;
 
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class OpenCatalogueCommand : NavigateCommandBase<CatalogueInfo>
     {
         public OpenCatalogueCommand(IAppCommandDependencyAggregate dependencyAggregate,
-            INavigationService navigationService, Func<ICatalogue, CatalogueViewModel> catalogueVmFactory)
+            INavigationService navigationService, Func<ICatalogue, CatalogueViewModel> catalogueVmFactory,
+            IRepoManagerLocator repoManagerLocator)
             : base(dependencyAggregate, navigationService)
         {
             CatalogueVmFactory = catalogueVmFactory;
+            RepoManagerLocator = repoManagerLocator;
+            IsExecutionBlocking = true;
         }
 
         private Func<ICatalogue, CatalogueViewModel> CatalogueVmFactory { get; }
 
-        protected override NavTuple GetNavTuple(CatalogueInfo parameter)
+        private IRepoManagerLocator RepoManagerLocator { get; }
+
+        protected override async Task ExecuteCoreAsync(CatalogueInfo parameter)
         {
-            // TODO load catalogue from parameter
-            return new NavTuple(new CataloguePage(), CatalogueVmFactory(ModelLocator.Catalogue));
+            var manager = RepoManagerLocator[parameter];
+            var catalogue = await manager.GetCatalogueAsync(parameter);
+            var navTuple = new NavTuple(new CataloguePage(), CatalogueVmFactory(catalogue));
+            await NavigateAsync(navTuple);
         }
 
         protected override string GetErrorString(CatalogueInfo parameter)

@@ -10,11 +10,19 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Views
         public static AddRemoteDataSourceViewModel AddRemoteDataSourceViewModel
             => Resolve<AddRemoteDataSourceViewModel>();
 
-        public static RemoteDataSourcesViewModel RemoteDataSourcesViewModel
-            => Resolve<RemoteDataSourcesViewModel>();
+        public static CatalogueDetailsViewModel CatalogueDetailsViewModel => Resolve<CatalogueDetailsViewModel>();
+
+        public static DataIndexViewModel DataIndexViewModel => Resolve<DataIndexViewModel>();
+
+        public static GameSystemDetailsViewModel GameSystemDetailsViewModel => Resolve<GameSystemDetailsViewModel>();
 
         public static RemoteDataSourceIndexViewModel RemoteDataSourceIndexViewModel
             => Resolve<RemoteDataSourceIndexViewModel>();
+
+        public static RemoteDataSourcesViewModel RemoteDataSourcesViewModel
+            => Resolve<RemoteDataSourcesViewModel>();
+
+        public static SystemIndexViewModel SystemIndexViewModel => Resolve<SystemIndexViewModel>();
 
         private static TService Resolve<TService>() where TService : class => null;
     }

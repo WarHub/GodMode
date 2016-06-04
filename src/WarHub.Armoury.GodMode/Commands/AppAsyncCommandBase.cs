@@ -6,6 +6,7 @@ namespace WarHub.Armoury.GodMode.Commands
     using System;
     using System.Diagnostics.CodeAnalysis;
     using AppServices;
+    using Model.DataAccess;
     using Mvvm.Commands;
 
     /// <summary>
@@ -25,6 +26,8 @@ namespace WarHub.Armoury.GodMode.Commands
         }
 
         protected IDialogService DialogService => DependencyAggregate.DialogService;
+
+        protected ILog Log => DependencyAggregate.Log;
 
         private IAppCommandDependencyAggregate DependencyAggregate { get; }
 
@@ -52,6 +55,8 @@ namespace WarHub.Armoury.GodMode.Commands
         }
 
         protected IDialogService DialogService => DependencyAggregate.DialogService;
+
+        protected ILog Log => DependencyAggregate.Log;
 
         private IAppCommandDependencyAggregate DependencyAggregate { get; }
 

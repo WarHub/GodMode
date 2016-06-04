@@ -1,20 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:behaviors="clr-namespace:WarHub.Armoury.GodMode.Behaviors;assembly=WarHub.Armoury.GodMode"
              xmlns:views="clr-namespace:WarHub.Armoury.GodMode.Modules.DataAccess.Views;assembly=WarHub.Armoury.GodMode"
-             x:Class="WarHub.Armoury.GodMode.Modules.DataAccess.Views.RemoteDataSourcesPage"
+             xmlns:behaviors="clr-namespace:WarHub.Armoury.GodMode.Behaviors;assembly=WarHub.Armoury.GodMode"
+             xmlns:converters="clr-namespace:WarHub.Armoury.GodMode.Modules.DataAccess.Converters;assembly=WarHub.Armoury.GodMode"
+             x:Class="WarHub.Armoury.GodMode.Modules.DataAccess.Views.DataIndexPage"
              x:Name="Page"
-             BindingContext="{x:Static views:ViewModelLocator.RemoteDataSourcesViewModel}"
-             Title="Remote Data Sources">
+             BindingContext="{x:Static views:ViewModelLocator.DataIndexViewModel}"
+             Title="Local Data Index"
+             IsBusy="{Binding RefreshDataIndexCommand.IsInProgress}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <converters:SystemIndexToDetailConverter x:Key="SystemIndexToDetailConverter" />
             <DataTemplate x:Key="ItemTemplate">
-                <TextCell Text="{Binding Name}" Detail="{Binding IndexUri}">
+                <TextCell Text="{Binding GameSystemInfo.Name}"
+                          Detail="{Binding Converter={StaticResource SystemIndexToDetailConverter}}">
                     <TextCell.ContextActions>
                         <MenuItem Text="delete"
-                                  Command="{Binding BindingContext.RemoveDataSourceCommand, Source={x:Reference Page}}"
+                                  Command="{Binding BindingContext.RemoveSystemCommand, Source={x:Reference Page}}"
                                   CommandParameter="{Binding}"
                                   IsDestructive="True" />
                     </TextCell.ContextActions>
@@ -37,18 +41,14 @@
         </Grid>
 
         <ListView Grid.Row="1"
-                  ItemsSource="{Binding DataSourceInfos}"
+                  RowHeight="60"
+                  ItemsSource="{Binding SystemIndexes}"
                   ItemTemplate="{StaticResource ItemTemplate}"
-                  behaviors:ItemSelectedBehavior.Command="{Binding OpenRemoteDataSourceIndexCommand}" />
+                  behaviors:ItemSelectedBehavior.Command="{Binding OpenSystemIndexCommand}" />
     </Grid>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Order="Primary" Command="{Binding BeginAddRemoteDataSourceCommand}">
-            <ToolbarItem.Icon>
-                <OnPlatform x:TypeArguments="FileImageSource" WinPhone="Assets/plus.png" />
-            </ToolbarItem.Icon>
-        </ToolbarItem>
-        <ToolbarItem Text="Refresh" Order="Primary" Command="{Binding RefreshRemoteDataSourcesCommand}">
+        <ToolbarItem Text="Refresh" Order="Primary" Command="{Binding RefreshDataIndexCommand}">
             <ToolbarItem.Icon>
                 <OnPlatform x:TypeArguments="FileImageSource" WinPhone="Assets/refresh.png" />
             </ToolbarItem.Icon>

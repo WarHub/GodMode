@@ -5,7 +5,6 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 {
     using System;
     using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using AppServices;
     using GodMode.Commands;
@@ -13,7 +12,6 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
     using Model.Repo;
     using ViewModels;
 
-    [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class AddDataSourceCommand : NavigateCommandBase<AddRemoteDataSourceViewModel>
     {
         public AddDataSourceCommand(IAppCommandDependencyAggregate dependencyAggregate,

@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:WarHub.Armoury.GodMode.Modules.DataAccess.Views;assembly=WarHub.Armoury.GodMode"
+             xmlns:behaviors="clr-namespace:WarHub.Armoury.GodMode.Behaviors;assembly=WarHub.Armoury.GodMode"
+             xmlns:converters="clr-namespace:WarHub.Armoury.GodMode.Modules.DataAccess.Converters;assembly=WarHub.Armoury.GodMode"
+             x:Class="WarHub.Armoury.GodMode.Modules.DataAccess.Views.SystemIndexPage"
+             x:Name="Page"
+             BindingContext="{x:Static views:ViewModelLocator.SystemIndexViewModel}"
+             Title="System index">
+
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CatalogueInfoToDetailConverter x:Key="CatalogueInfoToDetailConverter" />
+            <DataTemplate x:Key="ItemTemplate">
+                <TextCell Text="{Binding Name}"
+                          Detail="{Binding Converter={StaticResource CatalogueInfoToDetailConverter}}">
+                    <TextCell.ContextActions>
+                        <MenuItem Text="delete"
+                                  Command="{Binding BindingContext.RemoveCatalogueCommand, Source={x:Reference Page}}"
+                                  CommandParameter="{Binding}"
+                                  IsDestructive="True" />
+                    </TextCell.ContextActions>
+                </TextCell>
+            </DataTemplate>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+
+        <Grid Grid.Row="0" x:Name="HeaderGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Text="{Binding GameSystemInfo.Name}" FontSize="24" />
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0" Text="{Binding GameSystemInfo.RawId, StringFormat='id: {0}'}" />
+                    <Label Grid.Row="1" Text="{Binding GameSystemInfo.AuthorName, StringFormat='by: {0}'}" />
+                </Grid>
+
+                <Button Grid.Column="1" VerticalOptions="Center" Text="Details"
+                        Command="{Binding OpenGameSystemDetailsCommand}" CommandParameter="{Binding GameSystemInfo}" />
+            </Grid>
+        </Grid>
+
+        <ListView Grid.Row="1"
+                  RowHeight="70"
+                  ItemsSource="{Binding CatalogueInfos}"
+                  ItemTemplate="{StaticResource ItemTemplate}"
+                  behaviors:ItemSelectedBehavior.Command="{Binding OpenCatalogueDetailsCommand}" />
+    </Grid>
+
+    <!--<ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh" Order="Primary" Command="{Binding RefreshDataIndexCommand}">
+            <ToolbarItem.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource" WinPhone="Assets/refresh.png" />
+            </ToolbarItem.Icon>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>-->
+</ContentPage>
