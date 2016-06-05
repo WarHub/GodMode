@@ -9,6 +9,7 @@ namespace WarHub.Armoury.GodMode.WinPhone
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Media.Animation;
+    using HockeyApp;
     using Xamarin.Forms;
     using Application = Windows.UI.Xaml.Application;
     using Frame = Windows.UI.Xaml.Controls.Frame;
@@ -29,6 +30,7 @@ namespace WarHub.Armoury.GodMode.WinPhone
         {
             InitializeComponent();
             Suspending += OnSuspending;
+            HockeyClient.Current.Configure("Your_App_Id");
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ namespace WarHub.Armoury.GodMode.Windows
     using global::Windows.ApplicationModel;
     using global::Windows.ApplicationModel.Activation;
     using global::Windows.UI.Xaml;
+    using HockeyApp;
     using Xamarin.Forms;
 
     /// <summary>
@@ -23,6 +24,7 @@ namespace WarHub.Armoury.GodMode.Windows
         {
             InitializeComponent();
             Suspending += OnSuspending;
+            HockeyClient.Current.Configure("Your_App_Id");
         }
 
         /// <summary>

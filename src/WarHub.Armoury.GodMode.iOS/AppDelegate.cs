@@ -4,6 +4,7 @@
 namespace WarHub.Armoury.GodMode.iOS
 {
     using Foundation;
+    using HockeyApp;
     using UIKit;
     using Xamarin.Forms;
     using Xamarin.Forms.Platform.iOS;
@@ -25,6 +26,11 @@ namespace WarHub.Armoury.GodMode.iOS
         {
             Forms.Init();
             LoadApplication(new App());
+
+            var manager = BITHockeyManager.SharedHockeyManager;
+            manager.Configure("25ef8049cd15437d839129e191a1aaec");
+            manager.StartManager();
+            manager.Authenticator.AuthenticateInstallation();
 
             return base.FinishedLaunching(app, options);
         }

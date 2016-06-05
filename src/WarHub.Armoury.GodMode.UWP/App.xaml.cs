@@ -9,6 +9,7 @@ namespace WarHub.Armoury.GodMode.UWP
     using Windows.ApplicationModel.Activation;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Navigation;
+    using Microsoft.HockeyApp;
     using Xamarin.Forms;
     using Application = Windows.UI.Xaml.Application;
     using Frame = Windows.UI.Xaml.Controls.Frame;
@@ -26,6 +27,12 @@ namespace WarHub.Armoury.GodMode.UWP
         {
             InitializeComponent();
             Suspending += OnSuspending;
+            HockeyClient.Current.Configure("5c25f9f6543b444c80da8eb1a1fd92fd",
+                new TelemetryConfiguration
+                {
+                    Collectors =
+                        WindowsCollectors.Metadata | WindowsCollectors.Session | WindowsCollectors.UnhandledException
+                });
         }
 
         /// <summary>

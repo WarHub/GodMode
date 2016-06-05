@@ -1,6 +1,7 @@
 ﻿{
   "dependencies": {
     "Autofac": "3.5.2",
+    "HockeySDK.UWP": "4.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
     "PCLStorage": "1.0.2",
     "WarHub.Mvvm": "1.0.1",
