@@ -11,8 +11,8 @@
     <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
         <Label Text="{Binding MainText}" VerticalOptions="Center" HorizontalOptions="Center" />
         <Button Text="Open Demo Catalogue" Command="{Binding OpenCatalogueCommand}" />
-        <Button Text="Open Data Management" Command="{Binding OpenRemoteDataIndexCommand}" />
-        <Button Text="Open Storage browser" Command="{Binding OpenStorageHomeCommand}" />
-        <Button Text="Open Data index" Command="{Binding OpenDataIndexCommand}" />
+        <Button Text="Remote Sources" Command="{Binding OpenRemoteDataIndexCommand}" />
+        <Button Text="Storage browser" Command="{Binding OpenStorageHomeCommand}" />
+        <Button Text="Data index" Command="{Binding OpenDataIndexCommand}" />
     </StackLayout>
 </ContentPage>

@@ -21,9 +21,7 @@
             <DataTemplate x:Key="ItemTemplate">
                 <TextCell Text="{Binding DataName}"
                           Detail="{Binding RemoteAgainstLocalInfo, Converter={StaticResource RemoteAgainstLocalInfoToDetailConverter}}"
-                          DetailColor="{Binding RemoteAgainstLocalInfo, Converter={StaticResource RemoteAgainstLocalInfoToDetailColorConverter}}"
-                          Command="{Binding DownloadCommand}"
-                          CommandParameter="{Binding}" />
+                          DetailColor="{Binding RemoteAgainstLocalInfo, Converter={StaticResource RemoteAgainstLocalInfoToDetailColorConverter}}" />
             </DataTemplate>
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -45,11 +43,11 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Grid.Row="0" Text="Status:" />
-            <Label Grid.Column="1" Grid.Row="0" Text="{Binding DownloadCommand.OperationTitle}"
+            <Label Grid.Column="1" Grid.Row="0" Text="{Binding DownloadAllCommand.OperationTitle}"
                    HorizontalTextAlignment="End" />
             <ProgressBar Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1"
-                         IsVisible="{Binding DownloadCommand.IsInProgress}"
-                         Progress="{Binding DownloadCommand.ProgressPercent, Converter={StaticResource ProgressPercentToProgressConverter}}" />
+                         IsVisible="{Binding DownloadAllCommand.IsInProgress}"
+                         Progress="{Binding DownloadAllCommand.ProgressPercent, Converter={StaticResource ProgressPercentToProgressConverter}}" />
         </Grid>
 
         <Grid Grid.Row="1">
@@ -65,12 +63,13 @@
             x:Name="ItemsListView"
             Header="Game systems:"
             ItemsBaseSource="{Binding UpdateInfos}"
-            ItemTemplate="{StaticResource ItemTemplate}" />
+            ItemTemplate="{StaticResource ItemTemplate}"
+            behaviors:ItemSelectedBehavior.Command="{Binding DownloadSingleItemCommand}"  />
 
     </Grid>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Download" Command="{Binding DownloadCommand}" CommandParameter="{Binding}">
+        <ToolbarItem Text="Download" Command="{Binding DownloadAllCommand}" CommandParameter="{Binding}">
             <ToolbarItem.Icon>
                 <OnPlatform x:TypeArguments="FileImageSource" WinPhone="Assets/download.png" />
             </ToolbarItem.Icon>

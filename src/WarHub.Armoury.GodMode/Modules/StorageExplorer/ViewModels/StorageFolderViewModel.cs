@@ -30,13 +30,11 @@ namespace WarHub.Armoury.GodMode.Modules.StorageExplorer.ViewModels
             Enumerable.Empty<IFolder>().ToList().ToBindableGrouping(FolderGroupName, FolderGroupName);
 
         [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
-        public StorageFolderViewModel(IFolder folder, OpenFolderCommand openFolderCommand,
-            OpenFileDetailsCommand openFileDetailsCommand, DeleteFileCommand deleteFileCommand,
-            DeleteFolderCommand deleteFolderCommand)
+        public StorageFolderViewModel(IFolder folder, DeleteFileCommand deleteFileCommand,
+            DeleteFolderCommand deleteFolderCommand, OpenStorageItemCommand openStorageItemCommand)
         {
             Folder = folder;
-            OpenFolderCommand = openFolderCommand;
-            OpenFileDetailsCommand = openFileDetailsCommand;
+            OpenStorageItemCommand = openStorageItemCommand;
             DeleteFileCommand = deleteFileCommand.WrapWith(postExecuteAction: _ => UpdateFilesAsync());
             DeleteFolderCommand = deleteFolderCommand.WrapWith(postExecuteAction: _ => UpdateFoldersAsync());
             UpdateItems();
@@ -81,9 +79,7 @@ namespace WarHub.Armoury.GodMode.Modules.StorageExplorer.ViewModels
             }
         }
 
-        public OpenFileDetailsCommand OpenFileDetailsCommand { get; }
-
-        public OpenFolderCommand OpenFolderCommand { get; }
+        public OpenStorageItemCommand OpenStorageItemCommand { get; }
 
         private void UpdateItems()
         {

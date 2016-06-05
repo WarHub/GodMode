@@ -161,6 +161,7 @@
     <Compile Include="Modules\StorageExplorer\Commands\OpenFolderCommand.cs" />
     <Compile Include="Modules\StorageExplorer\Commands\OpenStorageHomeCommand.cs" />
     <Compile Include="Modules\StorageExplorer\Commands\DeleteFolderCommand.cs" />
+    <Compile Include="Modules\StorageExplorer\Commands\OpenStorageItemCommand.cs" />
     <Compile Include="Modules\StorageExplorer\Controls\GroupingStorageItemListView.cs" />
     <Compile Include="Modules\StorageExplorer\Controls\StorageItemTemplateSelector.cs" />
     <Compile Include="Modules\StorageExplorer\ViewModels\StorageFileDetailsViewModel.cs" />

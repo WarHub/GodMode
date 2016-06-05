@@ -18,10 +18,13 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
     public class RemoteDataSourceIndexViewModel : ViewModelBase
     {
         public RemoteDataSourceIndexViewModel(RemoteSourceDataIndex remoteSourceDataIndex,
-            RemoteDataUpdateInfoVmFactory remoteDataUpdateInfoVmFactory, DownloadDataSourceCommand downloadCommand)
+            RemoteDataUpdateInfoVmFactory remoteDataUpdateInfoVmFactory,
+            DownloadDataSourceCommand downloadAllCommand,
+            DownloadSingleDataItemCommand downloadSingleItemCommand)
         {
             RemoteSourceDataIndex = remoteSourceDataIndex;
-            DownloadCommand = downloadCommand;
+            DownloadAllCommand = downloadAllCommand;
+            DownloadSingleItemCommand = downloadSingleItemCommand;
             GameSystemUpdateInfoViewModels = RemoteSourceDataIndex.RemoteDataInfos
                 .Where(info => info.DataType == RemoteDataType.GameSystem)
                 .OrderBy(info => info.Name)
@@ -38,7 +41,9 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.ViewModels
 
         public IBindableGrouping<RemoteDataUpdateInfoViewModel> CatalogueUpdateInfoViewModels { get; }
 
-        public DownloadDataSourceCommand DownloadCommand { get; }
+        public DownloadDataSourceCommand DownloadAllCommand { get; }
+
+        public DownloadSingleDataItemCommand DownloadSingleItemCommand { get; }
 
         public IBindableGrouping<RemoteDataUpdateInfoViewModel> GameSystemUpdateInfoViewModels { get; }
 
