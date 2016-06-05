@@ -3,12 +3,12 @@
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:converters="clr-namespace:WarHub.Armoury.GodMode.Converters;assembly=WarHub.Armoury.GodMode"
-            xmlns:views1="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.Views;assembly=WarHub.Armoury.GodMode"
-            xmlns:viewModels="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.ViewModels;assembly=WarHub.Armoury.GodMode"
+            xmlns:views="clr-namespace:WarHub.Armoury.GodMode.Modules.Editor.Views;assembly=WarHub.Armoury.GodMode"
             x:Class="WarHub.Armoury.GodMode.Modules.Editor.Views.CataloguePage"
             x:Name="Page"
-            BindingContext="{x:Static views1:ViewModelLocator.CatalogueViewModel}"
-            Title="{Binding Name}">
+            BindingContext="{x:Static views:ViewModelLocator.CatalogueViewModel}"
+            Title="{Binding Name}"
+            IsBusy="{Binding SaveCatalogueCommand.IsInProgress}">
 
     <TabbedPage.Resources>
         <ResourceDictionary>
@@ -16,12 +16,12 @@
         </ResourceDictionary>
     </TabbedPage.Resources>
 
-    <views1:CatalogueItemsListPage />
+    <views:CatalogueItemsListPage />
 
     <ContentPage Title="Properties">
         <ScrollView>
             <StackLayout Orientation="Vertical">
-                <views1:IdentifierView BindingContext="{Binding Source={x:Reference Page}, Path=BindingContext.Id}" />
+                <views:IdentifierView BindingContext="{Binding Source={x:Reference Page}, Path=BindingContext.Id}" />
 
                 <Label>Catalogue Name</Label>
                 <Entry Text="{Binding Name}" Placeholder="Cataloue Name" />
@@ -53,4 +53,12 @@
             </StackLayout>
         </ScrollView>
     </ContentPage>
+  
+  <TabbedPage.ToolbarItems>
+    <ToolbarItem Text="Save" Order="Primary" Command="{Binding SaveCatalogueCommand}" CommandParameter="{Binding CatalogueInfo}">
+      <ToolbarItem.Icon>
+        <OnPlatform x:TypeArguments="FileImageSource" WinPhone="Assets/save.png" />
+      </ToolbarItem.Icon>
+    </ToolbarItem>
+  </TabbedPage.ToolbarItems>
 </TabbedPage>

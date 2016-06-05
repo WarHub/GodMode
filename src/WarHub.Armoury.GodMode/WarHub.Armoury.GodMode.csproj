@@ -135,6 +135,7 @@
     <Compile Include="Converters\ModifierToStringConverter.cs" />
     <Compile Include="Demo\DemoLoader.cs" />
     <Compile Include="Demo\ModelLocator.cs" />
+    <Compile Include="Modules\Editor\Commands\SaveCatalogueCommand.cs" />
     <Compile Include="Modules\Editor\Models\CatalogueItemFacade.cs" />
     <Compile Include="Modules\Editor\Models\CatalogueItemFacadeExtensions.cs" />
     <Compile Include="Modules\Editor\Models\CatalogueItemKind.cs" />
@@ -445,27 +446,27 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="WarHub.Armoury.Model, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\WarHub.Armoury.Model.0.3.2-ci-master-build00068\lib\portable45-net45+win8+wp8+wpa81\WarHub.Armoury.Model.dll</HintPath>
+      <HintPath>..\..\packages\WarHub.Armoury.Model.0.3.2-ci-master-build00069\lib\portable45-net45+win8+wp8+wpa81\WarHub.Armoury.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WarHub.Armoury.Model.BattleScribe, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\WarHub.Armoury.Model.BattleScribe.0.3.2-ci-master-build00068\lib\portable45-net45+win8+wp8+wpa81\WarHub.Armoury.Model.BattleScribe.dll</HintPath>
+      <HintPath>..\..\packages\WarHub.Armoury.Model.BattleScribe.0.3.2-ci-master-build00069\lib\portable45-net45+win8+wp8+wpa81\WarHub.Armoury.Model.BattleScribe.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WarHub.Armoury.Model.BattleScribe.Files, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\WarHub.Armoury.Model.BattleScribe.Files.0.3.2-ci-master-build00068\lib\portable45-net45+win8+wpa81\WarHub.Armoury.Model.BattleScribe.Files.dll</HintPath>
+      <HintPath>..\..\packages\WarHub.Armoury.Model.BattleScribe.Files.0.3.2-ci-master-build00069\lib\portable45-net45+win8+wpa81\WarHub.Armoury.Model.BattleScribe.Files.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WarHub.Armoury.Model.BattleScribeXml, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\WarHub.Armoury.Model.BattleScribeXml.0.3.2-ci-master-build00068\lib\portable45-net45+win8+wp8+wpa81\WarHub.Armoury.Model.BattleScribeXml.dll</HintPath>
+      <HintPath>..\..\packages\WarHub.Armoury.Model.BattleScribeXml.0.3.2-ci-master-build00069\lib\portable45-net45+win8+wp8+wpa81\WarHub.Armoury.Model.BattleScribeXml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WarHub.Armoury.Model.DataAccess, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\WarHub.Armoury.Model.DataAccess.0.3.2-ci-master-build00068\lib\portable45-net45+win8+wpa81\WarHub.Armoury.Model.DataAccess.dll</HintPath>
+      <HintPath>..\..\packages\WarHub.Armoury.Model.DataAccess.0.3.2-ci-master-build00069\lib\portable45-net45+win8+wpa81\WarHub.Armoury.Model.DataAccess.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WarHub.Armoury.Model.DataAccess.Autofac, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\WarHub.Armoury.Model.DataAccess.Autofac.0.3.2-ci-master-build00068\lib\portable45-net45+win8+wpa81\WarHub.Armoury.Model.DataAccess.Autofac.dll</HintPath>
+      <HintPath>..\..\packages\WarHub.Armoury.Model.DataAccess.Autofac.0.3.2-ci-master-build00069\lib\portable45-net45+win8+wpa81\WarHub.Armoury.Model.DataAccess.Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WarHub.Mvvm, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">

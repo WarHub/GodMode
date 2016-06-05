@@ -120,6 +120,7 @@
     <Content Include="Assets\download.png" />
     <Content Include="Assets\plus.png" />
     <Content Include="Assets\refresh.png" />
+    <Content Include="Assets\save.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-125.png" />
     <Content Include="Assets\SplashScreen.scale-150.png" />

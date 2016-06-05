@@ -9,6 +9,7 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
     using Bindables;
     using Commands;
     using Model;
+    using Model.Repo;
     using Models;
 
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
@@ -19,10 +20,11 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
         public CatalogueViewModel(ICatalogue model, Func<IIdentifier, IdentifierViewModel> identifierVmFactory,
             Func<IBindableMap<CatalogueItemFacade>, RemoveCatalogueItemCommand> removeCommandFactory,
             CreateItemInCatalogueCommandFactory createItemInCatalogueCommandFactory,
-            OpenCatalogueItemCommand openCatalogueItemCommand)
+            OpenCatalogueItemCommand openCatalogueItemCommand, SaveCatalogueCommand saveCatalogueCommand)
             : base(model)
         {
             OpenCatalogueItemCommand = openCatalogueItemCommand;
+            SaveCatalogueCommand = saveCatalogueCommand;
             SharedEntries = Catalogue.SharedEntries.ToBindableMap("shared entries", removeCommandFactory);
             SharedGroups = Catalogue.SharedGroups.ToBindableMap("shared groups", removeCommandFactory);
             SharedProfiles = Catalogue.SharedProfiles.ToBindableMap("shared profiles", removeCommandFactory);
@@ -33,7 +35,10 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
             RuleLinks = Catalogue.RuleLinks.ToBindableMap("rule links", removeCommandFactory);
             Id = identifierVmFactory(Catalogue.Id);
             CreateCatalogueItemCommand = createItemInCatalogueCommandFactory(Catalogue);
+            CatalogueInfo = new CatalogueInfo(Catalogue);
         }
+
+        public CatalogueInfo CatalogueInfo { get; }
 
         public string AuthorContact
         {
@@ -76,6 +81,8 @@ namespace WarHub.Armoury.GodMode.Modules.Editor.ViewModels
                 Set(() => Catalogue.Revision == uintValue, () => Catalogue.Revision = uintValue);
             }
         }
+
+        public SaveCatalogueCommand SaveCatalogueCommand { get; }
 
         private ICatalogue Catalogue => Model;
 
