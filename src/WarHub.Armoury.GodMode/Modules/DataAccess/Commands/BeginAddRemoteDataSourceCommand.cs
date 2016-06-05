@@ -24,7 +24,8 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 
         protected override NavTuple GetNavTuple()
         {
-            return new NavTuple(new AddRemoteDataSourcePage(), AddRemoteDataSourceVmFactory());
+            var vm = AddRemoteDataSourceVmFactory();
+            return new NavTuple(new AddRemoteDataSourcePage(), vm);
         }
     }
 }

@@ -5,22 +5,28 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Linq;
-    using System.Net.Http;
     using System.Threading.Tasks;
     using GodMode.Commands;
     using Model.BattleScribe.Files;
     using Model.Repo;
+    using PCLStorage;
+    using Services;
     using ViewModels;
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
     public class DownloadSingleDataItemCommand : AppAsyncCommandBase<RemoteDataUpdateInfoViewModel>
     {
         public DownloadSingleDataItemCommand(IAppCommandDependencyAggregate dependencyAggregate,
-            IRepoStorageService repoStorageService) : base(dependencyAggregate)
+            IRepoStorageService repoStorageService, IFileDownloadService fileDownloadService)
+            : base(dependencyAggregate)
         {
             RepoStorageService = repoStorageService;
+            FileDownloadService = fileDownloadService;
         }
+
+        private IFileDownloadService FileDownloadService { get; }
 
         private IRepoStorageService RepoStorageService { get; }
 
@@ -30,22 +36,34 @@ namespace WarHub.Armoury.GodMode.Modules.DataAccess.Commands
             var indexUri = parameter.IndexUri;
             OperationTitle = $"Downloading {parameter.DataName}";
             var uri = new Uri(indexUri, remoteDataInfo.IndexPathSuffix);
-            using (var client = new HttpClient())
-            using (var stream = await client.GetStreamAsync(uri))
+            using (var tempFolder = await FileDownloadService.CreateTempFolderAsync())
             {
-                switch (remoteDataInfo.DataType)
+                var file = await FileDownloadService.DownloadFileAsync(uri, tempFolder);
+                using (var fileStream = await file.OpenAsync(FileAccess.Read))
                 {
-                    case RemoteDataType.Catalogue:
-                        await CatalogueFile.MoveToRepoStorageAsync(stream, uri.Segments.Last(), RepoStorageService);
-                        break;
-                    case RemoteDataType.GameSystem:
-                        await GameSystemFile.MoveToRepoStorageAsync(stream, uri.Segments.Last(), RepoStorageService);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    var filename = uri.Segments.Last();
+                    await CopyToRepoStorage(remoteDataInfo, filename, fileStream);
                 }
             }
             parameter.UpdateLocalInfo();
+        }
+
+        private async Task CopyToRepoStorage(RemoteDataInfo remoteDataInfo, string fileName, Stream fileStream)
+        {
+            switch (remoteDataInfo.DataType)
+            {
+                case RemoteDataType.Catalogue:
+                    await
+                        CatalogueFile.MoveToRepoStorageAsync(fileStream, fileName, RepoStorageService);
+                    break;
+                case RemoteDataType.GameSystem:
+                    await
+                        GameSystemFile.MoveToRepoStorageAsync(fileStream, fileName, RepoStorageService);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        $"Unrecognized {nameof(RemoteDataType)} of {remoteDataInfo.Name} ({remoteDataInfo.IndexPathSuffix})");
+            }
         }
 
         protected override bool CanExecuteCore(RemoteDataUpdateInfoViewModel parameter) => parameter != null;

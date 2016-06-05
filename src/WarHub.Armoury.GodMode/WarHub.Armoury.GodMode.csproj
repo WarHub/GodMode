@@ -67,6 +67,8 @@
     <Compile Include="Modules\DataAccess\Converters\RemoteAgainstLocalInfoToDetailColorConverter.cs" />
     <Compile Include="Modules\DataAccess\Converters\RemoteAgainstLocalInfoToDetailConverter.cs" />
     <Compile Include="Modules\DataAccess\Converters\SystemIndexToDetailConverter.cs" />
+    <Compile Include="Modules\DataAccess\Services\FileDownloadService.cs" />
+    <Compile Include="Modules\DataAccess\Services\IFileDownloadService.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\AddRemoteDataSourceViewModel.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\CatalogueDetailsViewModel.cs" />
     <Compile Include="Modules\DataAccess\ViewModels\DataIndexViewModel.cs" />
@@ -388,7 +390,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Modules\DataAccess\Models\" />
-    <Folder Include="Modules\DataAccess\Services\" />
     <Folder Include="Modules\Editor\Services\" />
     <Folder Include="Modules\Home\Models\" />
     <Folder Include="Modules\Home\Services\" />
