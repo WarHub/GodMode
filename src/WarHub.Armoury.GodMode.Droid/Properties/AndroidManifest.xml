@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="WarHub.Armoury.GodMode.Droid" android:installLocation="auto" android:versionCode="0.1-alpha1" android:versionName="Alpha1">
 	<uses-sdk android:minSdkVersion="15" />
-	<application></application>
+	<application android:label="WarHub GodMode" android:icon="@drawable/icon"></application>
 </manifest>
