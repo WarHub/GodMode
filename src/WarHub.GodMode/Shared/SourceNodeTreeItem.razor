@@ -1,0 +1,59 @@
+﻿@using WarHub.ArmouryModel.Source
+@using WarHub.GodMode.Pages
+
+<div @onclick="OnClick" class="@(Active ? "active" : "")">
+    <span class="oi oi-caret-right @IconCss" style="@(hasChildren && expanded ? "transform: rotate(90deg)" : "")"></span>
+
+    <span>@GetName()</span>
+</div>
+
+@if (hasChildren && expanded)
+{
+    <ul>
+        @foreach (var child in Node.Children().Where(x => x.IsList).SelectMany(x => x.Children()))
+        {
+            <li>
+                <SourceNodeTreeItem Node="@child" />
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private bool hasChildren = false;
+    private bool expanded = false;
+
+    [Parameter]
+    public SourceNode Node { get; set; }
+
+    [CascadingParameter]
+    public Catalogue Catalogue { get; set; }
+
+    private string IconCss => !hasChildren ? "invisible" : "";
+
+    private bool Active => Catalogue.ActiveNode == this.Node;
+
+    protected override void OnInitialized()
+    {
+        hasChildren = Node.Descendants().Any(x => !x.IsList);
+    }
+
+    string GetName()
+    {
+        if (Node is INameableNode named && !string.IsNullOrWhiteSpace(named.Name))
+        {
+            return named.Name;
+        }
+        return Node.Kind.ToString();
+    }
+
+    void OnClick()
+    {
+        Catalogue.ActiveNode = this.Node;
+        if (!hasChildren)
+        {
+            return;
+        }
+        expanded = !expanded;
+    }
+}

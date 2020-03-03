@@ -1,0 +1,95 @@
+﻿@page "/"
+@page "/catalogue"
+@using WarHub.GodMode.Data
+@using WarHub.ArmouryModel.Source
+@using WarHub.ArmouryModel.ProjectModel
+@inject NavigationManager NavigationManager
+@inject DatafilesService DatafilesService
+
+<DatafileList @bind-DatafileName="DatafileName"></DatafileList>
+
+@if (DatafileInfo is null)
+{
+    <p>No file selected</p>
+}
+else
+{
+    <CascadingValue Value="this">
+        <div class="d-md-flex flex-row">
+            <div class="flex-fill">
+                <h4>Content</h4>
+                <SourceNodeTreeItem Node="@Root" />
+            </div>
+
+            <div class="flex-fill">
+                <h4>Details</h4>
+                @if (ActiveNode is { })
+                {
+                    <table class="table">
+                        <tr>
+                            <td>Kind</td>
+                            <td>
+                                <code>@ActiveNode.Kind.ToString()</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Id</td>
+                            <td>
+                                <code>@((ActiveNode as IIdentifiableNode)?.Id)</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Name</td>
+                            <td>
+                                <code>@((ActiveNode as INameableNode)?.Name)</code>
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+    </CascadingValue>
+}
+
+@code {
+    private string _datafileName;
+    private SourceNode activeNode;
+
+    [Parameter]
+    public string DatafileName
+    {
+        get => _datafileName;
+        set
+        {
+            var old = _datafileName;
+            _datafileName = value;
+            if (value != old)
+            {
+                UpdateDatafile();
+            }
+        }
+    }
+
+    public SourceNode ActiveNode
+    {
+        get => activeNode;
+        set
+        {
+            activeNode = value;
+            StateHasChanged();
+        }
+    }
+
+    public IDatafileInfo<SourceNode> DatafileInfo { get; set; }
+
+    public SourceNode Root { get; set; }
+
+    void UpdateDatafile()
+    {
+        if (!string.IsNullOrWhiteSpace(DatafileName))
+        {
+            DatafileInfo = DatafilesService.GetDatafileInfo(DatafileName);
+            Root = DatafileInfo.GetData();
+        }
+    }
+}

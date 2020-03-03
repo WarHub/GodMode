@@ -1,0 +1,51 @@
+﻿@using System.IO
+@using WarHub.GodMode.Data
+@inject DatafilesService FilesService
+
+<label for="file-select">Select datafile</label>
+
+<EditForm Model="this">
+    <InputSelect id="file-select" @bind-Value="DatafileName">
+        <optgroup label="Game systems">
+            @foreach (var gst in files.Where(x => x.Extension.Equals(".gst", StringComparison.OrdinalIgnoreCase)))
+            {
+                <option value="@gst.Name">
+                    @gst.Name
+                </option>
+            }
+        </optgroup>
+        @foreach (var cat in files.Where(x => x.Extension.Equals(".cat", StringComparison.OrdinalIgnoreCase)))
+        {
+            <option value="@cat.Name">
+                @cat.Name
+            </option>
+        }
+    </InputSelect>
+</EditForm>
+
+@code {
+    private FileInfo[] files;
+    private string datafileName;
+
+    [Parameter]
+    public string DatafileName
+    {
+        get => datafileName;
+        set
+        {
+            var changed = value != datafileName;
+            datafileName = value;
+            if (changed)
+                DatafileNameChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> DatafileNameChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        files = FilesService.GetDatafiles().Select(x => new FileInfo(x)).ToArray();
+        DatafileName = files.FirstOrDefault()?.Name;
+    }
+}
