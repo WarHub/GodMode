@@ -9,14 +9,19 @@
 
 @if (hasChildren && expanded)
 {
-    <ul>
-        @foreach (var child in Node.Children().Where(x => x.IsList).SelectMany(x => x.Children()))
-        {
-            <li>
-                <SourceNodeTreeItem Node="@child" />
-            </li>
-        }
-    </ul>
+
+    @foreach (var list in from ci in Node.ChildrenInfos() where ci.IsList && ci.Node.Children().Any() select ci)
+    {
+        <em>@list.Name</em>
+        <ul>
+            @foreach (var child in list.Node.Children())
+            {
+                <li>
+                    <SourceNodeTreeItem Node="@child" />
+                </li>
+            }
+        </ul>
+    }
 }
 
 @code {
@@ -55,5 +60,34 @@
             return;
         }
         expanded = !expanded;
+    }
+
+    void GetListGroups()
+    {
+        var itemNameGroups = new[]
+        {
+            new[]
+        {
+                nameof(SelectionEntryBaseCore.SelectionEntries),
+                nameof(SelectionEntryBaseCore.SelectionEntryGroups),
+                nameof(SelectionEntryBaseCore.EntryLinks),
+            },
+            new[]
+        {
+                nameof(SelectionEntryBaseCore.Profiles),
+                nameof(SelectionEntryBaseCore.Rules),
+                nameof(SelectionEntryBaseCore.InfoGroups),
+                nameof(SelectionEntryBaseCore.InfoLinks),
+            },
+            new[]
+        {
+                nameof(EntryBaseCore.Modifiers),
+                nameof(EntryBaseCore.ModifierGroups),
+            }
+        };
+        var groups =
+            from info in Node.ChildrenInfos()
+            where info.IsList
+            select info;
     }
 }
