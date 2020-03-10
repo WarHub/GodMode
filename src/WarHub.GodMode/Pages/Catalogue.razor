@@ -1,7 +1,6 @@
 ﻿@page "/"
 @page "/catalogue"
 @using WarHub.GodMode.Data
-@using WarHub.ArmouryModel.Source
 @using WarHub.ArmouryModel.ProjectModel
 @inject NavigationManager NavigationManager
 @inject DatafilesService DatafilesService
@@ -18,34 +17,17 @@
 else
 {
     <CascadingValue Value="this">
-        <div class="d-md-flex flex-row" style="max-height:90vh; overflow: hidden;">
-            <div class="flex-fill" style="height:100%; overflow:auto; width:50%;">
+        <div class="row">
+            <div class="col-md" style="max-height:80vh; overflow: auto;">
                 <h4 id="content">Content</h4>
-                <SourceNodeTreeItem Node="@Root" />
+                <div style="overflow: auto">
+                    <SourceNodeTreeItem Node="@Root" />
+                </div>
             </div>
 
-            <div class="flex-fill" style="height:100%; overflow:auto; width:50%;">
+            <div class="col-md">
                 <h4 id="details">Details</h4>
-                @if (ActiveNode is { })
-                {
-                    <table class="table">
-                        <tr>
-                            <td>Kind</td>
-                            <td>
-                                <code>@ActiveNode.Kind.ToString()</code>
-                            </td>
-                        </tr>
-                        @foreach (var (name, value) in GetProperties(ActiveNode))
-                        {
-                            <tr>
-                                <td>@name</td>
-                                <td>
-                                    <code>@(value?.ToString() ?? "<null>")</code>
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                }
+                <SourceNodeDetails Node="@ActiveNode" />
             </div>
         </div>
     </CascadingValue>
@@ -90,75 +72,6 @@ else
         {
             DatafileInfo = DatafilesService.GetDatafileInfo(DatafileName);
             Root = DatafileInfo.GetData();
-        }
-    }
-
-    IEnumerable<(string name, object value)> GetProperties(SourceNode node)
-    {
-        if (node is IIdentifiableNode id)
-            yield return ("Id", id.Id);
-        if (node is INameableNode named)
-            yield return ("Name", named.Name);
-        if (node is IPublicationReferencingNode pub)
-        {
-            yield return ("PubId", pub.PublicationId);
-            yield return ("PubPage", pub.Page);
-        }
-        if (node is IRootNode root)
-            yield return ("BattleScribe version", root.BattleScribeVersion);
-        if (node is EntryBaseNode entryBase)
-            yield return ("Hidden", entryBase.IsHidden);
-        if (node is SelectionEntryBaseNode selBase)
-        {
-            yield return ("Collective", selBase.Collective);
-            yield return ("Import", selBase.Import);
-        }
-        if (node is SelectionEntryNode entry)
-            yield return ("Type", entry.Type);
-        if (node is SelectionEntryGroupNode seg)
-            yield return ("Default", seg.DefaultSelectionEntryId);
-        if (node is CatalogueBaseNode catBase)
-        {
-            yield return ("Revision", catBase.Revision);
-            yield return ("Author Name", catBase.AuthorName);
-            yield return ("Author Contact", catBase.AuthorContact);
-            yield return ("Author Url", catBase.AuthorUrl);
-        }
-        if (node is CatalogueNode cat)
-        {
-            yield return ("Is Library", cat.IsLibrary);
-            yield return ("Gamesystem Id", cat.GamesystemId);
-            yield return ("Gamesystem Revision", cat.GamesystemRevision);
-        }
-        if (node is CatalogueLinkNode catLink)
-        {
-            yield return ("Target Id", catLink.TargetId);
-            yield return ("Type", catLink.Type);
-            yield return ("Import Root Entries", catLink.ImportRootEntries);
-        }
-        if (node is CategoryNode category)
-            yield return ("Is Primary", category.IsPrimary);
-        if (node is CategoryLinkNode categoryLink)
-        {
-            yield return ("Target Id", categoryLink.TargetId);
-            yield return ("Is Primary", categoryLink.IsPrimary);
-        }
-        if (node is CharacteristicNode ch)
-        {
-            yield return ("Type Id", ch.TypeId);
-            yield return ("Value", ch.Value);
-        }
-        if (node is CostBaseNode cost)
-        {
-            yield return ("Type Id", cost.TypeId);
-            yield return ("Value", cost.Value);
-        }
-        if (node is CostTypeNode costType)
-            yield return ("Default Cost Limit", costType.DefaultCostLimit);
-        if (node is EntryLinkNode entryLink)
-        {
-            yield return ("Target Id", entryLink.TargetId);
-            yield return ("Type", entryLink.Type);
         }
     }
 }
