@@ -2,10 +2,14 @@
 @using WarHub.GodMode.Pages
 @using WarHub.GodMode.Data
 
-<div @onclick="OnClick" class="@(Active ? "active" : "")">
-    <span class="oi oi-caret-right @IconCss" style="@(hasChildren && expanded ? "transform: rotate(90deg)" : "")"></span>
-    <span class="oi oi-@NodeIcon"></span>
-    <span>@GetName()</span>
+<div>
+    <a class="btn btn-light @ExpandInvisibleCss" @onclick="ToggleExpand">
+        <span class="oi @ExpandButtonIcon"></span>
+    </a>
+    <span @onclick="SelectNode">
+        <span class="oi oi-@NodeIcon"></span>
+        <span class="@(Active ? "border border-primary bg-highlight" : "")">@GetName()</span>
+    </span>
 </div>
 
 @if (hasChildren && expanded)
@@ -35,7 +39,9 @@
     [CascadingParameter]
     public Catalogue Catalogue { get; set; }
 
-    private string IconCss => !hasChildren ? "invisible" : "";
+    private string ExpandButtonIcon => expanded ? "oi-minus" : "oi-plus";
+
+    private string ExpandInvisibleCss => !hasChildren ? "invisible" : "";
 
     private string NodeIcon => NodeDisplayService.GetNodeDisplayInfo(Node).Icon;
 
@@ -51,14 +57,18 @@
         return NodeDisplayService.GetNodeDisplayInfo(Node).Name;
     }
 
-    void OnClick()
+    void ToggleExpand()
     {
-        Catalogue.ActiveNode = this.Node;
         if (!hasChildren)
         {
             return;
         }
         expanded = !expanded;
+    }
+
+    void SelectNode()
+    {
+        Catalogue.ActiveNode = this.Node;
     }
 
     void GetListGroups()
