@@ -3,7 +3,7 @@
 @using WarHub.GodMode.Data
 
 <div>
-    <a class="btn btn-light @ExpandInvisibleCss" @onclick="ToggleExpand">
+    <a class="btn btn-light btn-sm @ExpandInvisibleCss" @onclick="ToggleExpand">
         <span class="oi @ExpandButtonIcon"></span>
     </a>
     <span @onclick="SelectNode">
@@ -14,12 +14,12 @@
 
 @if (hasChildren && expanded)
 {
-
-    @foreach (var list in from ci in Node.ChildrenInfos() where ci.IsList && ci.Node.Children().Any() select ci)
+<div class="pl-3">
+    @foreach (var @group in GetLists())
     {
-        <em>@list.Name</em>
-        <ul>
-            @foreach (var child in list.Node.Children())
+        <em>@group.name</em>
+        <ul class="list-unstyled">
+            @foreach (var child in group.nodes)
             {
                 <li>
                     <SourceNodeTreeItem Node="@child" />
@@ -27,6 +27,7 @@
             }
         </ul>
     }
+</div>
 }
 
 @code {
@@ -47,9 +48,17 @@
 
     private bool Active => Catalogue.ActiveNode == this.Node;
 
-    protected override void OnInitialized()
+    private static ImmutableHashSet<string> ExcludedListNames { get; } = new[]
     {
-        hasChildren = Node.Descendants().Any(x => !x.IsList);
+        nameof(SelectionEntryNode.Costs),
+        nameof(SelectionEntryBaseNode.CategoryLinks),
+        nameof(ProfileNode.Characteristics),
+        nameof(ProfileTypeNode.CharacteristicTypes),
+    }.ToImmutableHashSet();
+
+    protected override void OnParametersSet()
+    {
+        hasChildren = Node.ChildrenInfos().Any(x => !ExcludedListNames.Contains(x.Name) && x.Node.Descendants().Any(x => !x.IsList));
     }
 
     string GetName()
@@ -69,6 +78,48 @@
     void SelectNode()
     {
         Catalogue.ActiveNode = this.Node;
+    }
+
+    IEnumerable<(string name, List<SourceNode> nodes)> GetLists()
+    {
+        var itemNameGroups = new[]
+        {
+            new[]
+        {
+                nameof(SelectionEntryBaseCore.SelectionEntries),
+                nameof(SelectionEntryBaseCore.SelectionEntryGroups),
+                nameof(SelectionEntryBaseCore.EntryLinks),
+            },
+            new[]
+        {
+                nameof(SelectionEntryBaseCore.Profiles),
+                nameof(SelectionEntryBaseCore.Rules),
+                nameof(SelectionEntryBaseCore.InfoGroups),
+                nameof(SelectionEntryBaseCore.InfoLinks),
+            },
+            new[]
+        {
+                nameof(EntryBaseCore.Modifiers),
+                nameof(EntryBaseCore.ModifierGroups),
+            }
+        };
+        var groups =
+            from childInfo in Node.ChildrenInfos().Where(x => !ExcludedListNames.Contains(x.Name))
+            join association in (
+                from g in itemNameGroups
+                from name in g
+                select new
+                {
+                    groupName = g[0],
+                    listName = name
+                }) on childInfo.Name equals association.listName into assocGroup
+            from assoc in assocGroup.DefaultIfEmpty(new { groupName = childInfo.Name, listName = childInfo.Name })
+            group childInfo by assoc into listGroup
+            select (
+                name: listGroup.Key.groupName,
+                nodes: listGroup.SelectMany(x => x.Node.Children()).ToList()
+            );
+        return groups.Where(x => x.nodes.Count > 0);
     }
 
     void GetListGroups()

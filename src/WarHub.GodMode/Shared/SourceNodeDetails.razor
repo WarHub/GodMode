@@ -2,7 +2,7 @@
 {
     <table class="table">
         <tr>
-            <td>Kind</td>
+            <th>Kind</th>
             <td>
                 <code>@Node.Kind.ToString()</code>
             </td>
@@ -10,13 +10,107 @@
         @foreach (var (name, value) in GetProperties(Node))
         {
             <tr>
-                <td>@name</td>
+                <th>@name</th>
                 <td>
                     <code>@(value?.ToString() ?? "<null>")</code>
                 </td>
             </tr>
         }
     </table>
+
+    if (Node is SelectionEntryNode selectionEntry)
+    {
+        <section class="card">
+            <h5 class="card-header">Costs</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>TypeId</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cost in selectionEntry.Costs)
+                    {
+                        <tr>
+                            <th>@cost.Name</th>
+                            <td>@cost.Value</td>
+                            <td>@cost.TypeId</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+    }
+
+    if (Node is ProfileNode profile)
+    {
+        <section class="card">
+            <h5 class="card-header">Characteristics</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>TypeId</th>
+                    </tr>
+                </thead>
+                @foreach (var characteristic in profile.Characteristics)
+                {
+                    <tr>
+                        <th>@characteristic.Name</th>
+                        <td>@characteristic.Value</td>
+                        <td>@characteristic.TypeId</td>
+                    </tr>
+                }
+            </table>
+        </section>
+    }
+
+    if (Node is ProfileTypeNode profileType)
+    {
+        <section class="card">
+            <h5 class="card-header">Characteristic types</h5>
+            <table class="table">
+                @foreach (var characteristic in profileType.CharacteristicTypes)
+                {
+                    <tr>
+                        <th>@characteristic.Name</th>
+                        <td>@characteristic.Id</td>
+                    </tr>
+                }
+            </table>
+        </section>
+    }
+
+    if (Node is SelectionEntryBaseNode selectionBase)
+    {
+        <section class="card">
+            <h5 class="card-header">Category links</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>IsPrimary</th>
+                        <th>TargetId</th>
+                        <th>Id</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var categoryLink in selectionBase.CategoryLinks)
+                    {
+                        <tr>
+                            <th>@categoryLink.Name</th>
+                            <td>@categoryLink.IsPrimary</td>
+                            <td>@categoryLink.TargetId</td>
+                            <td>@categoryLink.Id</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+    }
 }
 
 @code {
@@ -25,6 +119,7 @@
 
     IEnumerable<(string name, object value)> GetProperties(SourceNode node)
     {
+        // interfaces
         if (node is IIdentifiableNode id)
             yield return ("Id", id.Id);
         if (node is INameableNode named)
@@ -36,6 +131,12 @@
         }
         if (node is IRootNode root)
             yield return ("BattleScribe version", root.BattleScribeVersion);
+        // base classes
+        if (node is CostBaseNode cost)
+        {
+            yield return ("Type Id", cost.TypeId);
+            yield return ("Value", cost.Value);
+        }
         if (node is EntryBaseNode entryBase)
             yield return ("Hidden", entryBase.IsHidden);
         if (node is SelectionEntryBaseNode selBase)
@@ -43,10 +144,16 @@
             yield return ("Collective", selBase.Collective);
             yield return ("Import", selBase.Import);
         }
-        if (node is SelectionEntryNode entry)
-            yield return ("Type", entry.Type);
-        if (node is SelectionEntryGroupNode seg)
-            yield return ("Default", seg.DefaultSelectionEntryId);
+        if (node is SelectorBaseNode selectorBase)
+        {
+            yield return ("Field", selectorBase.Field);
+            yield return ("Scope", selectorBase.Scope);
+            yield return ("Value", selectorBase.Value);
+            yield return ("PercentValue", selectorBase.PercentValue);
+            yield return ("Shared", selectorBase.Shared);
+            yield return ("IncludeChildSelections", selectorBase.IncludeChildSelections);
+            yield return ("IncludeChildForces", selectorBase.IncludeChildForces);
+        }
         if (node is CatalogueBaseNode catBase)
         {
             yield return ("Revision", catBase.Revision);
@@ -54,41 +161,74 @@
             yield return ("Author Contact", catBase.AuthorContact);
             yield return ("Author Url", catBase.AuthorUrl);
         }
+        // sealed
         if (node is CatalogueNode cat)
         {
             yield return ("Is Library", cat.IsLibrary);
             yield return ("Gamesystem Id", cat.GamesystemId);
             yield return ("Gamesystem Revision", cat.GamesystemRevision);
         }
-        if (node is CatalogueLinkNode catLink)
+        else if (node is CatalogueLinkNode catLink)
         {
             yield return ("Target Id", catLink.TargetId);
             yield return ("Type", catLink.Type);
             yield return ("Import Root Entries", catLink.ImportRootEntries);
         }
-        if (node is CategoryNode category)
+        else if (node is CategoryNode category)
             yield return ("Is Primary", category.IsPrimary);
-        if (node is CategoryLinkNode categoryLink)
+        else if (node is CategoryLinkNode categoryLink)
         {
             yield return ("Target Id", categoryLink.TargetId);
             yield return ("Is Primary", categoryLink.IsPrimary);
         }
-        if (node is CharacteristicNode ch)
+        else if (node is CharacteristicNode ch)
         {
             yield return ("Type Id", ch.TypeId);
             yield return ("Value", ch.Value);
         }
-        if (node is CostBaseNode cost)
+        else if (node is ConditionNode cond)
         {
-            yield return ("Type Id", cost.TypeId);
-            yield return ("Value", cost.Value);
+            yield return ("ChildId", cond.ChildId);
+            yield return ("Type", cond.Type);
         }
-        if (node is CostTypeNode costType)
+        else if (node is ConditionGroupNode condGroup)
+            yield return ("Type", condGroup.Type);
+        else if (node is ConstraintNode constraint)
+            yield return ("Type", constraint.Type);
+        else if (node is CostTypeNode costType)
             yield return ("Default Cost Limit", costType.DefaultCostLimit);
-        if (node is EntryLinkNode entryLink)
+        else if (node is EntryLinkNode entryLink)
         {
             yield return ("Target Id", entryLink.TargetId);
             yield return ("Type", entryLink.Type);
         }
+        else if (node is InfoLinkNode infoLink)
+        {
+            yield return ("Target Id", infoLink.TargetId);
+            yield return ("Type", infoLink.Type);
+        }
+        else if (node is ModifierNode modifier)
+        {
+            yield return ("Type", modifier.Type);
+            yield return ("Field", modifier.Field);
+            yield return ("Value", modifier.Value);
+        }
+        else if (node is ProfileNode profile)
+        {
+            yield return ("TypeId", profile.TypeId);
+            yield return ("TypeName", profile.TypeName);
+        }
+        else if (node is RepeatNode repeat)
+        {
+            yield return ("ChildId", repeat.ChildId);
+            yield return ("Repeats", repeat.Repeats);
+            yield return ("IsRoundUp", repeat.IsRoundUp);
+        }
+        else if (node is SelectionEntryNode entry)
+            yield return ("Type", entry.Type);
+        else if (node is SelectionEntryGroupNode seg)
+            yield return ("Default", seg.DefaultSelectionEntryId);
+        else if (node is RuleNode rule)
+            yield return ("Description", rule.Description);
     }
 }
