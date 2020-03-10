@@ -6,12 +6,9 @@
 @inject NavigationManager NavigationManager
 @inject DatafilesService DatafilesService
 
-<div class="top-row">
+<div>
     <DatafileList @bind-DatafileName="DatafileName"></DatafileList>
 
-    <div class="nav nav-fill sticky-top ">
-
-    </div>
 </div>
 
 @if (DatafileInfo is null)
@@ -21,7 +18,7 @@
 else
 {
     <CascadingValue Value="this">
-        <div class="d-md-flex flex-row" style="max-height:95vh; overflow: hidden;">
+        <div class="d-md-flex flex-row" style="max-height:90vh; overflow: hidden;">
             <div class="flex-fill" style="height:100%; overflow:auto; width:50%;">
                 <h4 id="content">Content</h4>
                 <SourceNodeTreeItem Node="@Root" />

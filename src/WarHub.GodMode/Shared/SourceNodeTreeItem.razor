@@ -1,9 +1,10 @@
 ﻿@using WarHub.ArmouryModel.Source
 @using WarHub.GodMode.Pages
+@using WarHub.GodMode.Data
 
 <div @onclick="OnClick" class="@(Active ? "active" : "")">
     <span class="oi oi-caret-right @IconCss" style="@(hasChildren && expanded ? "transform: rotate(90deg)" : "")"></span>
-
+    <span class="oi oi-@NodeIcon"></span>
     <span>@GetName()</span>
 </div>
 
@@ -36,6 +37,8 @@
 
     private string IconCss => !hasChildren ? "invisible" : "";
 
+    private string NodeIcon => NodeDisplayService.GetNodeDisplayInfo(Node).Icon;
+
     private bool Active => Catalogue.ActiveNode == this.Node;
 
     protected override void OnInitialized()
@@ -45,11 +48,7 @@
 
     string GetName()
     {
-        if (Node is INameableNode named && !string.IsNullOrWhiteSpace(named.Name))
-        {
-            return named.Name;
-        }
-        return Node.Kind.ToString();
+        return NodeDisplayService.GetNodeDisplayInfo(Node).Name;
     }
 
     void OnClick()
