@@ -6,23 +6,28 @@
     <a class="btn btn-light btn-sm @ExpandInvisibleCss" @onclick="ToggleExpand">
         <span class="oi @ExpandButtonIcon"></span>
     </a>
-    <span @onclick="SelectNode">
+    <span @onclick="SelectNode" tabindex="@(Active ? 0 : -1)" @ref="NodeSpan" @onkeydown="OnKeyDown" @onkeydown:preventDefault>
         <span class="oi oi-@NodeIcon"></span>
         <span class="@(Active ? "border border-primary bg-highlight" : "")">@GetName()</span>
     </span>
 </div>
 
-@if (hasChildren && expanded)
+@if (HasChildren && Expanded)
 {
 <div class="pl-3">
-    @foreach (var @group in GetLists())
+    @{ 
+        var query = ChildGroups
+            .Select(x => (startIndex: 0, group: x))
+            .Scan((sum, item) => (startIndex: sum.startIndex + sum.group.nodes.Length, item.group));
+    }
+    @foreach (var (startIndex, @group) in query)
     {
         <em>@group.name</em>
         <ul class="list-unstyled">
-            @foreach (var child in group.nodes)
+            @foreach (var (index, child) in group.nodes.Index(startIndex))
             {
                 <li>
-                    <SourceNodeTreeItem Node="@child" />
+                    <SourceNodeTreeItem Node="@child" ParentItem="@this" IndexInParent="@index" />
                 </li>
             }
         </ul>
@@ -31,18 +36,44 @@
 }
 
 @code {
-    private bool hasChildren = false;
-    private bool expanded = false;
+    private SourceNode node;
 
     [Parameter]
-    public SourceNode Node { get; set; }
+    public SourceNode Node
+    {
+        get => node;
+        set
+        {
+            if (node != value)
+            {
+                node = value;
+                OnNodeChanged();
+            }
+        }
+    }
+
+    [Parameter]
+    public SourceNodeTreeItem ParentItem { get; set; }
+
+    [Parameter]
+    public int IndexInParent { get; set; } = -1;
 
     [CascadingParameter]
     public Catalogue Catalogue { get; set; }
 
-    private string ExpandButtonIcon => expanded ? "oi-minus" : "oi-plus";
+    public ElementReference NodeSpan { get; private set; }
 
-    private string ExpandInvisibleCss => !hasChildren ? "invisible" : "";
+    private bool Expanded { get; set; }
+
+    private bool HasChildren { get; set; }
+
+    private ImmutableArray<(string name, ImmutableArray<SourceNode> nodes)> ChildGroups { get; set; }
+
+    private SourceNodeTreeItem[] ChildItems { get; set; }
+
+    private string ExpandButtonIcon => Expanded ? "oi-minus" : "oi-plus";
+
+    private string ExpandInvisibleCss => !HasChildren ? "invisible" : "";
 
     private string NodeIcon => NodeDisplayService.GetNodeDisplayInfo(Node).Icon;
 
@@ -56,9 +87,23 @@
         nameof(ProfileTypeNode.CharacteristicTypes),
     }.ToImmutableHashSet();
 
+    void OnNodeChanged()
+    {
+        ChildGroups = GetChildGroups().ToImmutableArray();
+        HasChildren = ChildGroups.Length > 0;
+        ChildItems = new SourceNodeTreeItem[ChildGroups.Sum(x => x.nodes.Length)];
+    }
+
     protected override void OnParametersSet()
     {
-        hasChildren = Node.ChildrenInfos().Any(x => !ExcludedListNames.Contains(x.Name) && x.Node.Descendants().Any(x => !x.IsList));
+        if (Node == Catalogue.Root)
+        {
+            Expanded = true;
+        }
+        if (ParentItem is { })
+        {
+            ParentItem.ChildItems[IndexInParent] = this;
+        }
     }
 
     string GetName()
@@ -66,21 +111,25 @@
         return NodeDisplayService.GetNodeDisplayInfo(Node).Name;
     }
 
-    void ToggleExpand()
+    async Task ToggleExpand()
     {
-        if (!hasChildren)
+        if (!HasChildren)
         {
             return;
         }
-        expanded = !expanded;
+        Expanded = !Expanded;
+        if (!Expanded && this.Node.Contains(Catalogue.ActiveNode))
+        {
+            await SelectNode();
+        }
     }
 
-    void SelectNode()
+    async Task SelectNode()
     {
-        Catalogue.ActiveNode = this.Node;
+        await Catalogue.SelectNode(this);
     }
 
-    IEnumerable<(string name, List<SourceNode> nodes)> GetLists()
+    IEnumerable<(string name, ImmutableArray<SourceNode> nodes)> GetChildGroups()
     {
         var itemNameGroups = new[]
         {
@@ -115,39 +164,155 @@
                 }) on childInfo.Name equals association.listName into assocGroup
             from assoc in assocGroup.DefaultIfEmpty(new { groupName = childInfo.Name, listName = childInfo.Name })
             group childInfo by assoc into listGroup
-            select (
-                name: listGroup.Key.groupName,
-                nodes: listGroup.SelectMany(x => x.Node.Children()).ToList()
-            );
-        return groups.Where(x => x.nodes.Count > 0);
+            let nodes = listGroup.SelectMany(x => x.Node.Children()).ToImmutableArray()
+            where nodes.Length > 0
+            select (name: listGroup.Key.groupName, nodes: nodes);
+        return groups;
     }
 
-    void GetListGroups()
+    async Task OnKeyDown(KeyboardEventArgs e)
     {
-        var itemNameGroups = new[]
+        const int pageSteps = 10;
+        await (e.Key switch
         {
-            new[]
+            "ArrowLeft" => GoLeft(),
+            "ArrowUp" => GoUp(1),
+            "ArrowRight" => GoRight(),
+            "ArrowDown" => GoDown(1),
+            "Home" => GoHome(),
+            "End" => GoEnd(),
+            "PageUp" => GoUp(pageSteps),
+            "PageDown" => GoDown(pageSteps),
+            "*" => ExpandSiblings(),
+            _ => Task.CompletedTask
+        });
+    }
+
+    async Task GoLeft()
+    {
+        if (Expanded)
         {
-                nameof(SelectionEntryBaseCore.SelectionEntries),
-                nameof(SelectionEntryBaseCore.SelectionEntryGroups),
-                nameof(SelectionEntryBaseCore.EntryLinks),
-            },
-            new[]
+            await ToggleExpand();
+        }
+        else
         {
-                nameof(SelectionEntryBaseCore.Profiles),
-                nameof(SelectionEntryBaseCore.Rules),
-                nameof(SelectionEntryBaseCore.InfoGroups),
-                nameof(SelectionEntryBaseCore.InfoLinks),
-            },
-            new[]
+            await ParentItem?.SelectNode();
+        }
+    }
+
+    async Task GoRight()
+    {
+        if (!Expanded)
         {
-                nameof(EntryBaseCore.Modifiers),
-                nameof(EntryBaseCore.ModifierGroups),
+            await ToggleExpand();
+        }
+        else
+        {
+            await ChildItems[0].SelectNode();
+        }
+    }
+
+    async Task GoUp(int steps)
+    {
+        var x = this;
+        for (int i = 0; i < steps; i++)
+        {
+            x = GetPrevious(x);
+        }
+        await x.SelectNode();
+
+        static SourceNodeTreeItem GetPrevious(SourceNodeTreeItem item)
+        {
+            if (item.IndexInParent == 0)
+            {
+                return item.ParentItem;
             }
-        };
-        var groups =
-            from info in Node.ChildrenInfos()
-            where info.IsList
-            select info;
+            else if (item.IndexInParent > 0)
+            {
+                var prev = item.ParentItem.ChildItems[item.IndexInParent - 1];
+                while (prev.Expanded)
+                {
+                    prev = prev.ChildItems[^1];
+                }
+                return prev;
+            }
+            return item;
+        }
+    }
+
+    async Task GoDown(int steps)
+    {
+        var x = this;
+        for (int i = 0; i < steps; i++)
+        {
+            x = GetNext(x);
+        }
+        await x.SelectNode();
+
+        static SourceNodeTreeItem GetNext(SourceNodeTreeItem item)
+        {
+            if (item.Expanded)
+            {
+                return item.ChildItems[0];
+            }
+            if (item.IndexInParent + 1 < item.ParentItem?.ChildItems.Length)
+            {
+                return item.ParentItem.ChildItems[item.IndexInParent + 1];
+            }
+            else
+            {
+                var next = item;
+                while (next.IndexInParent + 1 == next.ParentItem?.ChildItems.Length)
+                {
+                    next = next.ParentItem;
+                }
+                if (next.ParentItem is { })
+                {
+                    return next.ParentItem.ChildItems[next.IndexInParent + 1];
+                }
+                return item;
+            }
+        }
+    }
+
+    async Task GoHome()
+    {
+        var first = this;
+        while (first.IndexInParent >= 0)
+        {
+            first = first.ParentItem;
+        }
+        await first.SelectNode();
+    }
+
+    async Task GoEnd()
+    {
+        var first = this;
+        while (first.IndexInParent >= 0)
+        {
+            first = first.ParentItem;
+        }
+        var last = first;
+        while (last.Expanded)
+        {
+            last = last.ChildItems[^1];
+        }
+        await last.SelectNode();
+    }
+
+    async Task ExpandSiblings()
+    {
+        if (ParentItem is null)
+        {
+            return;
+        }
+        foreach (var item in ParentItem.ChildItems)
+        {
+            if (!item.Expanded && item.HasChildren)
+            {
+                await item.ToggleExpand();
+                item.StateHasChanged();
+            }
+        }
     }
 }

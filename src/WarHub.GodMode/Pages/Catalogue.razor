@@ -4,6 +4,7 @@
 @using WarHub.ArmouryModel.ProjectModel
 @inject NavigationManager NavigationManager
 @inject DatafilesService DatafilesService
+@inject IJSRuntime JSRuntime
 
 <div>
     <DatafileList @bind-DatafileName="DatafileName"></DatafileList>
@@ -20,7 +21,7 @@ else
         <div class="row">
             <div class="col-md" style="max-height:80vh; overflow: auto;">
                 <h4 id="content">Content</h4>
-                <div style="overflow: auto">
+                <div>
                     <SourceNodeTreeItem Node="@Root" />
                 </div>
             </div>
@@ -72,6 +73,16 @@ else
         {
             DatafileInfo = DatafilesService.GetDatafileInfo(DatafileName);
             Root = DatafileInfo.GetData();
+            if (Root?.Contains(ActiveNode) != true)
+            {
+                ActiveNode = Root;
+            }
         }
+    }
+
+    public ValueTask SelectNode(SourceNodeTreeItem treeItem)
+    {
+        ActiveNode = treeItem.Node;
+        return JSRuntime.Focus(treeItem.NodeSpan);
     }
 }
