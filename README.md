@@ -5,3 +5,10 @@
 ## Overview
 
 Editor for BattleScribe data files.
+
+
+## License
+
+Code is licensed under [MIT license](./LICENSE.md)
+
+Images, icons and logo design Copyright © Amadeusz Sadowski.
