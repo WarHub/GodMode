@@ -6,9 +6,14 @@
     <a class="btn btn-light btn-sm @ExpandInvisibleCss" @onclick="ToggleExpand">
         <span class="oi @ExpandButtonIcon"></span>
     </a>
-    <span @onclick="SelectNode" tabindex="@(Active ? 0 : -1)" @ref="NodeSpan" @onkeydown="OnKeyDown" @onkeydown:preventDefault>
+    <span class="@(Active ? "border border-primary bg-highlight" : "")"
+          tabindex="@(Active ? 0 : -1)"
+          @ref="NodeSpan"
+          @onclick="SelectNode"
+          @onkeydown="OnKeyDown"
+          @onkeydown:preventDefault>
         <span class="oi oi-@NodeIcon"></span>
-        <span class="@(Active ? "border border-primary bg-highlight" : "")">@GetName()</span>
+        <span>@GetName()</span>
     </span>
 </div>
 
