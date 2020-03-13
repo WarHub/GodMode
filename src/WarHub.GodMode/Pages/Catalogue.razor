@@ -7,8 +7,7 @@
 @inject IJSRuntime JSRuntime
 
 <div>
-    <DatafileList @bind-DatafileName="DatafileName"></DatafileList>
-
+    <DatafileList @bind-DatafileName="DatafileName" />
 </div>
 
 @if (DatafileInfo is null)
@@ -19,16 +18,26 @@ else
 {
     <CascadingValue Value="this">
         <div class="row">
-            <div class="col-md" style="max-height:80vh; overflow: auto;">
+            <style>
+                div.max80vh {
+                    max-height: 80vh;
+                    overflow-x: hidden;
+                    overflow-y: auto;
+                }
+            </style>
+
+            <div class="col-md">
                 <h4 id="content">Content</h4>
-                <div>
+                <div class="max80vh px-3">
                     <SourceNodeTreeItem Node="@Root" />
                 </div>
             </div>
 
             <div class="col-md">
                 <h4 id="details">Details</h4>
-                <SourceNodeDetails Node="@ActiveNode" />
+                <div class="max80vh px-3">
+                    <SourceNodeDetails Node="@ActiveNode" />
+                </div>
             </div>
         </div>
     </CascadingValue>
