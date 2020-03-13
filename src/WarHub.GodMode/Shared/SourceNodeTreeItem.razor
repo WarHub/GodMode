@@ -1,43 +1,54 @@
 ﻿@using WarHub.ArmouryModel.Source
-@using WarHub.GodMode.Pages
 @using WarHub.GodMode.Data
+@using WarHub.GodMode.Pages
 
-<div>
-    <a class="btn btn-light btn-sm @ExpandInvisibleCss" @onclick="ToggleExpand">
+<div class="d-flex align-items-center">
+    <a class="btn btn-light btn-sm @ExpandInvisibleCss" role="button" @onclick="ToggleExpand">
         <span class="oi @ExpandButtonIcon"></span>
     </a>
-    <span class="@(Active ? "border border-primary bg-highlight" : "")"
-          tabindex="@(Active ? 0 : -1)"
-          @ref="NodeSpan"
-          @onclick="SelectNode"
-          @onkeydown="OnKeyDown"
-          @onkeydown:preventDefault>
+    @{
+        var name = GetName();
+    }
+    <label class="flex-shrink-1 text-truncate mb-0 ml-1 @(Active ? "border border-primary bg-highlight" : "")"
+           title="@name"
+           style="min-width: 5em;"
+           tabindex="@(Active ? 0 : -1)"
+           @ref="NodeSpan"
+           @onclick="SelectNode"
+           @onkeydown="OnKeyDown"
+           @onkeydown:preventDefault>
         <span class="oi oi-@NodeIcon"></span>
-        <span>@GetName()</span>
-    </span>
+        @name
+    </label>
+    @if (@ChildItems.Length > 0)
+    {
+        <span class="badge badge-secondary ml-1">
+            @ChildItems.Length
+        </span>
+    }
 </div>
 
 @if (HasChildren && Expanded)
 {
-<div class="pl-3">
-    @{ 
-        var query = ChildGroups
-            .Select(x => (startIndex: 0, group: x))
-            .Scan((sum, item) => (startIndex: sum.startIndex + sum.group.nodes.Length, item.group));
-    }
-    @foreach (var (startIndex, @group) in query)
-    {
-        <em>@group.name</em>
-        <ul class="list-unstyled">
-            @foreach (var (index, child) in group.nodes.Index(startIndex))
-            {
-                <li>
-                    <SourceNodeTreeItem Node="@child" ParentItem="@this" IndexInParent="@index" />
-                </li>
-            }
-        </ul>
-    }
-</div>
+    <div class="pl-3">
+        @{
+            var query = ChildGroups
+                .Select(x => (startIndex: 0, group: x))
+                .Scan((sum, item) => (startIndex: sum.startIndex + sum.group.nodes.Length, item.group));
+        }
+        @foreach (var (startIndex, @group) in query)
+        {
+            <em>@group.name</em>
+            <ul class="list-unstyled">
+                @foreach (var (index, child) in group.nodes.Index(startIndex))
+                {
+                    <li>
+                        <SourceNodeTreeItem Node="@child" ParentItem="@this" IndexInParent="@index" />
+                    </li>
+                }
+            </ul>
+        }
+    </div>
 }
 
 @code {
@@ -139,20 +150,20 @@
         var itemNameGroups = new[]
         {
             new[]
-        {
+{
                 nameof(SelectionEntryBaseCore.SelectionEntries),
                 nameof(SelectionEntryBaseCore.SelectionEntryGroups),
                 nameof(SelectionEntryBaseCore.EntryLinks),
             },
             new[]
-        {
+{
                 nameof(SelectionEntryBaseCore.Profiles),
                 nameof(SelectionEntryBaseCore.Rules),
                 nameof(SelectionEntryBaseCore.InfoGroups),
                 nameof(SelectionEntryBaseCore.InfoLinks),
             },
             new[]
-        {
+{
                 nameof(EntryBaseCore.Modifiers),
                 nameof(EntryBaseCore.ModifierGroups),
             }
