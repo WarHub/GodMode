@@ -3,18 +3,28 @@
 @using WarHub.GodMode.Pages
 
 <div class="d-flex align-items-center">
-    <a class="btn btn-light btn-sm @ExpandInvisibleCss" role="button" @onclick="ToggleExpand">
-        <span class="oi @ExpandButtonIcon"></span>
-    </a>
+    @if (HasChildren)
+    {
+        <a class="badge badge-light" role="button" @onclick="ToggleExpand">
+            <span class="small oi @ExpandButtonIcon"></span>
+        </a>
+    }
+    else
+    {
+        <span class="badge badge-light">
+            <span class="small oi oi-ellipses"></span>
+        </span>
+    }
     @{
         var name = GetName();
     }
     <label class="flex-shrink-1 text-truncate mb-0 ml-1 @(Active ? "border border-primary" : "")"
            title="@name"
-           style="min-width: 5em; border: 1px solid transparent;"
+           style="min-width: 5em; border: 1px solid transparent; user-select: none"
            tabindex="@(Active ? 0 : -1)"
            @ref="NodeSpan"
            @onclick="SelectNode"
+           @ondblclick="ToggleExpand"
            @onkeydown="OnKeyDown"
            @onkeydown:preventDefault>
         <span class="oi oi-@NodeIcon"></span>
@@ -30,7 +40,7 @@
 
 @if (HasChildren && Expanded)
 {
-    <div class="pl-3">
+    <div class="ml-2 pl-2" style="border-left: 1px dotted grey;">
         @{
             var query = ChildGroups
                 .Select(x => (startIndex: 0, group: x))
@@ -38,7 +48,7 @@
         }
         @foreach (var (startIndex, @group) in query)
         {
-            <em>@group.name</em>
+            <small class="pl-3">@group.name</small>
             <ul class="list-unstyled">
                 @foreach (var (index, child) in group.nodes.Index(startIndex))
                 {
@@ -88,8 +98,6 @@
     private SourceNodeTreeItem[] ChildItems { get; set; }
 
     private string ExpandButtonIcon => Expanded ? "oi-minus" : "oi-plus";
-
-    private string ExpandInvisibleCss => !HasChildren ? "invisible" : "";
 
     private string NodeIcon => NodeDisplayService.GetNodeDisplayInfo(Node).Icon;
 
