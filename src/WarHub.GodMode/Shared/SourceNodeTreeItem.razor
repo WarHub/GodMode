@@ -9,9 +9,9 @@
     @{
         var name = GetName();
     }
-    <label class="flex-shrink-1 text-truncate mb-0 ml-1 @(Active ? "border border-primary bg-highlight" : "")"
+    <label class="flex-shrink-1 text-truncate mb-0 ml-1 @(Active ? "border border-primary" : "")"
            title="@name"
-           style="min-width: 5em;"
+           style="min-width: 5em; border: 1px solid transparent;"
            tabindex="@(Active ? 0 : -1)"
            @ref="NodeSpan"
            @onclick="SelectNode"
