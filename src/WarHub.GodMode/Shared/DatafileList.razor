@@ -1,51 +1,64 @@
-﻿@using System.IO
+﻿@using WarHub.ArmouryModel.ProjectModel
 @using WarHub.GodMode.Data
 @inject DatafilesService FilesService
 
 <label for="file-select">Select datafile</label>
 
 <EditForm Model="this">
-    <InputSelect id="file-select" @bind-Value="DatafileName">
+    <InputSelect id="file-select" @bind-Value="SelectedFilepath">
+        @{
+            RenderFragment<IDatafileInfo> option = file =>
+                @<option value="@file.Filepath">@file.GetStorageName()</option>;
+        }
         <optgroup label="Game systems">
-            @foreach (var gst in files.Where(x => x.Extension.Equals(".gst", StringComparison.OrdinalIgnoreCase)))
+            @foreach (var file in FilesService.Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem))
             {
-                <option value="@gst.Name">
-                    @gst.Name
-                </option>
+                @option(file)
             }
         </optgroup>
-        @foreach (var cat in files.Where(x => x.Extension.Equals(".cat", StringComparison.OrdinalIgnoreCase)))
+        @foreach (var file in FilesService.Datafiles.Where(x => x.DataKind == SourceKind.Catalogue))
         {
-            <option value="@cat.Name">
-                @cat.Name
+            var name = file.GetStorageName();
+            <option value="@file.Filepath">
+                @name
             </option>
         }
     </InputSelect>
 </EditForm>
 
 @code {
-    private FileInfo[] files;
-    private string datafileName;
+    private IDatafileInfo selectedDatafile;
+
+    private ImmutableArray<IDatafileInfo> Datafiles => FilesService.Datafiles;
+
+    private IEnumerable<IDatafileInfo> Catalogues => Datafiles.Where(x => x.DataKind == SourceKind.Catalogue);
+
+    private IEnumerable<IDatafileInfo> Gamesystems => Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem);
+
+    private string SelectedFilepath
+    {
+        get => SelectedDatafile?.Filepath;
+        set => SelectedDatafile = FilesService.Datafiles.FirstOrDefault(x => x.Filepath == value);
+    }
 
     [Parameter]
-    public string DatafileName
+    public IDatafileInfo SelectedDatafile
     {
-        get => datafileName;
+        get => selectedDatafile;
         set
         {
-            var changed = value != datafileName;
-            datafileName = value;
+            var changed = value != selectedDatafile;
+            selectedDatafile = value;
             if (changed)
-                DatafileNameChanged.InvokeAsync(value);
+                SelectedDatafileChanged.InvokeAsync(value);
         }
     }
 
     [Parameter]
-    public EventCallback<string> DatafileNameChanged { get; set; }
+    public EventCallback<IDatafileInfo> SelectedDatafileChanged { get; set; }
 
     protected override void OnInitialized()
     {
-        files = FilesService.GetDatafiles().Select(x => new FileInfo(x)).ToArray();
-        DatafileName = files.FirstOrDefault()?.Name;
+        SelectedDatafile = Catalogues.FirstOrDefault() ?? Gamesystems.FirstOrDefault();
     }
 }

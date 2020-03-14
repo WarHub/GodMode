@@ -34,7 +34,7 @@
         </span>
         @Display.Name
     </label>
-    @if (@ChildItems.Length > 0)
+    @if (HasChildren)
     {
         <span class="badge badge-secondary ml-1">
             @ChildItems.Length

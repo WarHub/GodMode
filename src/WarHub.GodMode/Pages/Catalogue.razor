@@ -7,7 +7,7 @@
 @inject IJSRuntime JSRuntime
 
 <div>
-    <DatafileList @bind-DatafileName="DatafileName" />
+    <DatafileList @bind-SelectedDatafile="DatafileInfo" />
 </div>
 
 @if (DatafileInfo is null)
@@ -44,17 +44,17 @@ else
 }
 
 @code {
-    private string _datafileName;
+    private IDatafileInfo datafileInfo;
     private SourceNode activeNode;
 
     [Parameter]
-    public string DatafileName
+    public IDatafileInfo DatafileInfo
     {
-        get => _datafileName;
+        get => datafileInfo;
         set
         {
-            var old = _datafileName;
-            _datafileName = value;
+            var old = datafileInfo;
+            datafileInfo = value;
             if (value != old)
             {
                 UpdateDatafile();
@@ -72,15 +72,12 @@ else
         }
     }
 
-    public IDatafileInfo<SourceNode> DatafileInfo { get; set; }
-
     public SourceNode Root { get; set; }
 
     void UpdateDatafile()
     {
-        if (!string.IsNullOrWhiteSpace(DatafileName))
+        if (DatafileInfo is { })
         {
-            DatafileInfo = DatafilesService.GetDatafileInfo(DatafileName);
             Root = DatafileInfo.GetData();
             if (Root?.Contains(ActiveNode) != true)
             {
