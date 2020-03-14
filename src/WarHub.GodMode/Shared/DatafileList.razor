@@ -8,7 +8,7 @@
     <InputSelect id="file-select" @bind-Value="SelectedFilepath">
         @{
             RenderFragment<IDatafileInfo> option = file =>
-                @<option value="@file.Filepath">@file.GetStorageName()</option>;
+            @<option value="@file.Filepath">@file.GetStorageName()</option>;
         }
         <optgroup label="Game systems">
             @foreach (var file in FilesService.Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem))
@@ -27,15 +27,15 @@
 </EditForm>
 
 @code {
-    private IDatafileInfo selectedDatafile;
+    IDatafileInfo selectedDatafile;
 
-    private ImmutableArray<IDatafileInfo> Datafiles => FilesService.Datafiles;
+    ImmutableArray<IDatafileInfo> Datafiles => FilesService.Datafiles;
 
-    private IEnumerable<IDatafileInfo> Catalogues => Datafiles.Where(x => x.DataKind == SourceKind.Catalogue);
+    IEnumerable<IDatafileInfo> Catalogues => Datafiles.Where(x => x.DataKind == SourceKind.Catalogue);
 
-    private IEnumerable<IDatafileInfo> Gamesystems => Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem);
+    IEnumerable<IDatafileInfo> Gamesystems => Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem);
 
-    private string SelectedFilepath
+    string SelectedFilepath
     {
         get => SelectedDatafile?.Filepath;
         set => SelectedDatafile = FilesService.Datafiles.FirstOrDefault(x => x.Filepath == value);

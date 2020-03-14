@@ -44,8 +44,8 @@ else
 }
 
 @code {
-    private IDatafileInfo datafileInfo;
-    private SourceNode activeNode;
+    IDatafileInfo datafileInfo;
+    SourceNode activeNode;
 
     [Parameter]
     public IDatafileInfo DatafileInfo
@@ -74,6 +74,12 @@ else
 
     public SourceNode Root { get; set; }
 
+    public ValueTask SelectNode(SourceNodeTreeItem treeItem)
+    {
+        ActiveNode = treeItem.Node;
+        return JSRuntime.Focus(treeItem.NodeSpan);
+    }
+
     void UpdateDatafile()
     {
         if (DatafileInfo is { })
@@ -84,11 +90,5 @@ else
                 ActiveNode = Root;
             }
         }
-    }
-
-    public ValueTask SelectNode(SourceNodeTreeItem treeItem)
-    {
-        ActiveNode = treeItem.Node;
-        return JSRuntime.Focus(treeItem.NodeSpan);
     }
 }
