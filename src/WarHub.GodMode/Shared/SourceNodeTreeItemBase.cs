@@ -1,11 +1,15 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using WarHub.ArmouryModel.Source;
 
 namespace WarHub.GodMode.Shared
 {
     public abstract class SourceNodeTreeItemBase : ComponentBase
     {
+        [Parameter]
+        public TreeItemModel Model { get; set; }
+
         [Parameter]
         public SourceNodeTreeItemBase ParentItem { get; set; }
 
@@ -38,13 +42,19 @@ namespace WarHub.GodMode.Shared
 
         protected override void OnParametersSet()
         {
-            if (this == Tree.RootItem)
+            HasChildren = Model.ChildCount > 0;
+            if (Model is SingleNodeTreeItemModel { Node: { Kind: var kind } }
+                && (kind == SourceKind.Catalogue || kind == SourceKind.Gamesystem))
             {
                 Expanded = true;
             }
             if (ParentItem is { })
             {
                 ParentItem.ChildItems[IndexInParent] = this;
+            }
+            if ((ChildItems?.Length ?? 0) != Model.ChildCount)
+            {
+                ChildItems = new SourceNodeTreeItemBase[Model.ChildCount];
             }
         }
 

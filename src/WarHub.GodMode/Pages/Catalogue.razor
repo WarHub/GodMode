@@ -33,7 +33,7 @@ else
         <div class="col-md">
             <h4 id="details">Details</h4>
             <div class="max80vh px-3">
-                <SourceNodeDetails Node="@((ActiveItem as SourceNodeTreeItem)?.Node)" />
+                <SourceNodeDetails Node="@((ActiveItem?.Model as SingleNodeTreeItemModel)?.Node)" />
             </div>
         </div>
     </div>

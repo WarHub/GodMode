@@ -8,9 +8,16 @@ namespace WarHub.GodMode.Data
 {
     public struct NodeDisplayInfo
     {
-        public string Icon;
         public string Name;
+        public string Icon;
         public string IconModifier;
+
+        public void Deconstruct(out string name, out string icon, out string iconModifier)
+        {
+            name = Name;
+            icon = Icon;
+            iconModifier = IconModifier;
+        }
     }
 
     public class NodeDisplayService

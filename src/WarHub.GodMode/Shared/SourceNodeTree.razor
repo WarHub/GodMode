@@ -1,7 +1,7 @@
 ﻿@inject IJSRuntime JSRuntime
 
 <CascadingValue Value="this">
-    <SourceNodeTreeItem Node="@Root" @ref="RootItem" />
+    <SourceNodeTreeItem Model="@RootModel" @ref="RootItem" />
 </CascadingValue>
 
 @code {
@@ -16,8 +16,14 @@
 
     public SourceNodeTreeItem RootItem { get; private set; }
 
+    SingleNodeTreeItemModel RootModel { get; set; }
+
     protected override void OnParametersSet()
     {
+        if (RootModel?.Node != Root)
+        {
+            RootModel = new SingleNodeTreeItemModel(Root);
+        }
         if (RootItem?.Contains(ActiveItem) != true)
         {
             ActiveItem = RootItem;
