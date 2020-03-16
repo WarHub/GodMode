@@ -1,0 +1,34 @@
+﻿@inject IJSRuntime JSRuntime
+
+<CascadingValue Value="this">
+    <SourceNodeTreeItem Node="@Root" @ref="RootItem" />
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public SourceNodeTreeItemBase ActiveItem { get; set; }
+
+    [Parameter]
+    public EventCallback<SourceNodeTreeItemBase> ActiveItemChanged { get; set; }
+
+    [Parameter]
+    public SourceNode Root { get; set; }
+
+    public SourceNodeTreeItem RootItem { get; private set; }
+
+    protected override void OnParametersSet()
+    {
+        if (RootItem?.Contains(ActiveItem) != true)
+        {
+            ActiveItem = RootItem;
+        }
+    }
+
+    public ValueTask SelectNode(SourceNodeTreeItemBase treeItem)
+    {
+        ActiveItem = treeItem;
+        ActiveItemChanged.InvokeAsync(ActiveItem);
+        StateHasChanged();
+        return JSRuntime.Focus(treeItem.FocusableElementRef);
+    }
+}

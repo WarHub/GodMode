@@ -2,9 +2,7 @@
 @page "/catalogue"
 @using WarHub.GodMode.Data
 @using WarHub.ArmouryModel.ProjectModel
-@inject NavigationManager NavigationManager
 @inject DatafilesService DatafilesService
-@inject IJSRuntime JSRuntime
 
 <div>
     <DatafileList @bind-SelectedDatafile="DatafileInfo" />
@@ -16,39 +14,35 @@
 }
 else
 {
-    <CascadingValue Value="this">
-        <div class="row">
-            <style>
-                div.max80vh {
-                    max-height: 80vh;
-                    overflow-x: hidden;
-                    overflow-y: auto;
-                }
-            </style>
+    <div class="row">
+        <style>
+            div.max80vh {
+                max-height: 80vh;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+        </style>
 
-            <div class="col-md">
-                <h4 id="content">Content</h4>
-                <div class="max80vh px-3">
-                    <SourceNodeTreeItem Node="@Root" />
-                </div>
-            </div>
-
-            <div class="col-md">
-                <h4 id="details">Details</h4>
-                <div class="max80vh px-3">
-                    <SourceNodeDetails Node="@ActiveNode" />
-                </div>
+        <div class="col-md">
+            <h4 id="content">Content</h4>
+            <div class="max80vh px-3">
+                <SourceNodeTree Root="@Root" @bind-ActiveItem="ActiveItem" />
             </div>
         </div>
-    </CascadingValue>
+
+        <div class="col-md">
+            <h4 id="details">Details</h4>
+            <div class="max80vh px-3">
+                <SourceNodeDetails Node="@((ActiveItem as SourceNodeTreeItem)?.Node)" />
+            </div>
+        </div>
+    </div>
 }
 
 @code {
     IDatafileInfo datafileInfo;
-    SourceNode activeNode;
 
-    [Parameter]
-    public IDatafileInfo DatafileInfo
+    IDatafileInfo DatafileInfo
     {
         get => datafileInfo;
         set
@@ -57,38 +51,15 @@ else
             datafileInfo = value;
             if (value != old)
             {
-                UpdateDatafile();
+                if (DatafileInfo is { })
+                {
+                    Root = DatafileInfo.GetData();
+                }
             }
         }
     }
 
-    public SourceNode ActiveNode
-    {
-        get => activeNode;
-        set
-        {
-            activeNode = value;
-            StateHasChanged();
-        }
-    }
+    SourceNodeTreeItemBase ActiveItem { get; set; }
 
-    public SourceNode Root { get; set; }
-
-    public ValueTask SelectNode(SourceNodeTreeItem treeItem)
-    {
-        ActiveNode = treeItem.Node;
-        return JSRuntime.Focus(treeItem.NodeSpan);
-    }
-
-    void UpdateDatafile()
-    {
-        if (DatafileInfo is { })
-        {
-            Root = DatafileInfo.GetData();
-            if (Root?.Contains(ActiveNode) != true)
-            {
-                ActiveNode = Root;
-            }
-        }
-    }
+    SourceNode Root { get; set; }
 }

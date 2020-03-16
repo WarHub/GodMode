@@ -1,6 +1,7 @@
 ﻿@using WarHub.ArmouryModel.Source
 @using WarHub.GodMode.Data
-@using WarHub.GodMode.Pages
+
+@inherits SourceNodeTreeItemBase
 
 <div class="d-flex align-items-center">
     @if (HasChildren)
@@ -19,7 +20,7 @@
            title="@Display.Name"
            style="min-width: 0; border: 1px solid transparent; user-select: none"
            tabindex="@(Active ? 0 : -1)"
-           @ref="NodeSpan"
+           @ref="FocusableElementRef"
            @onclick="SelectNode"
            @ondblclick="ToggleExpand"
            @onkeydown="OnKeyDown"
@@ -82,28 +83,11 @@
         }
     }
 
-    [Parameter]
-    public SourceNodeTreeItem ParentItem { get; set; }
-
-    [Parameter]
-    public int IndexInParent { get; set; } = -1;
-
-    [CascadingParameter]
-    public Catalogue Catalogue { get; set; }
-
-    public ElementReference NodeSpan { get; private set; }
-
-    bool Expanded { get; set; }
-
-    bool HasChildren { get; set; }
-
     ImmutableArray<(string name, ImmutableArray<SourceNode> nodes)> ChildGroups { get; set; }
-
-    SourceNodeTreeItem[] ChildItems { get; set; }
 
     string ExpandButtonIcon => Expanded ? "oi-minus" : "oi-plus";
 
-    bool Active => Catalogue.ActiveNode == this.Node;
+    bool Active => Tree.ActiveItem == this;
 
     (string Name, string Icon, string ModIcon) Display { get; set; }
 
@@ -122,36 +106,6 @@
         ChildItems = new SourceNodeTreeItem[ChildGroups.Sum(x => x.nodes.Length)];
         var di = NodeDisplayService.GetNodeDisplayInfo(Node);
         Display = (di.Name, di.Icon, di.IconModifier);
-    }
-
-    protected override void OnParametersSet()
-    {
-        if (Node == Catalogue.Root)
-        {
-            Expanded = true;
-        }
-        if (ParentItem is { })
-        {
-            ParentItem.ChildItems[IndexInParent] = this;
-        }
-    }
-
-    async Task ToggleExpand()
-    {
-        if (!HasChildren)
-        {
-            return;
-        }
-        Expanded = !Expanded;
-        if (!Expanded && this.Node.Contains(Catalogue.ActiveNode))
-        {
-            await SelectNode();
-        }
-    }
-
-    async Task SelectNode()
-    {
-        await Catalogue.SelectNode(this);
     }
 
     IEnumerable<(string name, ImmutableArray<SourceNode> nodes)> GetChildGroups()
@@ -193,151 +147,5 @@
             where nodes.Length > 0
             select (name: listGroup.Key.groupName, nodes: nodes);
         return groups;
-    }
-
-    async Task OnKeyDown(KeyboardEventArgs e)
-    {
-        const int pageSteps = 10;
-        await (e.Key switch
-        {
-            "ArrowLeft" => GoLeft(),
-            "ArrowUp" => GoUp(1),
-            "ArrowRight" => GoRight(),
-            "ArrowDown" => GoDown(1),
-            "Home" => GoHome(),
-            "End" => GoEnd(),
-            "PageUp" => GoUp(pageSteps),
-            "PageDown" => GoDown(pageSteps),
-            "*" => ExpandSiblings(),
-            _ => Task.CompletedTask
-        });
-    }
-
-    async Task GoLeft()
-    {
-        if (Expanded)
-        {
-            await ToggleExpand();
-        }
-        else
-        {
-            await ParentItem?.SelectNode();
-        }
-    }
-
-    async Task GoRight()
-    {
-        if (!Expanded)
-        {
-            await ToggleExpand();
-        }
-        else
-        {
-            await ChildItems[0].SelectNode();
-        }
-    }
-
-    async Task GoUp(int steps)
-    {
-        var x = this;
-        for (int i = 0; i < steps; i++)
-        {
-            x = GetPrevious(x);
-        }
-        await x.SelectNode();
-
-        static SourceNodeTreeItem GetPrevious(SourceNodeTreeItem item)
-        {
-            if (item.IndexInParent == 0)
-            {
-                return item.ParentItem;
-            }
-            else if (item.IndexInParent > 0)
-            {
-                var prev = item.ParentItem.ChildItems[item.IndexInParent - 1];
-                while (prev.Expanded)
-                {
-                    prev = prev.ChildItems[^1];
-                }
-                return prev;
-            }
-            return item;
-        }
-    }
-
-    async Task GoDown(int steps)
-    {
-        var x = this;
-        for (int i = 0; i < steps; i++)
-        {
-            x = GetNext(x);
-        }
-        await x.SelectNode();
-
-        static SourceNodeTreeItem GetNext(SourceNodeTreeItem item)
-        {
-            if (item.Expanded)
-            {
-                return item.ChildItems[0];
-            }
-            if (item.IndexInParent + 1 < item.ParentItem?.ChildItems.Length)
-            {
-                return item.ParentItem.ChildItems[item.IndexInParent + 1];
-            }
-            else
-            {
-                var next = item;
-                while (next.IndexInParent + 1 == next.ParentItem?.ChildItems.Length)
-                {
-                    next = next.ParentItem;
-                }
-                if (next.ParentItem is { })
-                {
-                    return next.ParentItem.ChildItems[next.IndexInParent + 1];
-                }
-                return item;
-            }
-        }
-    }
-
-    async Task GoHome()
-    {
-        var first = this;
-        while (first.IndexInParent >= 0)
-        {
-            first = first.ParentItem;
-        }
-        await first.SelectNode();
-    }
-
-    async Task GoEnd()
-    {
-        var first = this;
-        while (first.IndexInParent >= 0)
-        {
-            first = first.ParentItem;
-        }
-        var last = first;
-        while (last.Expanded)
-        {
-            last = last.ChildItems[^1];
-        }
-        await last.SelectNode();
-    }
-
-    async Task ExpandSiblings()
-    {
-        if (ParentItem is null)
-        {
-            return;
-        }
-        foreach (var item in ParentItem.ChildItems)
-        {
-            if (!item.Expanded && item.HasChildren)
-            {
-                await item.ToggleExpand();
-                item.StateHasChanged();
-            }
-        }
     }
 }
