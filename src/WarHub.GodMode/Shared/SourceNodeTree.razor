@@ -16,25 +16,34 @@
 
     public SourceNodeTreeItem RootItem { get; private set; }
 
-    SingleNodeTreeItemModel RootModel { get; set; }
+    CatalogueBaseTreeItemModel RootModel { get; set; }
 
     protected override void OnParametersSet()
     {
         if (RootModel?.Node != Root)
         {
-            RootModel = new SingleNodeTreeItemModel(Root);
-        }
-        if (RootItem?.Contains(ActiveItem) != true)
-        {
-            ActiveItem = RootItem;
+            RootModel = CatalogueBaseTreeItemModel.Create((CatalogueBaseNode) Root);
         }
     }
 
-    public ValueTask SelectNode(SourceNodeTreeItemBase treeItem)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        ActiveItem = treeItem;
-        ActiveItemChanged.InvokeAsync(ActiveItem);
+        if (ActiveItem is null || !RootItem.Contains(ActiveItem))
+        {
+            await SetActiveItem(RootItem);
+        }
+    }
+
+    async Task SetActiveItem(SourceNodeTreeItemBase item)
+    {
+        ActiveItem = item;
+        await ActiveItemChanged.InvokeAsync(ActiveItem);
+    }
+
+    public async Task SelectNode(SourceNodeTreeItemBase treeItem)
+    {
+        await SetActiveItem(treeItem);
         StateHasChanged();
-        return JSRuntime.Focus(treeItem.FocusableElementRef);
+        await JSRuntime.Focus(treeItem.FocusableElementRef);
     }
 }

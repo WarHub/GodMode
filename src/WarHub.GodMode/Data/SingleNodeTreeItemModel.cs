@@ -2,45 +2,50 @@
 using System.Collections.Immutable;
 using System.Linq;
 using WarHub.ArmouryModel.Source;
-using WarHub.GodMode.Data;
 
-namespace WarHub.GodMode.Shared
+namespace WarHub.GodMode.Data
 {
-    //public class ListNodeTreeItemModel : TreeItemModel
-    //{
-
-    //}
-
-    public class SingleNodeTreeItemModel : TreeItemModel
+    public sealed class SingleNodeTreeItemModel : TreeItemModel, ITreeItemModelWithSourceNode
     {
-        public SingleNodeTreeItemModel(SourceNode node)
+        private ImmutableArray<(string name, ImmutableArray<SourceNode> nodes)> childNodeGroups;
+
+        private ImmutableList<(string name, ImmutableArray<TreeItemModel> models)> childrenGroups;
+
+        private SingleNodeTreeItemModel(SourceNode node)
         {
             Node = node;
-            (Title, Icon, IconMod) = NodeDisplayService.GetNodeDisplayInfo(node);
+            Display = NodeDisplayService.GetNodeDisplayInfo(node);
             childNodeGroups = GetChildNodeGroups(node).ToImmutableArray();
             ChildCount = childNodeGroups.Sum(x => x.nodes.Length);
         }
 
         public SourceNode Node { get; }
 
-        public override string Title { get; }
-
-        public override string Icon { get; }
-
-        public override string IconMod { get; }
-
-        public override bool ShowChildrenGroupNames => true;
+        public override NodeDisplayInfo Display { get; }
 
         public override int ChildCount { get; }
 
-        private ImmutableArray<(string name, ImmutableArray<SourceNode> nodes)> childNodeGroups;
+        public override bool ShowChildrenGroupNames => true;
+        SourceNode ITreeItemModelWithSourceNode.Node => Node;
 
-        private ImmutableList<(string name, ImmutableArray<TreeItemModel> models)> childrenGroups;
+        private static ImmutableHashSet<string> ExcludedListNames { get; }
+            = new[]
+            {
+                nameof(SelectionEntryNode.Costs),
+                nameof(SelectionEntryBaseNode.CategoryLinks),
+                nameof(ProfileNode.Characteristics),
+                nameof(ProfileTypeNode.CharacteristicTypes),
+            }.ToImmutableHashSet();
+
+        public static SingleNodeTreeItemModel Create(SourceNode node)
+        {
+            return new SingleNodeTreeItemModel(node);
+        }
 
         public override IEnumerable<(string name, ImmutableArray<TreeItemModel> models)> GetChildrenGroups()
         {
             return childrenGroups ??= childNodeGroups
-                    .Select(x => (x.name, models: x.nodes.Select(node => new SingleNodeTreeItemModel(node)).ToImmutableArray<TreeItemModel>()))
+                    .Select(x => (x.name, models: x.nodes.Select(Create).ToImmutableArray<TreeItemModel>()))
                     .ToImmutableList();
         }
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using WarHub.ArmouryModel.Source;
+using WarHub.GodMode.Data;
 
 namespace WarHub.GodMode.Shared
 {
@@ -43,8 +44,7 @@ namespace WarHub.GodMode.Shared
         protected override void OnParametersSet()
         {
             HasChildren = Model.ChildCount > 0;
-            if (Model is SingleNodeTreeItemModel { Node: { Kind: var kind } }
-                && (kind == SourceKind.Catalogue || kind == SourceKind.Gamesystem))
+            if (Model is CatalogueBaseTreeItemModel)
             {
                 Expanded = true;
             }
