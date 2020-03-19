@@ -1,5 +1,7 @@
-﻿using WarHub.ArmouryModel.Source;
+﻿using System.Globalization;
+using WarHub.ArmouryModel.Source;
 using WarHub.GodMode.SourceAnalysis;
+using static System.FormattableString;
 
 namespace WarHub.GodMode.Data
 {
@@ -58,6 +60,12 @@ namespace WarHub.GodMode.Data
                 EntryLinkNode link => GetLinkNameFromTargetOrSelf(link),
                 InfoLinkNode link => GetLinkNameFromTargetOrSelf(link),
                 INameableNode named => named.Name,
+                ConditionNode cond =>
+                    Invariant($"if {cond.Type} {FormatValue(cond.Value, cond.PercentValue)} {cond.Field} in {cond.Scope} of {cond.ChildId}"),
+                ConditionGroupNode condGroup => Invariant($"{condGroup.Type}"),
+                ConstraintNode constr =>
+                    Invariant($"{constr.Type} {FormatValue(constr.Value, constr.PercentValue)} {constr.Field} in {constr.Scope}"),
+                ModifierNode mod => GetModifierTitle(mod),
                 _ => node.Kind.ToString()
             };
 
@@ -66,6 +74,23 @@ namespace WarHub.GodMode.Data
                 return ctx?[root].ResolveLink(link) is { IsResolved: true, TargetNode: { } target }
                     ? ctx.GetNodeDisplayTitle(target)
                     : link.Name;
+            }
+
+            string GetModifierTitle(ModifierNode mod)
+            {
+                var typeText = mod.Type switch
+                {
+                    ModifierKind.Increment => " by",
+                    ModifierKind.Decrement => " by",
+                    ModifierKind.Set => " to",
+                    ModifierKind.Append => " with",
+                    _ => ""
+                };
+                return Invariant($"{mod.Type} {mod.Field}{typeText} {mod.Value}");
+            }
+            string FormatValue(decimal number, bool percent)
+            {
+                return number.ToString(percent ? "P" : "G", CultureInfo.InvariantCulture);
             }
         }
     }
