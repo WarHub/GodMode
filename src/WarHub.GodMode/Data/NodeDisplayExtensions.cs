@@ -1,24 +1,11 @@
 ﻿using WarHub.ArmouryModel.Source;
+using WarHub.GodMode.SourceAnalysis;
 
 namespace WarHub.GodMode.Data
 {
-    public struct NodeDisplayInfo
+    public static class NodeDisplayExtensions
     {
-        public string Title;
-        public string Icon;
-        public string IconMod;
-
-        public void Deconstruct(out string name, out string icon, out string iconModifier)
-        {
-            name = Title;
-            icon = Icon;
-            iconModifier = IconMod;
-        }
-    }
-
-    public class NodeDisplayService
-    {
-        public static (string Icon, string IconMod) GetSourceKindIcon(SourceKind kind) => kind switch
+        public static (string Icon, string IconMod) GetIcon(this SourceKind kind) => kind switch
         {
             // open iconic
             SourceKind.Catalogue => ("grid-three-up", null),
@@ -49,16 +36,37 @@ namespace WarHub.GodMode.Data
             _ => ("question-mark", null),
         };
 
-        public static NodeDisplayInfo GetNodeDisplayInfo(SourceNode node)
+        public static NodeDisplayInfo GetNodeDisplayInfo(this GamesystemContext ctx, SourceNode node)
         {
-            var name = node is INameableNode named ? named.Name : node.Kind.ToString();
-            var (icon, modifier) = GetSourceKindIcon(node.Kind);
+            var name = ctx.GetNodeDisplayTitle(node);
+            var (icon, modifier) = node.Kind.GetIcon();
             return new NodeDisplayInfo
             {
                 Icon = icon,
                 Title = name,
                 IconMod = modifier
             };
+        }
+
+        public static string GetNodeDisplayTitle(this GamesystemContext ctx, SourceNode node)
+        {
+            var root = node.FirstAncestorOrSelf<CatalogueBaseNode>();
+            return node switch
+            {
+                CatalogueLinkNode link => GetLinkNameFromTargetOrSelf(link),
+                CategoryLinkNode link => GetLinkNameFromTargetOrSelf(link),
+                EntryLinkNode link => GetLinkNameFromTargetOrSelf(link),
+                InfoLinkNode link => GetLinkNameFromTargetOrSelf(link),
+                INameableNode named => named.Name,
+                _ => node.Kind.ToString()
+            };
+
+            string GetLinkNameFromTargetOrSelf<T>(T link) where T : SourceNode, INameableNode
+            {
+                return ctx?[root].ResolveLink(link) is { IsResolved: true, TargetNode: { } target }
+                    ? ctx.GetNodeDisplayTitle(target)
+                    : link.Name;
+            }
         }
     }
 }

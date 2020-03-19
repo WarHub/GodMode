@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime
 
-<CascadingValue Value="this">
+<CascadingValue Value="@this">
     <SourceNodeTreeItem Model="@RootModel" @ref="RootItem" />
 </CascadingValue>
 
@@ -12,7 +12,10 @@
     public EventCallback<SourceNodeTreeItemBase> ActiveItemChanged { get; set; }
 
     [Parameter]
-    public SourceNode Root { get; set; }
+    public CatalogueBaseNode Root { get; set; }
+
+    [Parameter]
+    public GamesystemContext Context { get; set; }
 
     public SourceNodeTreeItem RootItem { get; private set; }
 
@@ -20,15 +23,16 @@
 
     protected override void OnParametersSet()
     {
-        if (RootModel?.Node != Root)
+        if (RootModel?.Node != Root || RootModel?.Context != Context)
         {
-            RootModel = CatalogueBaseTreeItemModel.Create((CatalogueBaseNode) Root);
+            RootModel = CatalogueBaseTreeItemModel.Create(Root, Context);
+            StateHasChanged();
         }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (ActiveItem is null || !RootItem.Contains(ActiveItem))
+        if (ActiveItem is null || ActiveItem != RootItem && !RootItem.Contains(ActiveItem))
         {
             await SetActiveItem(RootItem);
         }

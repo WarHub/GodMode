@@ -5,8 +5,8 @@ using System.Linq;
 using Optional;
 using Optional.Collections;
 using Optional.Unsafe;
+using WarHub.ArmouryModel.ProjectModel;
 using WarHub.ArmouryModel.Source;
-using WarHub.ArmouryModel.Workspaces.BattleScribe;
 using MoreEnumerable = MoreLinq.MoreEnumerable;
 
 namespace WarHub.GodMode.SourceAnalysis
@@ -43,11 +43,12 @@ namespace WarHub.GodMode.SourceAnalysis
 
         private ImmutableDictionary<CatalogueBaseNode, IRootNodeContext> RootContexts { get; }
 
-        public static IEnumerable<GamesystemContext> Create(XmlWorkspace workspace)
+        public static IEnumerable<GamesystemContext> Create(IWorkspace workspace)
         {
             return workspace
-                .GetDocuments(SourceKind.Catalogue, SourceKind.Gamesystem)
-                .Select(x => (CatalogueBaseNode)x.GetRoot())
+                .Datafiles
+                .Where(x => x.DataKind == SourceKind.Catalogue || x.DataKind == SourceKind.Gamesystem)
+                .Select(x => (CatalogueBaseNode)x.GetData())
                 .GroupBy(x => GetGamesystemId(x, "unknown"))
                 .Select(group => CreateSingle(group.ToImmutableArray()));
         }
@@ -110,30 +111,33 @@ namespace WarHub.GodMode.SourceAnalysis
                 return ResolveReference(cost.TypeId, x => x.CostTypes);
             }
 
-            public IReferenceTargetInfo<SourceNode> ResolveLink(SourceNode link)
+            public IReferenceTargetInfo<SourceNode> ResolveLink(SourceNode node)
             {
-                return link switch
+                return node switch
                 {
-                    CategoryLinkNode categoryLink =>
-                        ResolveReference(categoryLink.TargetId, x => x.CategoryEntries),
+                    CatalogueLinkNode { Type: CatalogueLinkKind.Catalogue } link =>
+                        ResolveReferenceFlat(link.TargetId, RootClosure.References),
 
-                    EntryLinkNode { Type: EntryLinkKind.SelectionEntry } entryLink =>
-                        ResolveReference(entryLink.TargetId, x => x.SharedSelectionEntries),
+                    CategoryLinkNode link =>
+                        ResolveReference(link.TargetId, x => x.CategoryEntries),
 
-                    EntryLinkNode { Type: EntryLinkKind.SelectionEntryGroup } entryLink =>
-                        ResolveReference(entryLink.TargetId, x => x.SharedSelectionEntryGroups),
+                    EntryLinkNode { Type: EntryLinkKind.SelectionEntry } link =>
+                        ResolveReference(link.TargetId, x => x.SharedSelectionEntries),
 
-                    InfoLinkNode { Type: InfoLinkKind.InfoGroup } infoLink =>
-                        ResolveReference(infoLink.TargetId, x => x.SharedInfoGroups),
+                    EntryLinkNode { Type: EntryLinkKind.SelectionEntryGroup } link =>
+                        ResolveReference(link.TargetId, x => x.SharedSelectionEntryGroups),
 
-                    InfoLinkNode { Type: InfoLinkKind.Profile } infoLink =>
-                        ResolveReference(infoLink.TargetId, x => x.SharedProfiles),
+                    InfoLinkNode { Type: InfoLinkKind.InfoGroup } link =>
+                        ResolveReference(link.TargetId, x => x.SharedInfoGroups),
 
-                    InfoLinkNode { Type: InfoLinkKind.Rule } infoLink =>
-                        ResolveReference(infoLink.TargetId, x => x.SharedRules),
+                    InfoLinkNode { Type: InfoLinkKind.Profile } link =>
+                        ResolveReference(link.TargetId, x => x.SharedProfiles),
+
+                    InfoLinkNode { Type: InfoLinkKind.Rule } link =>
+                        ResolveReference(link.TargetId, x => x.SharedRules),
 
                     null => CreateError("Can't resolve null link."),
-                    _ => CreateError($"Can't resolve unknown link type ({link.GetType()}).")
+                    _ => CreateError($"Can't resolve unknown link type ({node.GetType()}).")
                 };
             }
 
@@ -181,6 +185,33 @@ namespace WarHub.GodMode.SourceAnalysis
                 {
                     var list = getList(root);
                     var targets = list.NodeList.Where(x => x.Id == targetId);
+                    target = targets.FirstOrDefault();
+                    return target != null;
+                }
+
+                static IReferenceTargetInfo<TNode> CreateError(ReferenceErrorInfo error)
+                {
+                    return new ReferenceTargetInfo<TNode>(error);
+                }
+            }
+
+            private IReferenceTargetInfo<TNode> ResolveReferenceFlat<TNode>(
+                string targetId,
+                IEnumerable<TNode> list) where TNode : SourceNode, IIdentifiableNode
+            {
+                if (string.IsNullOrEmpty(targetId))
+                {
+                    return CreateError(new ReferenceErrorInfo("Empty targetId is non-resolvable."));
+                }
+                if (TryGetTarget(out var target))
+                {
+                    return ReferenceTargetInfo.Create(target);
+                }
+                return CreateError(new ReferenceErrorInfo($"Failed to resolve targetId '{targetId}'."));
+
+                bool TryGetTarget(out TNode target)
+                {
+                    var targets = list.Where(x => x.Id == targetId);
                     target = targets.FirstOrDefault();
                     return target != null;
                 }

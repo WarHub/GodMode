@@ -2,26 +2,29 @@
 using System.Collections.Immutable;
 using System.Linq;
 using WarHub.ArmouryModel.Source;
+using WarHub.GodMode.SourceAnalysis;
 
 namespace WarHub.GodMode.Data
 {
     public sealed class ListNodeTreeItemModel : TreeItemModel
     {
-        public static ListNodeTreeItemModel Create(NodeDisplayInfo display, IEnumerable<IListNode> listNodes)
+        public static ListNodeTreeItemModel Create(
+            NodeDisplayInfo display,
+            GamesystemContext context,
+            params IListNode[] listNodes)
         {
-            return new ListNodeTreeItemModel(display, listNodes);
+            return new ListNodeTreeItemModel(display, context, listNodes);
         }
 
-        public static ListNodeTreeItemModel Create(NodeDisplayInfo display, params IListNode[] listNodes)
-        {
-            return new ListNodeTreeItemModel(display, listNodes);
-        }
-
-        private ListNodeTreeItemModel(NodeDisplayInfo display, IEnumerable<IListNode> listNodes)
+        private ListNodeTreeItemModel(
+            NodeDisplayInfo display,
+            GamesystemContext context,
+            IEnumerable<IListNode> listNodes)
         {
             Display = display;
             ListNodes = listNodes.ToImmutableArray();
             ChildCount = ListNodes.Sum(x => x.NodeList.Count);
+            Context = context;
         }
 
         public ImmutableArray<IListNode> ListNodes { get; }
@@ -31,6 +34,7 @@ namespace WarHub.GodMode.Data
         public override bool ShowChildrenGroupNames => false;
 
         public override int ChildCount { get; }
+        public GamesystemContext Context { get; }
 
         private ImmutableArray<TreeItemModel>? models;
 
@@ -42,7 +46,7 @@ namespace WarHub.GodMode.Data
         private ImmutableArray<TreeItemModel> GetModels()
         {
             return ListNodes
-                .SelectMany(list => list.NodeList.Select(SingleNodeTreeItemModel.Create))
+                .SelectMany(list => list.NodeList.Select(node => SingleNodeTreeItemModel.Create(node, Context)))
                 .ToImmutableArray<TreeItemModel>();
         }
     }

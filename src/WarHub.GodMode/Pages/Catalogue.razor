@@ -5,7 +5,7 @@
 @inject DatafilesService DatafilesService
 
 <div>
-    <DatafileList @bind-SelectedDatafile="DatafileInfo" />
+    <DatafileList SelectedDatafile="@DatafileInfo" SelectedDatafileChanged="@SetDatafileInfo" />
 </div>
 
 @if (DatafileInfo is null)
@@ -26,7 +26,16 @@ else
         <div class="col-md">
             <h4 id="content">Content</h4>
             <div class="max80vh px-3">
-                <SourceNodeTree Root="@Root" @bind-ActiveItem="ActiveItem" />
+                @if (Root is { })
+                {
+                    <SourceNodeTree Root="@Root" Context="@GamesystemContext" @bind-ActiveItem="ActiveItem" />
+                }
+                else
+                {
+                    <p>
+                        <em>Loading datafile...</em>
+                    </p>
+                }
             </div>
         </div>
 
@@ -42,24 +51,26 @@ else
 @code {
     IDatafileInfo datafileInfo;
 
-    IDatafileInfo DatafileInfo
-    {
-        get => datafileInfo;
-        set
-        {
-            var old = datafileInfo;
-            datafileInfo = value;
-            if (value != old)
-            {
-                if (DatafileInfo is { })
-                {
-                    Root = DatafileInfo.GetData();
-                }
-            }
-        }
-    }
+    IDatafileInfo DatafileInfo => datafileInfo;
 
     SourceNodeTreeItemBase ActiveItem { get; set; }
 
-    SourceNode Root { get; set; }
+    CatalogueBaseNode Root { get; set; }
+
+    GamesystemContext GamesystemContext { get; set; }
+
+    private async Task SetDatafileInfo(IDatafileInfo value)
+    {
+        var old = datafileInfo;
+        datafileInfo = value;
+        if (value != old)
+        {
+            if (DatafileInfo is { })
+            {
+                Root = DatafileInfo.GetData() as CatalogueBaseNode;
+                GamesystemContext = Root is null ? null : await DatafilesService.GetContextFor(Root);
+            }
+            StateHasChanged();
+        }
+    }
 }

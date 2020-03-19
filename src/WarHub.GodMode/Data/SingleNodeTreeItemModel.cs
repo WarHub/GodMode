@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using WarHub.ArmouryModel.Source;
+using WarHub.GodMode.SourceAnalysis;
 
 namespace WarHub.GodMode.Data
 {
@@ -11,12 +12,13 @@ namespace WarHub.GodMode.Data
 
         private ImmutableList<(string name, ImmutableArray<TreeItemModel> models)> childrenGroups;
 
-        private SingleNodeTreeItemModel(SourceNode node)
+        private SingleNodeTreeItemModel(SourceNode node, GamesystemContext context)
         {
             Node = node;
-            Display = NodeDisplayService.GetNodeDisplayInfo(node);
+            Display = context.GetNodeDisplayInfo(node);
             childNodeGroups = GetChildNodeGroups(node).ToImmutableArray();
             ChildCount = childNodeGroups.Sum(x => x.nodes.Length);
+            Context = context;
         }
 
         public SourceNode Node { get; }
@@ -26,6 +28,9 @@ namespace WarHub.GodMode.Data
         public override int ChildCount { get; }
 
         public override bool ShowChildrenGroupNames => true;
+
+        public GamesystemContext Context { get; }
+
         SourceNode ITreeItemModelWithSourceNode.Node => Node;
 
         private static ImmutableHashSet<string> ExcludedListNames { get; }
@@ -37,16 +42,19 @@ namespace WarHub.GodMode.Data
                 nameof(ProfileTypeNode.CharacteristicTypes),
             }.ToImmutableHashSet();
 
-        public static SingleNodeTreeItemModel Create(SourceNode node)
+        public static SingleNodeTreeItemModel Create(SourceNode node, GamesystemContext context)
         {
-            return new SingleNodeTreeItemModel(node);
+            return new SingleNodeTreeItemModel(node, context);
         }
 
         public override IEnumerable<(string name, ImmutableArray<TreeItemModel> models)> GetChildrenGroups()
         {
             return childrenGroups ??= childNodeGroups
-                    .Select(x => (x.name, models: x.nodes.Select(Create).ToImmutableArray<TreeItemModel>()))
+                    .Select(x => (x.name, models: CreateModels(x.nodes)))
                     .ToImmutableList();
+
+            ImmutableArray<TreeItemModel> CreateModels(ImmutableArray<SourceNode> nodes) =>
+                nodes.Select(node => Create(node, Context)).ToImmutableArray<TreeItemModel>();
         }
 
         private static IEnumerable<(string name, ImmutableArray<SourceNode> nodes)> GetChildNodeGroups(SourceNode node)
