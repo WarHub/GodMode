@@ -4,27 +4,25 @@
 
 <label for="file-select">Select datafile</label>
 
-<EditForm Model="this">
-    <InputSelect id="file-select" @bind-Value="SelectedFilepath">
-        @{
-            RenderFragment<IDatafileInfo> option = file =>
-            @<option value="@file.Filepath">@file.GetStorageName()</option>;
-        }
-        <optgroup label="Game systems">
-            @foreach (var file in FilesService.Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem))
-            {
-                @option(file)
-            }
-        </optgroup>
-        @foreach (var file in FilesService.Datafiles.Where(x => x.DataKind == SourceKind.Catalogue))
+<select id="file-select" @bind="SelectedFilepath">
+    @{
+        RenderFragment<IDatafileInfo> option = file =>
+        @<option value="@file.Filepath">@file.GetStorageName()</option>;
+    }
+    <optgroup label="Game systems">
+        @foreach (var file in FilesService.Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem))
         {
-            var name = file.GetStorageName();
-            <option value="@file.Filepath">
-                @name
-            </option>
+            @option(file)
         }
-    </InputSelect>
-</EditForm>
+    </optgroup>
+    @foreach (var file in FilesService.Datafiles.Where(x => x.DataKind == SourceKind.Catalogue))
+    {
+        var name = file.GetStorageName();
+        <option value="@file.Filepath">
+            @name
+        </option>
+    }
+</select>
 
 @code {
     IDatafileInfo selectedDatafile;
