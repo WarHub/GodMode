@@ -11,7 +11,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+      - name: Read .NET Core SDK version
+        id: globaljson
+        run: |
+          $version = (Get-Content global.json -Raw | ConvertFrom-Json).sdk.version
+          Write-Host "::set-output name=version::$version"
       - uses: actions/setup-dotnet@v1
+        with:
+            dotnet-version: ${{ steps.globaljson.outputs.version }}
       - run: dotnet --info
       - run: dotnet restore -v m
       - run: dotnet build --no-restore -c ${{ matrix.BuildConfiguration}}
