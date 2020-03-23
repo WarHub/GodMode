@@ -1,0 +1,98 @@
+﻿@inject GitHubWorkspaceService GitHubService
+@inject DatafilesService DatafilesService
+@using WarHub.ArmouryModel.ProjectModel
+
+<h3>Source</h3>
+
+<div class="btn-group">
+    <button type="button" class="btn btn-secondary @GetButtonActive(Mode.LocalFs)" @onclick="() => Select(Mode.LocalFs)">
+        Local filesystem
+    </button>
+    <button type="button" class="btn btn-secondary @GetButtonActive(Mode.GitHub)" @onclick="() => Select(Mode.GitHub)">
+        GitHub repository
+    </button>
+</div>
+
+@if (SelectedMode == Mode.GitHub)
+{
+    <form>
+        <label for="github-url">GitHub repository</label>
+        <input type="url" id="github-url" @onchange="UrlSelected" placeholder="e.g. @(GitHubBaseUrl)/BSData/wh40k" />
+        <em>@ValidationMessage</em>
+        <button type="button" @onclick="LoadGitHubUrl" disabled="@(ValidationMessage != null)">
+            Load
+        </button>
+    </form>
+}
+
+
+@code {
+
+    private enum Mode
+    {
+        LocalFs,
+        GitHub
+    }
+
+    string GitHubBaseUrl = "https://github.com/";
+
+    Mode SelectedMode { get; set; } = Mode.LocalFs;
+
+    string UrlInputValue;
+
+    string ValidationMessage;
+
+    string GitHubRepository;
+
+    string GetButtonActive(Mode mode) => SelectedMode == mode ? "active" : "";
+
+    [Parameter]
+    public IWorkspace Workspace { get; set; }
+
+    [Parameter]
+    public EventCallback<IWorkspace> WorkspaceChanged { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SetWorkspace(DatafilesService.GetLocalFsWorkspace());
+    }
+
+    async Task Select(Mode mode)
+    {
+        SelectedMode = mode;
+        if (mode == Mode.LocalFs)
+        {
+            await SetWorkspace(DatafilesService.GetLocalFsWorkspace());
+        }
+    }
+
+    async Task SetWorkspace(IWorkspace value)
+    {
+        Workspace = value;
+        await WorkspaceChanged.InvokeAsync(value);
+    }
+
+    void UrlSelected(ChangeEventArgs e)
+    {
+        UrlInputValue = e.Value.ToString();
+        if (!UrlInputValue.StartsWith(GitHubBaseUrl))
+        {
+            ValidationMessage = $"URL must start with " + GitHubBaseUrl;
+            return;
+        }
+        ValidationMessage = null;
+        var uri = new Uri(UrlInputValue);
+        if (uri.Segments.Length < 3)
+        {
+            ValidationMessage = $"Please provide repository address.";
+            return;
+        }
+        GitHubRepository = uri.Segments[1].Trim('/') + '/' + uri.Segments[2].Trim('/');
+    }
+
+    async Task LoadGitHubUrl()
+    {
+        var ws = await GitHubService.GetWorkspaceAsync(GitHubRepository);
+        await SetWorkspace(ws);
+    }
+}

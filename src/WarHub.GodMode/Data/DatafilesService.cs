@@ -14,8 +14,6 @@ namespace WarHub.GodMode.Data
         private readonly string dataDir;
         private readonly IWorkspace workspace;
 
-        public ImmutableArray<IDatafileInfo> Datafiles => workspace.Datafiles;
-
         public DatafilesService(IConfiguration configuration)
         {
             dataDir = configuration["DataDir"];
@@ -24,6 +22,8 @@ namespace WarHub.GodMode.Data
 
         private Dictionary<SourceNode, GamesystemContext> Contexts { get; }
             = new Dictionary<SourceNode, GamesystemContext>();
+
+        public IWorkspace GetLocalFsWorkspace() => workspace;
 
         public async Task<GamesystemContext> GetContextFor(CatalogueBaseNode node)
         {

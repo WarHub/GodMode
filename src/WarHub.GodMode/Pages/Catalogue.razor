@@ -4,8 +4,12 @@
 @using WarHub.ArmouryModel.ProjectModel
 @inject DatafilesService DatafilesService
 
+<RepositorySourceSelect @bind-Workspace="Workspace" />
+
 <div>
-    <DatafileList SelectedDatafile="@DatafileInfo" SelectedDatafileChanged="@SetDatafileInfo" />
+    <DatafileList Workspace="@Workspace"
+                  SelectedDatafile="@DatafileInfo"
+                  SelectedDatafileChanged="@SetDatafileInfo" />
 </div>
 
 @if (DatafileInfo is null)
@@ -52,6 +56,8 @@ else
     IDatafileInfo datafileInfo;
 
     IDatafileInfo DatafileInfo => datafileInfo;
+
+    IWorkspace Workspace { get; set; }
 
     SourceNodeTreeItemBase ActiveItem { get; set; }
 

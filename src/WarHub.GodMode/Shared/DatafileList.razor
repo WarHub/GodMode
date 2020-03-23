@@ -1,33 +1,31 @@
 ﻿@using WarHub.ArmouryModel.ProjectModel
-@using WarHub.GodMode.Data
-@inject DatafilesService FilesService
 
-<label for="file-select">Select datafile</label>
+@if (Workspace is { })
+{
+    <label for="file-select">Select datafile</label>
 
-<select id="file-select" @bind="SelectedFilepath">
-    @{
-        RenderFragment<IDatafileInfo> option = file =>
-        @<option value="@file.Filepath">@file.GetStorageName()</option>;
-    }
-    <optgroup label="Game systems">
-        @foreach (var file in FilesService.Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem))
+    <select id="file-select" @bind="SelectedFilepath">
+        @{
+            RenderFragment<IDatafileInfo> option = file
+                => @<option value="@file.Filepath">@file.GetStorageName()</option>;
+        }
+        <optgroup label="Game systems">
+            @foreach (var file in Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem))
+            {
+                @option(file)
+            }
+        </optgroup>
+        @foreach (var file in Datafiles.Where(x => x.DataKind == SourceKind.Catalogue))
         {
             @option(file)
         }
-    </optgroup>
-    @foreach (var file in FilesService.Datafiles.Where(x => x.DataKind == SourceKind.Catalogue))
-    {
-        var name = file.GetStorageName();
-        <option value="@file.Filepath">
-            @name
-        </option>
-    }
-</select>
+    </select>
+}
 
 @code {
     IDatafileInfo selectedDatafile;
 
-    ImmutableArray<IDatafileInfo> Datafiles => FilesService.Datafiles;
+    ImmutableArray<IDatafileInfo> Datafiles => Workspace?.Datafiles ?? ImmutableArray<IDatafileInfo>.Empty;
 
     IEnumerable<IDatafileInfo> Catalogues => Datafiles.Where(x => x.DataKind == SourceKind.Catalogue);
 
@@ -36,8 +34,11 @@
     string SelectedFilepath
     {
         get => SelectedDatafile?.Filepath;
-        set => SelectedDatafile = FilesService.Datafiles.FirstOrDefault(x => x.Filepath == value);
+        set => SelectedDatafile = Datafiles.FirstOrDefault(x => x.Filepath == value);
     }
+
+    [Parameter]
+    public IWorkspace Workspace { get; set; }
 
     [Parameter]
     public IDatafileInfo SelectedDatafile
@@ -55,8 +56,11 @@
     [Parameter]
     public EventCallback<IDatafileInfo> SelectedDatafileChanged { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
-        SelectedDatafile = Catalogues.FirstOrDefault() ?? Gamesystems.FirstOrDefault();
+        if (Workspace?.Datafiles.Contains(SelectedDatafile) != true)
+        {
+            SelectedDatafile = Catalogues.FirstOrDefault() ?? Gamesystems.FirstOrDefault();
+        }
     }
 }
