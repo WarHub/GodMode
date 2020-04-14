@@ -1,11 +1,6 @@
-﻿@page "/"
-@page "/catalogue"
-@using WarHub.GodMode.Data
+﻿@using WarHub.GodMode.Data
 @using WarHub.ArmouryModel.ProjectModel
-@inject DatafilesService DatafilesService
-
-<RepositorySourceSelect @bind-Workspace="Workspace" />
-
+@inject WorkspaceResolver Resolver
 <div>
     <DatafileList Workspace="@Workspace"
                   SelectedDatafile="@DatafileInfo"
@@ -30,7 +25,7 @@ else
         <div class="col-md">
             <h4 id="content">Content</h4>
             <div class="max80vh px-3">
-                @if (Root is { })
+                @if (Root is { } && GamesystemContext is { })
                 {
                     <SourceNodeTree Root="@Root" Context="@GamesystemContext" @bind-ActiveItem="ActiveItem" />
                 }
@@ -57,7 +52,8 @@ else
 
     IDatafileInfo DatafileInfo => datafileInfo;
 
-    IWorkspace Workspace { get; set; }
+    [Parameter]
+    public IWorkspace Workspace { get; set; }
 
     SourceNodeTreeItemBase ActiveItem { get; set; }
 
@@ -73,8 +69,10 @@ else
         {
             if (DatafileInfo is { })
             {
+                Root = null;
+                GamesystemContext = null;
                 Root = DatafileInfo.GetData() as CatalogueBaseNode;
-                GamesystemContext = Root is null ? null : await DatafilesService.GetContextFor(Root);
+                GamesystemContext = Root is null ? null : await Resolver.GetContext(Workspace, Root);
             }
             StateHasChanged();
         }

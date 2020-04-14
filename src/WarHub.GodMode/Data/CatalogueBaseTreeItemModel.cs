@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using WarHub.ArmouryModel.Source;
@@ -10,6 +11,10 @@ namespace WarHub.GodMode.Data
     {
         public static CatalogueBaseTreeItemModel Create(CatalogueBaseNode node, GamesystemContext context)
         {
+            if (context?.Contains(node) == false)
+            {
+                throw new InvalidOperationException("Node doesn't belong to the context.");
+            }
             return new CatalogueBaseTreeItemModel(node, context);
         }
 

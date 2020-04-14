@@ -31,6 +31,7 @@ namespace WarHub.GodMode
             services.AddServerSideBlazor();
             services.AddSingleton<DatafilesService>();
             services.AddSingleton<GitHubWorkspaceService>();
+            services.AddScoped<WorkspaceResolver>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

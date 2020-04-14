@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Amadevus.RecordGenerator" Version="0.6.0" PrivateAssets="all" ExcludeAssets="runtime" />
     <PackageReference Include="morelinq" Version="3.2.0" />
     <PackageReference Include="Optional" Version="4.0.0" />
     <PackageReference Include="WarHub.ArmouryModel.Workspaces.BattleScribe" Version="0.7.0" />

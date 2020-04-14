@@ -1,5 +1,86 @@
-﻿@page "/index"
+﻿@page "/"
+@page "/gh/{GitHubOwner}/{GitHubRepository}"
 
-<h1>Hello, world!</h1>
+@using WarHub.ArmouryModel.ProjectModel
 
-Welcome to your new app.
+@inject NavigationManager Navman
+@inject WorkspaceResolver Resolver
+
+<RepositorySourceSelect WorkspaceInfo="WorkspaceInfo" WorkspaceInfoChanged="SelectWorkspaceInfo" />
+
+@if (GitHubErrorMessage is null)
+{
+    if (Workspace is { })
+    {
+        <WorkspaceView Workspace="Workspace" />
+    }
+    else
+    {
+        <em>Loading source...</em>
+    }
+}
+else
+{
+    <h4>@GitHubErrorMessage</h4>
+}
+
+@code {
+    IWorkspace Workspace { get; set; }
+
+    WorkspaceInfo WorkspaceInfo { get; set; } = WorkspaceInfo.LocalFs;
+
+    [Parameter]
+    public string GitHubOwner { get; set; }
+
+    [Parameter]
+    public string GitHubRepository { get; set; }
+
+    string GitHubErrorMessage { get; set; }
+
+    (WorkspaceInfo info, string error) ParseLocation()
+    {
+        if (string.IsNullOrEmpty(GitHubOwner) || string.IsNullOrEmpty(GitHubRepository))
+        {
+            return (WorkspaceInfo.LocalFs, null);
+        }
+        var urlString = $"https://github.com/{GitHubOwner}/{GitHubRepository}";
+        try
+        {
+            var url = new Uri(urlString);
+            var info = WorkspaceInfo.CreateGitHub(url);
+            return (info, null);
+        }
+        catch (Exception e)
+        {
+            var msg = $"Failed to parse GitHub address '{urlString}': " + e.Message;
+            return (WorkspaceInfo.LocalFs, msg);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var (info, message) = ParseLocation();
+        GitHubErrorMessage = message;
+        await SelectWorkspaceInfo(info);
+    }
+
+    async Task SelectWorkspaceInfo(WorkspaceInfo info)
+    {
+        if (WorkspaceInfo != info || Workspace == null)
+        {
+            WorkspaceInfo = info;
+            Workspace = null;
+            Workspace = await Resolver.GetWorkspace(info);
+            var navUrl = info.Type switch
+            {
+                WorkspaceType.GitHub => "/gh/" + string.Concat(info.GitHubUrl.Segments[^2..]),
+                _ => "/"
+            };
+            if (Navman.ToAbsoluteUri(navUrl).ToString() != Navman.Uri)
+            {
+                Navman.NavigateTo(navUrl);
+            }
+            StateHasChanged();
+        }
+    }
+}

@@ -43,6 +43,8 @@ namespace WarHub.GodMode.SourceAnalysis
 
         private ImmutableDictionary<CatalogueBaseNode, IRootNodeContext> RootContexts { get; }
 
+        public bool Contains(CatalogueBaseNode root) => RootContexts.ContainsKey(root);
+
         public static IEnumerable<GamesystemContext> Create(IWorkspace workspace)
         {
             return workspace

@@ -1,7 +1,14 @@
 ﻿@inject IJSRuntime JSRuntime
 
-<CascadingValue Value="@this">
-    <SourceNodeTreeItem Model="@RootModel" @ref="RootItem" />
+<CascadingValue Value="this">
+    @if (Context.Contains(Root))
+    {
+        <SourceNodeTreeItem Model="RootModel" @ref="RootItem" />
+    }
+    else
+    {
+        <span>Context mismatch.</span>
+    }
 </CascadingValue>
 
 @code {
@@ -40,8 +47,11 @@
 
     async Task SetActiveItem(SourceNodeTreeItemBase item)
     {
-        ActiveItem = item;
-        await ActiveItemChanged.InvokeAsync(ActiveItem);
+        if (ActiveItem != item)
+        {
+            ActiveItem = item;
+            await ActiveItemChanged.InvokeAsync(ActiveItem);
+        }
     }
 
     public async Task SelectNode(SourceNodeTreeItemBase treeItem)

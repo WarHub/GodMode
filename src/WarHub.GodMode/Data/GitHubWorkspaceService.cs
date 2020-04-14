@@ -18,10 +18,10 @@ namespace WarHub.GodMode.Data
 
         private IHttpClientFactory HttpClientFactory { get; }
 
-        private Dictionary<string, (string path, WeakReference<IWorkspace> workspaceRef)> Cache { get; }
-            = new Dictionary<string, (string path, WeakReference<IWorkspace> workspaceRef)>();
+        private Dictionary<Uri, (string path, WeakReference<IWorkspace> workspaceRef)> Cache { get; }
+            = new Dictionary<Uri, (string path, WeakReference<IWorkspace> workspaceRef)>();
 
-        public async Task<IWorkspace> GetWorkspaceAsync(string repository)
+        public async Task<IWorkspace> GetWorkspaceAsync(Uri repository)
         {
             if (Cache.TryGetValue(repository, out var cached))
             {
@@ -33,12 +33,13 @@ namespace WarHub.GodMode.Data
             }
             return await Task.Run(async () =>
             {
-                var extractDirectory = Path.Join(Path.GetTempPath(), "godmode", "download", repository);
+                var repoPath = string.Concat(repository.Segments[^2..^1]);
+                var extractDirectory = Path.Join(Path.GetTempPath(), "godmode", "download", repoPath);
                 if (Directory.Exists(extractDirectory))
                 {
                     Directory.Delete(extractDirectory, recursive: true);
                 }
-                var repoUri = "https://github.com/" + repository + "/archive/master.zip";
+                var repoUri = repository + "/archive/master.zip";
                 var response = await HttpClientFactory.CreateClient().GetAsync(repoUri);
                 response.EnsureSuccessStatusCode();
                 using var zipStream = await response.Content.ReadAsStreamAsync();
