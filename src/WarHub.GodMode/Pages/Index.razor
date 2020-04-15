@@ -25,15 +25,15 @@ else
 }
 
 @code {
-    IWorkspace Workspace { get; set; }
-
-    WorkspaceInfo WorkspaceInfo { get; set; } = WorkspaceInfo.LocalFs;
-
     [Parameter]
     public string GitHubOwner { get; set; }
 
     [Parameter]
     public string GitHubRepository { get; set; }
+
+    IWorkspace Workspace { get; set; }
+
+    WorkspaceInfo WorkspaceInfo { get; set; } = WorkspaceInfo.LocalFs;
 
     string GitHubErrorMessage { get; set; }
 
