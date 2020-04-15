@@ -4,7 +4,7 @@ using System.Linq;
 using WarHub.ArmouryModel.Source;
 using WarHub.GodMode.SourceAnalysis;
 
-namespace WarHub.GodMode.Data
+namespace WarHub.GodMode.Components.Areas.TreeView
 {
     public sealed class ListNodeTreeItemModel : TreeItemModel
     {

@@ -1,6 +1,8 @@
-﻿@using WarHub.GodMode.Data
-@using WarHub.ArmouryModel.ProjectModel
-@inject WorkspaceResolver Resolver
+﻿@using WarHub.ArmouryModel.ProjectModel
+@using WarHub.GodMode.Components.Areas.TreeView
+
+@inject IWorkspaceContextResolver Resolver
+
 <div>
     <DatafileList Workspace="@Workspace"
                   SelectedDatafile="@DatafileInfo"

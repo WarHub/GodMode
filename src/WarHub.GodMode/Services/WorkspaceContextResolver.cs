@@ -4,37 +4,18 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using WarHub.ArmouryModel.ProjectModel;
 using WarHub.ArmouryModel.Source;
+using WarHub.GodMode.Components.Areas.Workspace;
 using WarHub.GodMode.SourceAnalysis;
 
-namespace WarHub.GodMode.Data
+namespace WarHub.GodMode.Services
 {
-    public class WorkspaceResolver
+    public class WorkspaceContextResolver : IWorkspaceContextResolver
     {
-        public WorkspaceResolver(GitHubWorkspaceService gitHubService, LocalFsService localFsService)
-        {
-            GitHubService = gitHubService;
-            LocalFsService = localFsService;
-        }
-
-        private GitHubWorkspaceService GitHubService { get; }
-
-        private LocalFsService LocalFsService { get; }
-
         private Dictionary<CatalogueBaseNode, GamesystemContext> Contexts { get; }
             = new Dictionary<CatalogueBaseNode, GamesystemContext>();
 
         private ConcurrentDictionary<IWorkspace, Task> WorkspaceContextCreationTasks { get; }
             = new ConcurrentDictionary<IWorkspace, Task>();
-
-        public async Task<IWorkspace> GetWorkspace(WorkspaceInfo info)
-        {
-            return info.Type switch
-            {
-                WorkspaceType.LocalFilesystem => LocalFsService.GetLocalFsWorkspace(),
-                WorkspaceType.GitHub => await GitHubService.GetWorkspace(info.GitHubUrl),
-                _ => null
-            };
-        }
 
         public async Task<GamesystemContext> GetContext(IWorkspace workspace, CatalogueBaseNode node)
         {

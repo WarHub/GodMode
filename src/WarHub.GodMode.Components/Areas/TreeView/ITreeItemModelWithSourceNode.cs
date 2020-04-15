@@ -1,6 +1,6 @@
 ﻿using WarHub.ArmouryModel.Source;
 
-namespace WarHub.GodMode.Data
+namespace WarHub.GodMode.Components.Areas.TreeView
 {
     public interface ITreeItemModelWithSourceNode
     {

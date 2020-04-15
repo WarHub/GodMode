@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using WarHub.GodMode.Data;
 
-namespace WarHub.GodMode.Shared
+namespace WarHub.GodMode.Components.Areas.TreeView
 {
     public abstract class SourceNodeTreeItemBase : ComponentBase
     {
@@ -64,7 +63,7 @@ namespace WarHub.GodMode.Shared
                 return;
             }
             Expanded = !Expanded;
-            if (!Expanded && this.Contains(Tree.ActiveItem))
+            if (!Expanded && Contains(Tree.ActiveItem))
             {
                 await SelectNode();
             }

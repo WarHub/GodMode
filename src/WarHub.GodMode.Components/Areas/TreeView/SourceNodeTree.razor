@@ -1,4 +1,6 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@using Microsoft.JSInterop
+
+@inject IJSRuntime JSRuntime
 
 <CascadingValue Value="this">
     @if (Context.Contains(Root))

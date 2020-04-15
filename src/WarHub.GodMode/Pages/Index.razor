@@ -2,15 +2,16 @@
 @page "/gh/{GitHubOwner}/{GitHubRepository}"
 
 @using WarHub.ArmouryModel.ProjectModel
+@using WarHub.GodMode.Components.Areas.Workspace
 
 @inject NavigationManager Navman
-@inject WorkspaceResolver Resolver
+@inject IWorkspaceProviderAggregate ProviderAggregate
 
 <Title>@TitleText</Title>
 
 <RepositorySourceSelect WorkspaceInfo="WorkspaceInfo" WorkspaceInfoChanged="UpdateWorkspace" />
 
-@if (GitHubErrorMessage is null)
+@if (ErrorMessage is null)
 {
     if (Workspace is { })
     {
@@ -23,7 +24,7 @@
 }
 else
 {
-    <h4>@GitHubErrorMessage</h4>
+    <h4>@ErrorMessage</h4>
 }
 
 @code {
@@ -39,17 +40,19 @@ else
         _ => "GodMode"
     };
 
+    WorkspaceInfo FallbackWorkspaceInfo => ProviderAggregate.ProviderInfos.First().InitialWorkspaceInfo;
+
     IWorkspace Workspace { get; set; }
 
     WorkspaceInfo WorkspaceInfo { get; set; }
 
-    string GitHubErrorMessage { get; set; }
+    string ErrorMessage { get; set; }
 
     (WorkspaceInfo info, string error) ParseLocation()
     {
         if (string.IsNullOrEmpty(GitHubOwner) || string.IsNullOrEmpty(GitHubRepository))
         {
-            return (WorkspaceInfo.LocalFs, null);
+            return (null, null);
         }
         var urlString = $"https://github.com/{GitHubOwner}/{GitHubRepository}";
         try
@@ -61,7 +64,7 @@ else
         catch (Exception e)
         {
             var msg = $"Failed to parse GitHub address '{urlString}': " + e.Message;
-            return (WorkspaceInfo.LocalFs, msg);
+            return (null, msg);
         }
     }
 
@@ -78,8 +81,8 @@ else
     async Task Update()
     {
         var (info, message) = ParseLocation();
-        GitHubErrorMessage = message;
-        await UpdateWorkspace(info);
+        ErrorMessage = message;
+        await UpdateWorkspace(info ?? FallbackWorkspaceInfo);
     }
 
     async Task UpdateWorkspace(WorkspaceInfo info)
@@ -88,14 +91,14 @@ else
         {
             WorkspaceInfo = info;
             Workspace = null;
-            GitHubErrorMessage = null;
+            ErrorMessage = null;
             try
             {
-                Workspace = await Resolver.GetWorkspace(info);
+                Workspace = await ProviderAggregate.GetWorkspace(info);
             }
             catch (Exception e)
             {
-                GitHubErrorMessage = $"Failed to load GitHub repository: {e.Message}";
+                ErrorMessage = $"Failed to load repository source: {e.Message}";
             }
             if (Navman.ToAbsoluteUri(info.AppRoute).ToString() != Navman.Uri)
             {

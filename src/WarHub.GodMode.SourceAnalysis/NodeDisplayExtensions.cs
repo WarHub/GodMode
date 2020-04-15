@@ -1,9 +1,8 @@
 ﻿using System.Globalization;
 using WarHub.ArmouryModel.Source;
-using WarHub.GodMode.SourceAnalysis;
 using static System.FormattableString;
 
-namespace WarHub.GodMode.Data
+namespace WarHub.GodMode.SourceAnalysis
 {
     public static class NodeDisplayExtensions
     {
@@ -42,12 +41,7 @@ namespace WarHub.GodMode.Data
         {
             var name = ctx.GetNodeDisplayTitle(node);
             var (icon, modifier) = node.Kind.GetIcon();
-            return new NodeDisplayInfo
-            {
-                Icon = icon,
-                Title = name,
-                IconMod = modifier
-            };
+            return new NodeDisplayInfo(name, icon, modifier);
         }
 
         public static string GetNodeDisplayTitle(this GamesystemContext ctx, SourceNode node)

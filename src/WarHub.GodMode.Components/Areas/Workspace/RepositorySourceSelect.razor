@@ -1,14 +1,10 @@
-﻿@using WarHub.ArmouryModel.ProjectModel
-
-@inject GitHubWorkspaceService GitHubService
-@inject LocalFsService LocalFsService
-
+﻿@inject IWorkspaceProviderAggregate ProviderAggregate
 
 <h4>
     Source:
     @if (WorkspaceInfo.Type == WorkspaceType.LocalFilesystem)
     {
-        <span>@LocalFsService.GetLocalFsWorkspace().Info.GetDirectoryInfo().FullName</span>
+        <span>@WorkspaceInfo.LocalFsPath</span>
     }
     else if (WorkspaceInfo.Type == WorkspaceType.GitHub)
     {
@@ -29,21 +25,26 @@
 {
     <form class="mb-3" @onsubmit="Submit" @onsubmit:preventDefault>
         <div class="btn-group mb-3">
-            <button type="button" class="btn btn-secondary @GetButtonActive(WorkspaceType.LocalFilesystem)" @onclick="() => Select(WorkspaceType.LocalFilesystem)">
-                Local filesystem
-            </button>
-            <button type="button" class="btn btn-secondary @GetButtonActive(WorkspaceType.GitHub)" @onclick="() => Select(WorkspaceType.GitHub)">
-                GitHub repository
-            </button>
+            @foreach (var providerInfo in ProviderAggregate.ProviderInfos)
+            {
+                <button type="button" class="btn btn-secondary @GetButtonActive(providerInfo)" @onclick="() => Select(providerInfo)">
+                    @(providerInfo.Type switch
+                    {
+                        WorkspaceType.LocalFilesystem => "Local filesystem",
+                        WorkspaceType.GitHub => "GitHub repository",
+                        _ => "unknown"
+                    })
+                </button>
+            }
         </div>
         @if (SelectedType == WorkspaceType.LocalFilesystem)
         {
             <p>
                 Local filesystem is accessed via <code>DataDir</code> configuration setting. Current location is
-                <code>@LocalFsService.GetLocalFsWorkspace().Info.GetDirectoryInfo().FullName</code>
+                <code>@SelectedProviderInfo.InitialWorkspaceInfo.LocalFsPath</code>
             </p>
         }
-        @if (SelectedType == WorkspaceType.GitHub)
+        else if (SelectedType == WorkspaceType.GitHub)
         {
             <div class="form-group">
                 <label for="github-url">GitHub repository (owner/name)</label>
@@ -66,23 +67,17 @@
 
 @code {
 
-    private enum Mode
-    {
-        LocalFs,
-        GitHub
-    }
-
     string GitHubBaseUrl = "https://github.com/";
-
-    WorkspaceType SelectedType { get; set; }
-
-    string ValidationMessage;
 
     Uri GitHubUrl;
 
     string GitHubPath;
 
-    string GetButtonActive(WorkspaceType type) => SelectedType == type ? "active" : "";
+    string ValidationMessage;
+
+    WorkspaceType SelectedType => SelectedProviderInfo.Type;
+
+    WorkspaceProviderInfo SelectedProviderInfo { get; set; }
 
     bool Editing { get; set; }
 
@@ -92,12 +87,14 @@
     [Parameter]
     public EventCallback<WorkspaceInfo> WorkspaceInfoChanged { get; set; }
 
-    void Select(WorkspaceType type)
+    string GetButtonActive(WorkspaceProviderInfo info) => SelectedProviderInfo == info ? "active" : "";
+
+    void Select(WorkspaceProviderInfo providerInfo)
     {
-        SelectedType = type;
+        SelectedProviderInfo = providerInfo;
     }
 
-    async Task SetWorkspace(WorkspaceInfo value)
+    async Task SetWorkspaceInfo(WorkspaceInfo value)
     {
         WorkspaceInfo = value;
         await WorkspaceInfoChanged.InvokeAsync(value);
@@ -128,18 +125,17 @@
             return;
         }
         Editing = false;
-        var workspace = SelectedType switch
+        var workspaceInfo = SelectedProviderInfo.Type switch
         {
             WorkspaceType.GitHub => WorkspaceInfo.CreateGitHub(GitHubUrl),
-            WorkspaceType.LocalFilesystem => WorkspaceInfo.LocalFs,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => SelectedProviderInfo.InitialWorkspaceInfo
         };
-        await SetWorkspace(workspace);
+        await SetWorkspaceInfo(workspaceInfo);
     }
 
     void Edit()
     {
-        SelectedType = WorkspaceInfo.Type;
+        SelectedProviderInfo = ProviderAggregate[WorkspaceInfo.Type];
         if (WorkspaceInfo.Type == WorkspaceType.GitHub)
         {
             GitHubUrl = WorkspaceInfo.GitHubUrl;

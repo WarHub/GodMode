@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using WarHub.GodMode.SourceAnalysis;
 
-namespace WarHub.GodMode.Data
+namespace WarHub.GodMode.Components.Areas.TreeView
 {
     public abstract class TreeItemModel
     {

@@ -10,7 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
-using WarHub.GodMode.Data;
+using WarHub.GodMode.Components.Areas.Workspace;
+using WarHub.GodMode.Services;
 
 namespace WarHub.GodMode
 {
@@ -31,9 +32,10 @@ namespace WarHub.GodMode
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHeadElementHelper();
-            services.AddSingleton<LocalFsService>();
-            services.AddSingleton<GitHubWorkspaceService>();
-            services.AddScoped<WorkspaceResolver>();
+            services.AddSingleton<LocalFsWorkspaceProvider>();
+            services.AddSingleton<GitHubWorkspaceProvider>();
+            services.AddScoped<IWorkspaceProviderAggregate, WorkspaceProviderAggregate>();
+            services.AddScoped<IWorkspaceContextResolver, WorkspaceContextResolver>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

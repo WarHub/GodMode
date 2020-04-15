@@ -1,14 +1,8 @@
 ﻿using System;
 using Amadevus.RecordGenerator;
 
-namespace WarHub.GodMode.Data
+namespace WarHub.GodMode.Components.Areas.Workspace
 {
-    public enum WorkspaceType
-    {
-        LocalFilesystem,
-        GitHub
-    }
-
     [Record(Features.Default | Features.Equality)]
     public sealed partial class WorkspaceInfo
     {
@@ -16,6 +10,8 @@ namespace WarHub.GodMode.Data
         private string appRoute;
 
         public WorkspaceType Type { get; }
+
+        public string LocalFsPath { get; }
 
         public Uri GitHubUrl { get; }
 
@@ -28,7 +24,10 @@ namespace WarHub.GodMode.Data
             _ => throw new InvalidOperationException()
         };
 
-        public static WorkspaceInfo LocalFs { get; } = new WorkspaceInfo(WorkspaceType.LocalFilesystem, null);
-        public static WorkspaceInfo CreateGitHub(Uri gitHubUrl) => new WorkspaceInfo(WorkspaceType.GitHub, gitHubUrl);
+        public static WorkspaceInfo CreateLocalFs(string path)
+            => new WorkspaceInfo(WorkspaceType.LocalFilesystem, path, null);
+
+        public static WorkspaceInfo CreateGitHub(Uri gitHubUrl)
+            => new WorkspaceInfo(WorkspaceType.GitHub, null, gitHubUrl);
     }
 }

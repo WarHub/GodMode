@@ -5,7 +5,7 @@ using System.Linq;
 using WarHub.ArmouryModel.Source;
 using WarHub.GodMode.SourceAnalysis;
 
-namespace WarHub.GodMode.Data
+namespace WarHub.GodMode.Components.Areas.TreeView
 {
     public sealed class CatalogueBaseTreeItemModel : TreeItemModel, ITreeItemModelWithSourceNode
     {
@@ -74,12 +74,7 @@ namespace WarHub.GodMode.Data
             {
                 var (icon, iconMod) = group.ItemKind.GetIcon();
                 return ListNodeTreeItemModel.Create(
-                    new NodeDisplayInfo
-                    {
-                        Title = group.Title,
-                        Icon = icon,
-                        IconMod = iconMod
-                    },
+                    new NodeDisplayInfo(group.Title, icon, iconMod),
                     Context,
                     group.Lists);
             }

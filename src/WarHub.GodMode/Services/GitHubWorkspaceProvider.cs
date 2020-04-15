@@ -6,12 +6,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using WarHub.ArmouryModel.ProjectModel;
 using WarHub.ArmouryModel.Workspaces.BattleScribe;
+using WarHub.GodMode.Components.Areas.Workspace;
 
-namespace WarHub.GodMode.Data
+namespace WarHub.GodMode.Services
 {
-    public class GitHubWorkspaceService
+    public class GitHubWorkspaceProvider : IWorkspaceProvider
     {
-        public GitHubWorkspaceService(IHttpClientFactory httpClientFactory)
+        public GitHubWorkspaceProvider(IHttpClientFactory httpClientFactory)
         {
             HttpClientFactory = httpClientFactory;
         }
@@ -21,7 +22,16 @@ namespace WarHub.GodMode.Data
         private Dictionary<Uri, (string path, WeakReference<IWorkspace> workspaceRef)> Cache { get; }
             = new Dictionary<Uri, (string path, WeakReference<IWorkspace> workspaceRef)>();
 
-        public async Task<IWorkspace> GetWorkspace(Uri repository)
+        public async Task<IWorkspace> GetWorkspace(WorkspaceInfo info)
+        {
+            if (info is { Type: WorkspaceType.GitHub, GitHubUrl: { } })
+            {
+                return await GetWorkspaceCore(info.GitHubUrl);
+            }
+            return null;
+        }
+
+        public async Task<IWorkspace> GetWorkspaceCore(Uri repository)
         {
             if (Cache.TryGetValue(repository, out var cached))
             {

@@ -4,7 +4,7 @@ using System.Linq;
 using WarHub.ArmouryModel.Source;
 using WarHub.GodMode.SourceAnalysis;
 
-namespace WarHub.GodMode.Data
+namespace WarHub.GodMode.Components.Areas.TreeView
 {
     public sealed class SingleNodeTreeItemModel : TreeItemModel, ITreeItemModelWithSourceNode
     {
@@ -82,14 +82,14 @@ namespace WarHub.GodMode.Data
             };
             var groups =
                 from childInfo in node.ChildrenInfos().Where(x => !ExcludedListNames.Contains(x.Name))
-                join association in (
+                join association in
                     from g in itemNameGroups
                     from name in g
                     select new
                     {
                         groupName = g[0],
                         listName = name
-                    }) on childInfo.Name equals association.listName into assocGroup
+                    } on childInfo.Name equals association.listName into assocGroup
                 from assoc in assocGroup.DefaultIfEmpty(new { groupName = childInfo.Name, listName = childInfo.Name })
                 group childInfo by assoc into listGroup
                 let nodes = listGroup.SelectMany(x => x.Node.Children()).ToImmutableArray()
