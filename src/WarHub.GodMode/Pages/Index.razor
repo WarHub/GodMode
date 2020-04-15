@@ -6,6 +6,8 @@
 @inject NavigationManager Navman
 @inject WorkspaceResolver Resolver
 
+<Title>@TitleText</Title>
+
 <RepositorySourceSelect WorkspaceInfo="WorkspaceInfo" WorkspaceInfoChanged="UpdateWorkspace" />
 
 @if (GitHubErrorMessage is null)
@@ -30,6 +32,12 @@ else
 
     [Parameter]
     public string GitHubRepository { get; set; }
+
+    string TitleText => WorkspaceInfo?.Type switch
+    {
+        WorkspaceType.GitHub => WorkspaceInfo.GitHubRepository,
+        _ => "GodMode"
+    };
 
     IWorkspace Workspace { get; set; }
 

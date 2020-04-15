@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 using WarHub.GodMode.Data;
 
 namespace WarHub.GodMode
@@ -29,6 +30,7 @@ namespace WarHub.GodMode
             services.AddHttpClient();
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddHeadElementHelper();
             services.AddSingleton<LocalFsService>();
             services.AddSingleton<GitHubWorkspaceService>();
             services.AddScoped<WorkspaceResolver>();
