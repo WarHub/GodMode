@@ -70,7 +70,15 @@ else
         {
             WorkspaceInfo = info;
             Workspace = null;
-            Workspace = await Resolver.GetWorkspace(info);
+            GitHubErrorMessage = null;
+            try
+            {
+                Workspace = await Resolver.GetWorkspace(info);
+            }
+            catch (Exception e)
+            {
+                GitHubErrorMessage = $"Failed to load GitHub repository: {e.Message}";
+            }
             var navUrl = info.Type switch
             {
                 WorkspaceType.GitHub => "/gh/" + info.GitHubRepository,
