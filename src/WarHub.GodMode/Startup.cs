@@ -29,7 +29,7 @@ namespace WarHub.GodMode
             services.AddHttpClient();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<DatafilesService>();
+            services.AddSingleton<LocalFsService>();
             services.AddSingleton<GitHubWorkspaceService>();
             services.AddScoped<WorkspaceResolver>();
         }

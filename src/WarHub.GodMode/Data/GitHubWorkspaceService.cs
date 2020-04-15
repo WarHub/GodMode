@@ -21,7 +21,7 @@ namespace WarHub.GodMode.Data
         private Dictionary<Uri, (string path, WeakReference<IWorkspace> workspaceRef)> Cache { get; }
             = new Dictionary<Uri, (string path, WeakReference<IWorkspace> workspaceRef)>();
 
-        public async Task<IWorkspace> GetWorkspaceAsync(Uri repository)
+        public async Task<IWorkspace> GetWorkspace(Uri repository)
         {
             if (Cache.TryGetValue(repository, out var cached))
             {
@@ -33,7 +33,7 @@ namespace WarHub.GodMode.Data
             }
             return await Task.Run(async () =>
             {
-                var repoPath = string.Concat(repository.Segments[^2..^1]);
+                var repoPath = string.Concat(repository.Segments[^2..]);
                 var extractDirectory = Path.Join(Path.GetTempPath(), "godmode", "download", repoPath);
                 if (Directory.Exists(extractDirectory))
                 {

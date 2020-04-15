@@ -1,14 +1,14 @@
 ﻿@using WarHub.ArmouryModel.ProjectModel
 
 @inject GitHubWorkspaceService GitHubService
-@inject DatafilesService DatafilesService
+@inject LocalFsService LocalFsService
 
 
 <h4>
     Source:
     @if (WorkspaceInfo.Type == WorkspaceType.LocalFilesystem)
     {
-        <span>@DatafilesService.GetLocalFsWorkspace().Info.GetDirectoryInfo().FullName</span>
+        <span>@LocalFsService.GetLocalFsWorkspace().Info.GetDirectoryInfo().FullName</span>
     }
     else if (WorkspaceInfo.Type == WorkspaceType.GitHub)
     {
@@ -40,7 +40,7 @@
         {
             <p>
                 Local filesystem is accessed via <code>DataDir</code> configuration setting. Current location is
-                <code>@DatafilesService.GetLocalFsWorkspace().Info.GetDirectoryInfo().FullName</code>
+                <code>@LocalFsService.GetLocalFsWorkspace().Info.GetDirectoryInfo().FullName</code>
             </p>
         }
         @if (SelectedType == WorkspaceType.GitHub)
@@ -87,7 +87,7 @@
     bool Editing { get; set; }
 
     [Parameter]
-    public WorkspaceInfo WorkspaceInfo { get; set; } = WorkspaceInfo.LocalFs;
+    public WorkspaceInfo WorkspaceInfo { get; set; }
 
     [Parameter]
     public EventCallback<WorkspaceInfo> WorkspaceInfoChanged { get; set; }

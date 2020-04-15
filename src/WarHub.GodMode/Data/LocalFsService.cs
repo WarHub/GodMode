@@ -4,12 +4,12 @@ using WarHub.ArmouryModel.Workspaces.BattleScribe;
 
 namespace WarHub.GodMode.Data
 {
-    public class DatafilesService
+    public class LocalFsService
     {
         private readonly string dataDir;
         private readonly IWorkspace workspace;
 
-        public DatafilesService(IConfiguration configuration)
+        public LocalFsService(IConfiguration configuration)
         {
             dataDir = configuration["DataDir"];
             workspace = XmlWorkspace.CreateFromDirectory(dataDir);

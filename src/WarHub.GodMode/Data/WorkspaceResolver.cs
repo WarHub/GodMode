@@ -10,15 +10,15 @@ namespace WarHub.GodMode.Data
 {
     public class WorkspaceResolver
     {
-        public WorkspaceResolver(GitHubWorkspaceService gitHubService, DatafilesService localFilesystemService)
+        public WorkspaceResolver(GitHubWorkspaceService gitHubService, LocalFsService localFsService)
         {
             GitHubService = gitHubService;
-            LocalFilesystemService = localFilesystemService;
+            LocalFsService = localFsService;
         }
 
         private GitHubWorkspaceService GitHubService { get; }
 
-        private DatafilesService LocalFilesystemService { get; }
+        private LocalFsService LocalFsService { get; }
 
         private Dictionary<CatalogueBaseNode, GamesystemContext> Contexts { get; }
             = new Dictionary<CatalogueBaseNode, GamesystemContext>();
@@ -30,8 +30,8 @@ namespace WarHub.GodMode.Data
         {
             return info.Type switch
             {
-                WorkspaceType.LocalFilesystem => LocalFilesystemService.GetLocalFsWorkspace(),
-                WorkspaceType.GitHub => await GitHubService.GetWorkspaceAsync(info.GitHubUrl),
+                WorkspaceType.LocalFilesystem => LocalFsService.GetLocalFsWorkspace(),
+                WorkspaceType.GitHub => await GitHubService.GetWorkspace(info.GitHubUrl),
                 _ => null
             };
         }

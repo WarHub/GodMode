@@ -6,7 +6,7 @@
 @inject NavigationManager Navman
 @inject WorkspaceResolver Resolver
 
-<RepositorySourceSelect WorkspaceInfo="WorkspaceInfo" WorkspaceInfoChanged="SelectWorkspaceInfo" />
+<RepositorySourceSelect WorkspaceInfo="WorkspaceInfo" WorkspaceInfoChanged="UpdateWorkspace" />
 
 @if (GitHubErrorMessage is null)
 {
@@ -33,7 +33,7 @@ else
 
     IWorkspace Workspace { get; set; }
 
-    WorkspaceInfo WorkspaceInfo { get; set; } = WorkspaceInfo.LocalFs;
+    WorkspaceInfo WorkspaceInfo { get; set; }
 
     string GitHubErrorMessage { get; set; }
 
@@ -57,14 +57,24 @@ else
         }
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        await Update();
+    }
+
     protected override async Task OnInitializedAsync()
+    {
+        await Update();
+    }
+
+    async Task Update()
     {
         var (info, message) = ParseLocation();
         GitHubErrorMessage = message;
-        await SelectWorkspaceInfo(info);
+        await UpdateWorkspace(info);
     }
 
-    async Task SelectWorkspaceInfo(WorkspaceInfo info)
+    async Task UpdateWorkspace(WorkspaceInfo info)
     {
         if (WorkspaceInfo != info || Workspace == null)
         {
@@ -79,14 +89,9 @@ else
             {
                 GitHubErrorMessage = $"Failed to load GitHub repository: {e.Message}";
             }
-            var navUrl = info.Type switch
+            if (Navman.ToAbsoluteUri(info.AppRoute).ToString() != Navman.Uri)
             {
-                WorkspaceType.GitHub => "/gh/" + info.GitHubRepository,
-                _ => "/"
-            };
-            if (Navman.ToAbsoluteUri(navUrl).ToString() != Navman.Uri)
-            {
-                Navman.NavigateTo(navUrl);
+                Navman.NavigateTo(info.AppRoute);
             }
             StateHasChanged();
         }
