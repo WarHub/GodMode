@@ -12,9 +12,8 @@
     }
     else if (WorkspaceInfo.Type == WorkspaceType.GitHub)
     {
-        var repository = string.Concat(WorkspaceInfo.GitHubUrl.Segments[^2..]);
         <img height="32" width="32" src="https://unpkg.com/simple-icons@latest/icons/github.svg" />
-        <a href="@WorkspaceInfo.GitHubUrl">@repository</a>
+        <a href="@WorkspaceInfo.GitHubUrl">@WorkspaceInfo.GitHubRepository</a>
     }
     else
     {
@@ -144,7 +143,7 @@
         if (WorkspaceInfo.Type == WorkspaceType.GitHub)
         {
             GitHubUrl = WorkspaceInfo.GitHubUrl;
-            GitHubPath = string.Concat(GitHubUrl.Segments[^2..]);
+            GitHubPath = WorkspaceInfo.GitHubRepository;
         }
         ValidationMessage = null;
         Editing = true;

@@ -73,7 +73,7 @@ else
             Workspace = await Resolver.GetWorkspace(info);
             var navUrl = info.Type switch
             {
-                WorkspaceType.GitHub => "/gh/" + string.Concat(info.GitHubUrl.Segments[^2..]),
+                WorkspaceType.GitHub => "/gh/" + info.GitHubRepository,
                 _ => "/"
             };
             if (Navman.ToAbsoluteUri(navUrl).ToString() != Navman.Uri)
