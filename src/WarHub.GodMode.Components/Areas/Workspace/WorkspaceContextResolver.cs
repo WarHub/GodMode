@@ -4,10 +4,9 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using WarHub.ArmouryModel.ProjectModel;
 using WarHub.ArmouryModel.Source;
-using WarHub.GodMode.Components.Areas.Workspace;
 using WarHub.GodMode.SourceAnalysis;
 
-namespace WarHub.GodMode.Services
+namespace WarHub.GodMode.Components.Areas.Workspace
 {
     public class WorkspaceContextResolver : IWorkspaceContextResolver
     {
