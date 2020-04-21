@@ -8,7 +8,7 @@ namespace WarHub.GodMode
     {
         public static ValueTask Focus(this IJSRuntime jsRuntime, ElementReference element)
         {
-            return jsRuntime.InvokeVoidAsync("hackaroundFocus", element);
+            return jsRuntime.InvokeVoidAsync("godmodeComponentsInterop.hackaroundFocus", element);
         }
     }
 }
