@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
+using WarHub.GodMode.Components;
 using WarHub.GodMode.Components.Areas.Workspace;
 using WarHub.GodMode.GithubPages.Services;
 
 namespace WarHub.GodMode.GithubPages
 {
-    public class Program
+    public static class Program
     {
         public static async Task Main(string[] args)
         {
@@ -21,7 +22,8 @@ namespace WarHub.GodMode.GithubPages
 
             await builder.Build().RunAsync();
         }
-        static void ConfigureServices(IServiceCollection services)
+
+        private static void ConfigureServices(IServiceCollection services)
         {
             services.AddHeadElementHelper();
             services.AddSingleton<GitHubWorkspaceProvider>();

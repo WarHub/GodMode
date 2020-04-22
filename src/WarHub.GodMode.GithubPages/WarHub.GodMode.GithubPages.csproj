@@ -11,7 +11,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.0-preview4.20210.8" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.0-preview4.20210.8" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.0-preview5.20210.3" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="1.1.0.1" />
     <PackageReference Include="WarHub.ArmouryModel.Workspaces.BattleScribe" Version="0.7.0" />
   </ItemGroup>
 

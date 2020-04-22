@@ -13,7 +13,7 @@
     }
     else
     {
-        <span>unknown</span>
+        <span>none</span>
     }
     @if (!Editing)
     {
@@ -89,6 +89,14 @@
 
     string GetButtonActive(WorkspaceProviderInfo info) => SelectedProviderInfo == info ? "active" : "";
 
+    protected override void OnParametersSet()
+    {
+        if (WorkspaceInfo.Type == WorkspaceType.Invalid)
+        {
+            Edit();
+        }
+    }
+
     void Select(WorkspaceProviderInfo providerInfo)
     {
         SelectedProviderInfo = providerInfo;
@@ -135,7 +143,10 @@
 
     void Edit()
     {
-        SelectedProviderInfo = ProviderAggregate[WorkspaceInfo.Type];
+        SelectedProviderInfo = WorkspaceInfo.Type switch {
+            WorkspaceType.Invalid => ProviderAggregate.ProviderInfos.First(),
+            _ => ProviderAggregate[WorkspaceInfo.Type]
+        };
         if (WorkspaceInfo.Type == WorkspaceType.GitHub)
         {
             GitHubUrl = WorkspaceInfo.GitHubUrl;

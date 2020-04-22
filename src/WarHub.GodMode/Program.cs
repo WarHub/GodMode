@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace WarHub.GodMode
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
