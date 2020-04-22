@@ -44,11 +44,11 @@ else
         _ => "GodMode"
     };
 
-    WorkspaceInfo FallbackWorkspaceInfo => ProviderAggregate.ProviderInfos.First().InitialWorkspaceInfo;
+    WorkspaceInfo FallbackWorkspaceInfo => WorkspaceInfo.Invalid;
 
     IWorkspace Workspace { get; set; }
 
-    WorkspaceInfo WorkspaceInfo { get; set; }
+    WorkspaceInfo WorkspaceInfo { get; set; } = WorkspaceInfo.Invalid;
 
     string ErrorMessage { get; set; }
 

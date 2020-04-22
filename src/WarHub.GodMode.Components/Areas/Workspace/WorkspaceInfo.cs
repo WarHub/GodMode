@@ -19,10 +19,12 @@ namespace WarHub.GodMode.Components.Areas.Workspace
 
         public string AppRoute => appRoute ??= Type switch
         {
-            WorkspaceType.GitHub => $"/gh/{GitHubRepository}",
-            WorkspaceType.LocalFilesystem => "/",
-            _ => throw new InvalidOperationException()
+            WorkspaceType.GitHub => $"gh/{GitHubRepository}",
+            WorkspaceType.LocalFilesystem => "",
+            _ => ""
         };
+
+        public static WorkspaceInfo Invalid { get; } = new WorkspaceInfo(WorkspaceType.Invalid, null, null);
 
         public static WorkspaceInfo CreateLocalFs(string path)
             => new WorkspaceInfo(WorkspaceType.LocalFilesystem, path, null);

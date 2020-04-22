@@ -44,7 +44,7 @@ namespace WarHub.GodMode.Services
             return await Task.Run(async () =>
             {
                 var repoPath = string.Concat(repository.Segments[^2..]);
-                var extractDirectory = Path.Join(Path.GetTempPath(), "godmode", "download", repoPath);
+                var extractDirectory = Path.Combine(Path.GetTempPath(), "godmode", "download", repoPath);
                 if (Directory.Exists(extractDirectory))
                 {
                     Directory.Delete(extractDirectory, recursive: true);
