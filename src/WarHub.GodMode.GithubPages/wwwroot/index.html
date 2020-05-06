@@ -27,6 +27,107 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/WarHub.GodMode.Components/scripts.js"></script>
+    <script type="module">
+        window.JsMemoryInterop = {
+            /** @type {Map<number, Uint8Array>} */
+            pinned: new Map(),
+
+            /** @type {number} */
+            latestPinned: undefined,
+
+            PinMemory: function PinMemory(/** @type {Uint8Array} */ array) {
+                const self = this;
+                const memRef = self.pinned.size === 0 || self.latestPinned === undefined ? 0 : self.latestPinned + 1;
+                self.pinned.set(memRef, array);
+                return self.latestPinned = memRef;
+            },
+            UnpinMemory: function UnpinMemory(/** @type {number} */ memRef) {
+                return this.pinned.delete(memRef);
+            },
+            GetLength: function GetLength(/** @type {number} */ memRef) {
+                return this.pinned.get(memRef).byteLength;
+            },
+            ReadUnmarshalled: function ReadUnmarshalled(params) {
+                // read params
+                /** @type {number} */
+                const position = Blazor.platform.readUint64Field(params, 0);
+                /** @type {number} */
+                const offset = Blazor.platform.readInt32Field(params, 8);
+                /** @type {number} */
+                const count = Blazor.platform.readInt32Field(params, 12);
+                /** @type {number} */
+                const memRef = Blazor.platform.readInt32Field(params, 16);
+                /** @type {number} */
+                const bufferPtr = Blazor.platform.readObjectField(params, 20);
+                // act
+                /** @type {Uint8Array} */
+                const buffer = Blazor.platform.toUint8Array(bufferPtr);
+                /** @type {Uint8Array} */
+                const array = this.pinned.get(memRef);
+                const copyCount = Math.min(array.byteLength - position, count);
+                // if we're going to copy whole array, no need to copy
+                const view = position === 0 && copyCount === array.byteLength ? array : new Uint8Array(array.buffer, array.byteOffset + position, copyCount)
+                buffer.set(view, offset);
+                return copyCount;
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/@isomorphic-git/lightning-fs@4.2.2"></script>
+    <script src="https://unpkg.com/isomorphic-git@1.4.0"></script>
+    <script type="module">
+        import http from 'https://unpkg.com/isomorphic-git@1.4.0/http/web/index.js';
+        window.fs = new LightningFS('fs');
+        window.pfs = window.fs.promises;
+        // interop
+        window.ghpagesInterop = {
+            gitClone: async function (gitUrl, root) {
+                await git.clone({
+                    fs,
+                    http,
+                    dir: root,
+                    corsProxy: 'https://cors.isomorphic-git.org',
+                    url: gitUrl,
+                    singleBranch: true,
+                    depth: 1
+                });
+                const rootEntries = await pfs.readdir(root);
+                return {
+                    root,
+                    rootEntries
+                };
+            },
+            fsReadFileBase64: async function (filepath) {
+                const file = await pfs.readFile(filepath);
+                const base64String = await new Promise((resolve, reject) => {
+                    try {
+                        const reader = new FileReader();
+                        reader.onload = ((r) => {
+                            return () => {
+                                try {
+                                    const dataUrl = r.result;
+                                    const base64 = dataUrl ? dataUrl.split('base64,')[1] : null;
+                                    resolve(base64);
+                                } catch (e) {
+                                    reject(e);
+                                }
+                            }
+                        })(reader);
+                        reader.readAsDataURL(new Blob([file]));
+                    } catch (e) {
+                        reject(e);
+                    }
+                });
+                return base64String;
+            },
+            fsReadFileMemRef: async function (/** @type {string} */ filepath, /** @type {string} */ memRefScript) {
+                /** @type {Uint8Array} */
+                const file = await pfs.readFile(filepath);
+                /** @type {(Uint8Array) => number} */
+                const getMemRef = eval(memRefScript);
+                return getMemRef(file);
+            }
+        };
+    </script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
 </body>
 

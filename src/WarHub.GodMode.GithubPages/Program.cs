@@ -27,6 +27,7 @@ namespace WarHub.GodMode.GithubPages
         {
             services.AddHeadElementHelper();
             services.AddSingleton<GitHubWorkspaceProvider>();
+            services.AddSingleton<JsMemoryInteropService>();
             services.AddScoped<IWorkspaceProviderAggregate, WorkspaceProviderAggregate>();
             services.AddScoped<IWorkspaceContextResolver, WorkspaceContextResolver>();
         }
