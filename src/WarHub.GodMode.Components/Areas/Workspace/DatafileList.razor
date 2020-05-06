@@ -10,12 +10,12 @@
                 => @<option value="@file.Filepath">@file.GetStorageName()</option>;
         }
         <optgroup label="Game systems">
-            @foreach (var file in Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem))
+            @foreach (var file in Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem).OrderBy(x => x.GetStorageName()))
             {
                 @option(file)
             }
         </optgroup>
-        @foreach (var file in Datafiles.Where(x => x.DataKind == SourceKind.Catalogue))
+        @foreach (var file in Datafiles.Where(x => x.DataKind == SourceKind.Catalogue).OrderBy(x => x.GetStorageName()))
         {
             @option(file)
         }
