@@ -1,0 +1,158 @@
+﻿@inject IWorkspaceProviderAggregate ProviderAggregate
+
+<h4>
+    Source:
+    @if (WorkspaceInfo.Type == WorkspaceType.LocalFilesystem)
+    {
+        <span>@WorkspaceInfo.LocalFsPath</span>
+    }
+    else if (WorkspaceInfo.Type == WorkspaceType.GitHub)
+    {
+        <img height="32" width="32" src="https://unpkg.com/simple-icons@latest/icons/github.svg" />
+        <a href="@WorkspaceInfo.GitHubUrl">@WorkspaceInfo.GitHubRepository</a>
+    }
+    else
+    {
+        <span>none</span>
+    }
+    @if (!Editing)
+    {
+        <button class="btn btn-link btn-sm" @onclick="Edit">edit</button>
+    }
+</h4>
+
+@if (Editing)
+{
+    <form class="mb-3" @onsubmit="Submit" @onsubmit:preventDefault>
+        <div class="btn-group mb-3">
+            @foreach (var providerInfo in ProviderAggregate.ProviderInfos)
+            {
+                <button type="button" class="btn btn-secondary @GetButtonActive(providerInfo)" @onclick="() => Select(providerInfo)">
+                    @(providerInfo.Type switch
+                    {
+                        WorkspaceType.LocalFilesystem => "Local filesystem",
+                        WorkspaceType.GitHub => "GitHub repository",
+                        _ => "unknown"
+                    })
+                </button>
+            }
+        </div>
+        @if (SelectedType == WorkspaceType.LocalFilesystem)
+        {
+            <p>
+                Local filesystem is accessed via <code>DataDir</code> configuration setting. Current location is
+                <code>@SelectedProviderInfo.InitialWorkspaceInfo.LocalFsPath</code>
+            </p>
+        }
+        else if (SelectedType == WorkspaceType.GitHub)
+        {
+            <div class="form-group">
+                <label for="github-url">GitHub repository (owner/name)</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">@GitHubBaseUrl</span>
+                    </div>
+                    <input type="text" required pattern="[^/\s]+/[^/\s]+" id="github-url" class="form-control" value="@GitHubPath" @onchange="UrlSelected" placeholder="e.g. BSData/wh40k" />
+                </div>
+                <small class="text-danger mb-3">@ValidationMessage</small>
+            </div>
+        }
+        <div class="mb-3">
+            <button type="submit" class="btn btn-success" disabled="@(ValidationMessage != null)">Open</button>
+            <button type="button" class="btn btn-outline-secondary" @onclick="() => Editing = false">Cancel</button>
+        </div>
+    </form>
+}
+
+
+@code {
+
+    string GitHubBaseUrl = "https://github.com/";
+
+    Uri GitHubUrl;
+
+    string GitHubPath;
+
+    string ValidationMessage;
+
+    WorkspaceType SelectedType => SelectedProviderInfo.Type;
+
+    WorkspaceProviderInfo SelectedProviderInfo { get; set; }
+
+    bool Editing { get; set; }
+
+    [Parameter]
+    public WorkspaceInfo WorkspaceInfo { get; set; }
+
+    [Parameter]
+    public EventCallback<WorkspaceInfo> WorkspaceInfoChanged { get; set; }
+
+    string GetButtonActive(WorkspaceProviderInfo info) => SelectedProviderInfo == info ? "active" : "";
+
+    protected override void OnParametersSet()
+    {
+        if (WorkspaceInfo.Type == WorkspaceType.Invalid)
+        {
+            Edit();
+        }
+    }
+
+    void Select(WorkspaceProviderInfo providerInfo)
+    {
+        SelectedProviderInfo = providerInfo;
+    }
+
+    async Task SetWorkspaceInfo(WorkspaceInfo value)
+    {
+        WorkspaceInfo = value;
+        await WorkspaceInfoChanged.InvokeAsync(value);
+    }
+
+    void UrlSelected(ChangeEventArgs e)
+    {
+        GitHubPath = e.Value.ToString().Trim().Trim('/');
+        if (GitHubPath.StartsWith(GitHubBaseUrl))
+        {
+            GitHubPath = GitHubPath.Substring(GitHubBaseUrl.Length);
+            e.Value = GitHubPath;
+        }
+        var uri = new Uri($"{GitHubBaseUrl}{GitHubPath}");
+        if (uri.Segments.Length != 3)
+        {
+            ValidationMessage = $"Please provide repository address in the format: 'Owner/RepoName'.";
+            return;
+        }
+        ValidationMessage = null;
+        GitHubUrl = uri;
+    }
+
+    async Task Submit()
+    {
+        if (ValidationMessage is { })
+        {
+            return;
+        }
+        Editing = false;
+        var workspaceInfo = SelectedProviderInfo.Type switch
+        {
+            WorkspaceType.GitHub => WorkspaceInfo.CreateGitHub(GitHubUrl),
+            _ => SelectedProviderInfo.InitialWorkspaceInfo
+        };
+        await SetWorkspaceInfo(workspaceInfo);
+    }
+
+    void Edit()
+    {
+        SelectedProviderInfo = WorkspaceInfo.Type switch {
+            WorkspaceType.Invalid => ProviderAggregate.ProviderInfos.First(),
+            _ => ProviderAggregate[WorkspaceInfo.Type]
+        };
+        if (WorkspaceInfo.Type == WorkspaceType.GitHub)
+        {
+            GitHubUrl = WorkspaceInfo.GitHubUrl;
+            GitHubPath = WorkspaceInfo.GitHubRepository;
+        }
+        ValidationMessage = null;
+        Editing = true;
+    }
+}

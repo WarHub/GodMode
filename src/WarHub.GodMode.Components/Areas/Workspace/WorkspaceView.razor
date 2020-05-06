@@ -1,0 +1,82 @@
+﻿@using WarHub.ArmouryModel.ProjectModel
+@using WarHub.GodMode.Components.Areas.TreeView
+
+@inject IWorkspaceContextResolver Resolver
+
+<div>
+    <DatafileList Workspace="@Workspace"
+                  SelectedDatafile="@DatafileInfo"
+                  SelectedDatafileChanged="@SetDatafileInfo" />
+</div>
+
+@if (DatafileInfo is null)
+{
+    <p>No file selected</p>
+}
+else
+{
+    <div class="row">
+        <style>
+            div.max80vh {
+                max-height: 80vh;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+        </style>
+
+        <div class="col-md">
+            <h4 id="content">Content</h4>
+            <div class="max80vh px-3">
+                @if (Root is { } && GamesystemContext is { })
+                {
+                    <SourceNodeTree Root="@Root" Context="@GamesystemContext" @bind-ActiveItem="ActiveItem" />
+                }
+                else
+                {
+                    <p>
+                        <em>Loading datafile...</em>
+                    </p>
+                }
+            </div>
+        </div>
+
+        <div class="col-md">
+            <h4 id="details">Details</h4>
+            <div class="max80vh px-3">
+                <SourceNodeDetails Node="@((ActiveItem?.Model as ITreeItemModelWithSourceNode)?.Node)" />
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    IDatafileInfo datafileInfo;
+
+    IDatafileInfo DatafileInfo => datafileInfo;
+
+    [Parameter]
+    public IWorkspace Workspace { get; set; }
+
+    SourceNodeTreeItemBase ActiveItem { get; set; }
+
+    CatalogueBaseNode Root { get; set; }
+
+    GamesystemContext GamesystemContext { get; set; }
+
+    private async Task SetDatafileInfo(IDatafileInfo value)
+    {
+        var old = datafileInfo;
+        datafileInfo = value;
+        if (value != old)
+        {
+            if (DatafileInfo is { })
+            {
+                Root = null;
+                GamesystemContext = null;
+                Root = DatafileInfo.GetData() as CatalogueBaseNode;
+                GamesystemContext = Root is null ? null : await Resolver.GetContext(Workspace, Root);
+            }
+            StateHasChanged();
+        }
+    }
+}

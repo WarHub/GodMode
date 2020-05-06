@@ -1,0 +1,66 @@
+﻿@using WarHub.ArmouryModel.ProjectModel
+
+@if (Workspace is { })
+{
+    <label for="file-select">Select datafile</label>
+
+    <select id="file-select" @bind="SelectedFilepath">
+        @{
+            RenderFragment<IDatafileInfo> option = file
+                => @<option value="@file.Filepath">@file.GetStorageName()</option>;
+        }
+        <optgroup label="Game systems">
+            @foreach (var file in Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem).OrderBy(x => x.GetStorageName()))
+            {
+                @option(file)
+            }
+        </optgroup>
+        @foreach (var file in Datafiles.Where(x => x.DataKind == SourceKind.Catalogue).OrderBy(x => x.GetStorageName()))
+        {
+            @option(file)
+        }
+    </select>
+}
+
+@code {
+    IDatafileInfo selectedDatafile;
+
+    ImmutableArray<IDatafileInfo> Datafiles => Workspace?.Datafiles ?? ImmutableArray<IDatafileInfo>.Empty;
+
+    IEnumerable<IDatafileInfo> Catalogues => Datafiles.Where(x => x.DataKind == SourceKind.Catalogue);
+
+    IEnumerable<IDatafileInfo> Gamesystems => Datafiles.Where(x => x.DataKind == SourceKind.Gamesystem);
+
+    string SelectedFilepath
+    {
+        get => SelectedDatafile?.Filepath;
+        set => SelectedDatafile = Datafiles.FirstOrDefault(x => x.Filepath == value);
+    }
+
+    [Parameter]
+    public IWorkspace Workspace { get; set; }
+
+    [Parameter]
+    public IDatafileInfo SelectedDatafile
+    {
+        get => selectedDatafile;
+        set
+        {
+            var changed = value != selectedDatafile;
+            selectedDatafile = value;
+            if (changed)
+                SelectedDatafileChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<IDatafileInfo> SelectedDatafileChanged { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Workspace?.Datafiles.Contains(SelectedDatafile) != true)
+        {
+            SelectedDatafile = Catalogues.FirstOrDefault() ?? Gamesystems.FirstOrDefault();
+        }
+    }
+}

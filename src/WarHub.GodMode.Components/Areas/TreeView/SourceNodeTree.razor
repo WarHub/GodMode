@@ -1,0 +1,65 @@
+﻿@using Microsoft.JSInterop
+
+@inject IJSRuntime JSRuntime
+
+<CascadingValue Value="this">
+    @if (Context.Contains(Root))
+    {
+        <SourceNodeTreeItem Model="RootModel" @ref="RootItem" />
+    }
+    else
+    {
+        <span>Context mismatch.</span>
+    }
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public SourceNodeTreeItemBase ActiveItem { get; set; }
+
+    [Parameter]
+    public EventCallback<SourceNodeTreeItemBase> ActiveItemChanged { get; set; }
+
+    [Parameter]
+    public CatalogueBaseNode Root { get; set; }
+
+    [Parameter]
+    public GamesystemContext Context { get; set; }
+
+    public SourceNodeTreeItem RootItem { get; private set; }
+
+    CatalogueBaseTreeItemModel RootModel { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (RootModel?.Node != Root || RootModel?.Context != Context)
+        {
+            RootModel = CatalogueBaseTreeItemModel.Create(Root, Context);
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ActiveItem is null || ActiveItem != RootItem && !RootItem.Contains(ActiveItem))
+        {
+            await SetActiveItem(RootItem);
+        }
+    }
+
+    async Task SetActiveItem(SourceNodeTreeItemBase item)
+    {
+        if (ActiveItem != item)
+        {
+            ActiveItem = item;
+            await ActiveItemChanged.InvokeAsync(ActiveItem);
+        }
+    }
+
+    public async Task SelectNode(SourceNodeTreeItemBase treeItem)
+    {
+        await SetActiveItem(treeItem);
+        StateHasChanged();
+        await JSRuntime.Focus(treeItem.FocusableElementRef);
+    }
+}

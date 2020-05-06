@@ -1,0 +1,118 @@
+﻿@page "/"
+@page "/gh/{GitHubOwner}/{GitHubRepository}"
+
+@using WarHub.ArmouryModel.ProjectModel
+@using WarHub.GodMode.Components.Areas.Workspace
+
+@inject NavigationManager Navman
+@inject IWorkspaceProviderAggregate ProviderAggregate
+
+<Title>@TitleText</Title>
+
+<RepositorySourceSelect WorkspaceInfo="WorkspaceInfo" WorkspaceInfoChanged="UpdateWorkspace" />
+
+@if (ErrorMessage is null)
+{
+    if (Workspace is { })
+    {
+        <WorkspaceView Workspace="Workspace" />
+    }
+    else if (WorkspaceInfo.Type == WorkspaceType.Invalid)
+    {
+        <em>No workspace loaded.</em>
+    }
+    else
+    {
+        <em>Loading source...</em>
+    }
+}
+else
+{
+    <h4>@ErrorMessage</h4>
+}
+
+@code {
+    [Parameter]
+    public string GitHubOwner { get; set; }
+
+    [Parameter]
+    public string GitHubRepository { get; set; }
+
+    string TitleText => WorkspaceInfo?.Type switch
+    {
+        WorkspaceType.GitHub => WorkspaceInfo.GitHubRepository,
+        _ => "GodMode"
+    };
+
+    WorkspaceInfo FallbackWorkspaceInfo => WorkspaceInfo.Invalid;
+
+    IWorkspace Workspace { get; set; }
+
+    WorkspaceInfo WorkspaceInfo { get; set; }
+
+    string ErrorMessage { get; set; }
+
+    (WorkspaceInfo info, string error) ParseLocation()
+    {
+        if (string.IsNullOrEmpty(GitHubOwner) || string.IsNullOrEmpty(GitHubRepository))
+        {
+            return (null, null);
+        }
+        var urlString = $"https://github.com/{GitHubOwner}/{GitHubRepository}";
+        try
+        {
+            var url = new Uri(urlString);
+            var info = WorkspaceInfo.CreateGitHub(url);
+            return (info, null);
+        }
+        catch (Exception e)
+        {
+            var msg = $"Failed to parse GitHub address '{urlString}': " + e.Message;
+            return (null, msg);
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await Update();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Update();
+    }
+
+    async Task Update()
+    {
+        var (info, message) = ParseLocation();
+        ErrorMessage = message;
+        await UpdateWorkspace(info ?? FallbackWorkspaceInfo);
+    }
+
+    async Task UpdateWorkspace(WorkspaceInfo info)
+    {
+        if (WorkspaceInfo != info || Workspace == null)
+        {
+            WorkspaceInfo = info;
+            Workspace = null;
+            ErrorMessage = null;
+            try
+            {
+                if (info.Type != WorkspaceType.Invalid)
+                {
+                    Workspace = await ProviderAggregate.GetWorkspace(info);
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorMessage = $"Failed to load repository source: {e.Message}";
+            }
+            var targetUri = Navman.ToAbsoluteUri(Navman.BaseUri + info.AppRoute).ToString();
+            if (targetUri != Navman.Uri)
+            {
+                Navman.NavigateTo(targetUri);
+            }
+            StateHasChanged();
+        }
+    }
+}
