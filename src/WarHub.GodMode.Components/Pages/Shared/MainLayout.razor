@@ -1,15 +1,21 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="sidebar">
-    <NavMenu />
-</div>
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark">
+        <NavMenu />
+    </nav>
+</header>
 
-<div class="main">
-    <div class="top-row px-4">
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-    </div>
-
+<main class="flex-shrink-0">
     <div class="content px-4">
         @Body
     </div>
-</div>
+</main>
+
+<footer class="mt-auto py-3 mx-5 border-top">
+    <div class="d-flex flex-column flex-md-row justify-content-around">
+        <a href="https://github.com/WarHub/GodMode/tree/@ThisAssembly.GitCommitId">GodMode v@(ThisAssembly.AssemblyInformationalVersion)</a>
+        <span class="text-muted">© Amadeusz Sadowski, WarHub</span>
+        <a href="https://github.com/WarHub/GodMode">Source on GitHub</a>
+    </div>
+</footer>
