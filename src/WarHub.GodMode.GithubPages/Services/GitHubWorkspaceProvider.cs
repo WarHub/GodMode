@@ -78,31 +78,31 @@ namespace WarHub.GodMode.GithubPages.Services
             var datafiles = await ReadDatafilesAsync(root, rootFiles).ToListAsync();
             return new InMemoryWorkspace(root, datafiles.ToImmutableArray());
 
-            IEnumerable<IDatafileInfo> ReadDatafiles(string root, string[] filenames)
-            {
-                foreach (var filename in filenames)
-                {
-                    yield return ReadDatafile(root, filename);
-                }
-            }
+            // IEnumerable<IDatafileInfo> ReadDatafiles(string root, string[] filenames)
+            // {
+            //     foreach (var filename in filenames)
+            //     {
+            //         yield return ReadDatafile(root, filename);
+            //     }
+            // }
 
-            IDatafileInfo ReadDatafile(string root, string filename)
-            {
-                var filepath = $"{root}/{filename}";
-                var kind = filepath.GetXmlDocumentKind();
-                if (kind == XmlDocumentKind.Catalogue)
-                {
-                    return new LazyWeakXmlDatafileInfo<CatalogueNode>(filepath, SourceKind.Catalogue, memFs);
-                }
-                else if (kind == XmlDocumentKind.Gamesystem)
-                {
-                    return new LazyWeakXmlDatafileInfo<GamesystemNode>(filepath, SourceKind.Gamesystem, memFs);
-                }
-                else
-                {
-                    return new UnknownTypeDatafileInfo(filename);
-                }
-            }
+            // IDatafileInfo ReadDatafile(string root, string filename)
+            // {
+            //     var filepath = $"{root}/{filename}";
+            //     var kind = filepath.GetXmlDocumentKind();
+            //     if (kind == XmlDocumentKind.Catalogue)
+            //     {
+            //         return new LazyWeakXmlDatafileInfo<CatalogueNode>(filepath, SourceKind.Catalogue, memFs);
+            //     }
+            //     else if (kind == XmlDocumentKind.Gamesystem)
+            //     {
+            //         return new LazyWeakXmlDatafileInfo<GamesystemNode>(filepath, SourceKind.Gamesystem, memFs);
+            //     }
+            //     else
+            //     {
+            //         return new UnknownTypeDatafileInfo(filename);
+            //     }
+            // }
 
             async IAsyncEnumerable<IDatafileInfo> ReadDatafilesAsync(string root, string[] filenames)
             {

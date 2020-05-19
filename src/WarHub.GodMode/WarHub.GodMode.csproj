@@ -1,14 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" />
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Amadevus.RecordGenerator" Version="0.6.0" PrivateAssets="all" ExcludeAssets="runtime" />
-    <PackageReference Include="morelinq" Version="3.2.0" />
-    <PackageReference Include="Optional" Version="4.0.0" />
-    <PackageReference Include="WarHub.ArmouryModel.Workspaces.BattleScribe" Version="0.7.0" />
+    <PackageReference Include="Amadevus.RecordGenerator" />
+    <PackageReference Include="morelinq" />
+    <PackageReference Include="Optional" />
+    <PackageReference Include="WarHub.ArmouryModel.Workspaces.BattleScribe" />
   </ItemGroup>
 
   <ItemGroup>
