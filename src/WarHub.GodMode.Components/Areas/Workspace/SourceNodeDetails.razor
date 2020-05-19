@@ -102,7 +102,7 @@
                     {
                         <tr>
                             <th>@categoryLink.Name</th>
-                            <td>@categoryLink.IsPrimary</td>
+                            <td>@categoryLink.Primary</td>
                             <td>@categoryLink.TargetId</td>
                             <td>@categoryLink.Id</td>
                         </tr>
@@ -119,6 +119,8 @@
 
     IEnumerable<(string name, object value)> GetProperties(SourceNode node)
     {
+        if (node is CommentableNode comm)
+            yield return ("Comment", comm.Comment);
         // interfaces
         if (node is IIdentifiableNode id)
             yield return ("Id", id.Id);
@@ -138,18 +140,18 @@
             yield return ("Value", cost.Value);
         }
         if (node is EntryBaseNode entryBase)
-            yield return ("Hidden", entryBase.IsHidden);
+            yield return ("Hidden", entryBase.Hidden);
         if (node is SelectionEntryBaseNode selBase)
         {
             yield return ("Collective", selBase.Collective);
-            yield return ("Import", selBase.Import);
+            yield return ("Exported", selBase.Exported);
         }
         if (node is SelectorBaseNode selectorBase)
         {
             yield return ("Field", selectorBase.Field);
             yield return ("Scope", selectorBase.Scope);
             yield return ("Value", selectorBase.Value);
-            yield return ("PercentValue", selectorBase.PercentValue);
+            yield return ("IsValuePercentage", selectorBase.IsValuePercentage);
             yield return ("Shared", selectorBase.Shared);
             yield return ("IncludeChildSelections", selectorBase.IncludeChildSelections);
             yield return ("IncludeChildForces", selectorBase.IncludeChildForces);
@@ -175,11 +177,11 @@
             yield return ("Import Root Entries", catLink.ImportRootEntries);
         }
         else if (node is CategoryNode category)
-            yield return ("Is Primary", category.IsPrimary);
+            yield return ("Is Primary", category.Primary);
         else if (node is CategoryLinkNode categoryLink)
         {
             yield return ("Target Id", categoryLink.TargetId);
-            yield return ("Is Primary", categoryLink.IsPrimary);
+            yield return ("Is Primary", categoryLink.Primary);
         }
         else if (node is CharacteristicNode ch)
         {
@@ -221,8 +223,8 @@
         else if (node is RepeatNode repeat)
         {
             yield return ("ChildId", repeat.ChildId);
-            yield return ("Repeats", repeat.Repeats);
-            yield return ("IsRoundUp", repeat.IsRoundUp);
+            yield return ("Repeats", repeat.RepeatCount);
+            yield return ("RoundUp", repeat.RoundUp);
         }
         else if (node is SelectionEntryNode entry)
             yield return ("Type", entry.Type);

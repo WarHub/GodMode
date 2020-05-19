@@ -55,10 +55,10 @@ namespace WarHub.GodMode.SourceAnalysis
                 InfoLinkNode link => GetLinkNameFromTargetOrSelf(link),
                 INameableNode named => named.Name,
                 ConditionNode cond =>
-                    Invariant($"if {cond.Type} {FormatValue(cond.Value, cond.PercentValue)} {cond.Field} in {cond.Scope} of {cond.ChildId}"),
+                    Invariant($"if {cond.Type} {FormatValue(cond.Value, cond.IsValuePercentage)} {cond.Field} in {cond.Scope} of {cond.ChildId}"),
                 ConditionGroupNode condGroup => Invariant($"{condGroup.Type}"),
                 ConstraintNode constr =>
-                    Invariant($"{constr.Type} {FormatValue(constr.Value, constr.PercentValue)} {constr.Field} in {constr.Scope}"),
+                    Invariant($"{constr.Type} {FormatValue(constr.Value, constr.IsValuePercentage)} {constr.Field} in {constr.Scope}"),
                 ModifierNode mod => GetModifierTitle(mod),
                 _ => node.Kind.ToString()
             };
