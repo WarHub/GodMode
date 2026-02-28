@@ -146,15 +146,15 @@
             yield return ("Collective", selBase.Collective);
             yield return ("Exported", selBase.Exported);
         }
-        if (node is SelectorBaseNode selectorBase)
+        if (node is QueryBaseNode queryBase)
         {
-            yield return ("Field", selectorBase.Field);
-            yield return ("Scope", selectorBase.Scope);
-            yield return ("Value", selectorBase.Value);
-            yield return ("IsValuePercentage", selectorBase.IsValuePercentage);
-            yield return ("Shared", selectorBase.Shared);
-            yield return ("IncludeChildSelections", selectorBase.IncludeChildSelections);
-            yield return ("IncludeChildForces", selectorBase.IncludeChildForces);
+            yield return ("Field", queryBase.Field);
+            yield return ("Scope", queryBase.Scope);
+            yield return ("Value", queryBase.Value);
+            yield return ("IsValuePercentage", queryBase.IsValuePercentage);
+            yield return ("Shared", queryBase.Shared);
+            yield return ("IncludeChildSelections", queryBase.IncludeChildSelections);
+            yield return ("IncludeChildForces", queryBase.IncludeChildForces);
         }
         if (node is CatalogueBaseNode catBase)
         {

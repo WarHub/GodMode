@@ -1,7 +1,7 @@
 name: deploy-pages
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   deploy-gh-pages:
@@ -9,27 +9,18 @@ jobs:
     env:
       DOTNET_NOLOGO: 1
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # all history
-      - name: Read .NET Core SDK version
-        id: globaljson
-        shell: pwsh
-        run: |
-          dotnet --version
-          if ($LASTEXITCODE -ne 0) { # if dotnet didn't find version required by globaljson, it exits with non-0 code
-            Write-Host "::set-output name=version::$((Get-Content global.json -Raw | ConvertFrom-Json).sdk.version)"
-          }
-          $LASTEXITCODE = 0
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ steps.globaljson.outputs.version }}
+          dotnet-version: '10.0.x'
       - run: dotnet --info
       - run: dotnet tool restore
       - run: dotnet nbgv get-version
       - run: dotnet publish src/WarHub.GodMode.GithubPages -c Release -o bin/publish
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ github.token }}
           publish_dir: ./bin/publish/wwwroot

@@ -1,12 +1,3 @@
-﻿using Amadevus.RecordGenerator;
+﻿namespace WarHub.GodMode.SourceAnalysis;
 
-namespace WarHub.GodMode.SourceAnalysis
-{
-    [Record(Features.Default | Features.Equality)]
-    public partial struct NodeDisplayInfo
-    {
-        public string Title { get; }
-        public string Icon { get; }
-        public string IconMod { get; }
-    }
-}
+public readonly record struct NodeDisplayInfo(string Title, string Icon, string? IconMod);

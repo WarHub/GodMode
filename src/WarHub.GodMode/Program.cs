@@ -1,28 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Toolbelt.Blazor.Extensions.DependencyInjection;
+using WarHub.GodMode.Components.Areas.Workspace;
+using WarHub.GodMode.Services;
 
-namespace WarHub.GodMode
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpClient();
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddHeadElementHelper();
+builder.Services.AddSingleton<LocalFsWorkspaceProvider>();
+builder.Services.AddSingleton<GitHubWorkspaceProvider>();
+builder.Services.AddScoped<IWorkspaceProviderAggregate, WorkspaceProviderAggregate>();
+builder.Services.AddScoped<IWorkspaceContextResolver, WorkspaceContextResolver>();
+
+var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
 {
-    public static class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
 }
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAntiforgery();
+
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+app.Run();

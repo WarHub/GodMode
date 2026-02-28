@@ -50,9 +50,10 @@ namespace WarHub.GodMode.SourceAnalysis
             return workspace
                 .Datafiles
                 .Where(x => x.DataKind == SourceKind.Catalogue || x.DataKind == SourceKind.Gamesystem)
-                .Select(x => (CatalogueBaseNode)x.GetData())
-                .GroupBy(x => GetGamesystemId(x, "unknown"))
-                .Select(group => CreateSingle(group.ToImmutableArray()));
+                .Select(x => (CatalogueBaseNode?)x.GetData())
+                .Where(x => x is not null)
+                .GroupBy(x => GetGamesystemId(x!, "unknown"))
+                .Select(group => CreateSingle(group.ToImmutableArray()!));
         }
 
         public static GamesystemContext CreateSingle(ImmutableArray<CatalogueBaseNode> rootNodes)

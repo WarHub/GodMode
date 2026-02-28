@@ -11,24 +11,14 @@ jobs:
       Configuration: ${{ matrix.BuildConfiguration }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # all history
-      - name: Read .NET Core SDK version
-        id: globaljson
-        shell: pwsh
-        run: |
-          dotnet --version
-          if ($LASTEXITCODE -ne 0) { # if dotnet didn't find version required by globaljson, it exits with non-0 code
-            Write-Host "::set-output name=version::$((Get-Content global.json -Raw | ConvertFrom-Json).sdk.version)"
-          }
-          $LASTEXITCODE = 0
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ steps.globaljson.outputs.version }}
+          dotnet-version: '10.0.x'
       - run: dotnet --info
       - run: dotnet tool restore
       - run: dotnet nbgv get-version
       - run: dotnet restore -v m
       - run: dotnet build --no-restore
-#      - run: dotnet test --no-build

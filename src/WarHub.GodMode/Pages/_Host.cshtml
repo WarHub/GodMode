@@ -22,17 +22,10 @@
     <link rel="icon" href="_content/WarHub.GodMode.Components/favicon.ico" type="image/vnd.microsoft.icon" sizes="16x16 32x32 48x48" />
 </head>
 <body>
-    <app>
-        <component type="typeof(Components.App)" render-mode="ServerPrerendered" />
-    </app>
+    <component type="typeof(WarHub.GodMode.Components.App)" render-mode="ServerPrerendered" />
 
     <div id="blazor-error-ui">
-        <environment include="Staging,Production">
-            An error has occurred. This application may no longer respond until reloaded.
-        </environment>
-        <environment include="Development">
-            An unhandled exception has occurred. See browser dev tools for details.
-        </environment>
+        An error has occurred. This application may no longer respond until reloaded.
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
