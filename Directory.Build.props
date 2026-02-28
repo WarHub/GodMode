@@ -2,11 +2,14 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Authors>Amadeusz Sadowski</Authors>
     <Company>WarHub</Company>
     <Copyright>Copyright © Amadeusz Sadowski</Copyright>
     <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
   <PropertyGroup>

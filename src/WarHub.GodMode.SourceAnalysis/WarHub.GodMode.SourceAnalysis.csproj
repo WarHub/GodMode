@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  
-  <Sdk Name="Microsoft.Build.CentralPackageVersions" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Amadevus.RecordGenerator" />
     <PackageReference Include="morelinq" />
     <PackageReference Include="Optional" />
     <PackageReference Include="WarHub.ArmouryModel.Workspaces.BattleScribe" />
